@@ -1,0 +1,187 @@
+main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 0;
+  text-align: center;
+}
+
+/* Topper */
+main h2 {
+  font-size: 32px;
+  font-weight: bold;
+  color: #8e0037;
+  margin-bottom: 30px;
+}
+
+/* White box */
+.booking-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: white;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  gap: 15px;
+  width: 90%;
+  max-width: 2000px;
+}
+
+/* Dropdowns, date input, and button */
+.booking-form select,
+.booking-form button {
+  padding: 15px;
+  font-size: 16px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  appearance: none;
+  background: white;
+  color: #555;
+  text-align: left;
+  width: 100%;
+  max-width: 300px;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+/* Date input */
+.booking-form input[type="date"] {
+  -webkit-appearance: none; 
+  -moz-appearance: textfield; 
+  appearance: none; 
+  padding: 15px;
+  font-size: 16px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  background: white;
+  color: #555;
+  text-align: left;
+  width: 100%;
+  max-width: 300px;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+/* hover effect */
+.booking-form input[type="date"]:hover {
+  border-color: #8e0037;
+}
+
+
+/* date picker */
+.booking-form select:hover, 
+.booking-form input[type="date"]:hover {
+  border-color: #8e0037;
+}
+
+.booking-form select option {
+  color: #333;
+}
+
+/* SEARCH button */
+.booking-form button {
+  background: linear-gradient(to right, #004aad, #8e0037);
+  color: white;
+  padding: 10px 150px;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  margin-top: 5px;
+  width: 100%;
+  max-width: 400px;
+}
+
+.booking-form button:hover {
+  background: linear-gradient(to right, #8e0037, #004aad);
+}
+
+/* dropdowns / date input */
+.booking-form select, 
+.booking-form input[type="date"] {
+  background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="%23555" d="M7 10l5 5 5-5H7z"/></svg>');
+  background-repeat: no-repeat;
+  background-position: right 15px center;
+  background-size: 12px;
+}
+
+#ticket-results {
+  margin-top: 20px;
+  width: 100%;
+}
+
+/* Ticket Card Styling */
+#ticket-results {
+  margin-top: 20px;
+  width: 100%;
+}
+
+.ticket-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: white;
+  color: black;
+  padding: 20px;
+  margin: 15px 0;
+  border-radius: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  font-family: 'Jost', sans-serif;
+  gap: 15px;
+}
+
+.ticket-card div {
+  display: flex;
+  align-items: center;
+  text-align: left;
+   /* Ensures even spacing across the card */
+}
+
+.ticket-card .station {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.ticket-card .time {
+  font-size: 14px;
+  color: gray;
+}
+
+.ticket-card .price {
+  font-size: 18px;
+  font-weight: bold;
+  color: #8e0037;
+}
+
+.ticket-card .from-price {
+  font-size: 12px;
+  color: gray;
+}
+
+.ticket-card .select-btn {
+  background: linear-gradient(to right, #004aad, #8e0037);
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.ticket-card .select-btn:hover {
+  background: linear-gradient(to right, #8e0037, #004aad);
+}
+
+/* Ensuring each section in the ticket card is inline */
+.ticket-card > div {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  flex-wrap: nowrap;
+}
+
+.ticket-card > div span {
+  margin: 0 10px;
+}

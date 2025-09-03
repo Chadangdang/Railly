@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>STRAWBERRY MORAKOT</title>
+  <link rel="stylesheet" href="/StrawberryMorakot/MyTicket/MyTicket.css" />
+  <link rel="stylesheet" href="/StrawberryMorakot/index.css" />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900&display=swap');
+  </style>
+</head>
+<body>
+
+  <header>
+    <nav>
+      <div class="brand">STRAWBERRY MORAKOT</div>
+      <div class="main-nav-wrapper">
+        <ul class="main-nav">
+          <li><a href="/StrawberryMorakot/Home/Home.html">HOME</a></li>
+          <li><a href="/StrawberryMorakot/Booking/Booking.html">BOOKING</a></li>
+          <li><a href="/StrawberryMorakot/MyTicket/MyTicket.html">MY TICKET</a></li>
+          <li><a href="/StrawberryMorakot/Aboutus/Aboutus.html">ABOUT US</a></li>
+        </ul>
+      </div>
+      <ul class="auth-nav">
+        <li><a href="/StrawberryMorakot/Backend/logout.php" id="logout-btn">Log out</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <div class="topper"><h2>MY TICKET</h2></div>
+    <div><h3>Show Your Ticket to the Train Staff</h3></div>
+    <p>
+      Please present your E-ticket by showing the E-ticket below to the train staff when requested.
+      Simply scan the barcode at the station or on the train for a smooth and hassle-free boarding experience.
+    </p>
+
+    <div id="ticket-results" class="ticket-container">
+      <p class="no-tickets">Fetching your tickets...</p>
+    </div>
+  </main>
+
+  <footer>
+    <img src="/StrawberryMorakot/SIIT_logo.png" alt="SIIT_logo" />
+  </footer>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const username = urlParams.get("username");
+      const userId = urlParams.get("id");
+
+      if (!username || !userId) {
+        alert("Missing user information. Please log in again.");
+        return;
+      }
+
+      // Add username and id to all nav links
+      const mainNavLinks = document.querySelectorAll('.main-nav a');
+      mainNavLinks.forEach(link => {
+        const linkUrl = new URL(link.href, window.location.origin);
+        linkUrl.searchParams.set('username', username);
+        linkUrl.searchParams.set('id', userId);
+        link.href = linkUrl.href;
+      });
+
+      // Fetch ticket data
+      fetch(`/StrawberryMorakot/Backend/getUserTickets.php?username=${username}&id=${userId}`)
+        .then(response => response.json())
+        .then(data => {
+          const ticketContainer = document.getElementById("ticket-results");
+
+          if (data.status === "error") {
+            ticketContainer.innerHTML = `<p class="no-tickets">${data.message}</p>`;
+            return;
+          }
+
+          if (data.tickets.length === 0) {
+            ticketContainer.innerHTML = `<p class="no-tickets">You have no tickets booked yet.</p>`;
+            return;
+          }
+
+          ticketContainer.innerHTML = ""; // Clear loading text
+
+          data.tickets.forEach(ticket => {
+            const ticketCard = document.createElement("div");
+            ticketCard.classList.add("ticket");
+
+            ticketCard.innerHTML = `
+              <div class="ticket-details">
+                <div class="train-time">
+                  <span>${ticket.departure}</span> 
+                  <span>${ticket.origin}</span> 
+                  <span class="arrow">→</span> 
+                  <span>${ticket.arrival}</span> 
+                  <span>${ticket.destination}</span>
+                </div>
+                <div class="additional-info">
+                  <p><strong>Date:</strong> ${ticket.datee}</p>
+                  <p><strong>Train Route:</strong> #${ticket.route_id}</p>
+                  <p><strong>Price:</strong> ${ticket.price} THB / person</p>
+                </div>
+                <div class="barcode">
+                  <img src="https://barcode.tec-it.com/barcode.ashx?data=${ticket.route_id}" alt="Barcode">
+                </div>
+              </div>
+            `;
+            ticketContainer.appendChild(ticketCard);
+          });
+        })
+        .catch(error => {
+          console.error("Error fetching tickets:", error);
+          document.getElementById("ticket-results").innerHTML = `<p class="no-tickets">Error fetching tickets. Please try again later.</p>`;
+        });
+    });
+  </script>
+</body>
+</html>

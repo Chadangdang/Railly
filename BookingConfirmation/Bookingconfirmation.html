@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>STRAWBERRY MORAKOT</title>
+  <link rel="stylesheet" href="/StrawberryMorakot/BookingConfirmation/Bookingconfirmation.css" />
+  <link rel="stylesheet" href="/StrawberryMorakot/index.css" />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap');
+  </style>
+</head>
+<body>
+  <header>
+    <nav>
+      <div class="brand">STRAWBERRY MORAKOT</div>
+    </nav>
+  </header>
+
+  <!-- Main Content -->
+  <main>
+    <h2>BOOKING CONFIRMATION</h2>
+    <div class="booking-container">
+      <!-- Train Details -->
+      <div class="train-details">
+        <div class="train-schedule">
+          <div class="station">
+            <p class="time" id="departure-time"></p>
+            <p class="location" id="origin"></p>
+          </div>
+          <div class="arrow">→</div>
+          <div class="station">
+            <p class="time" id="arrival-time"></p>
+            <p class="location" id="destination"></p>
+          </div>
+        </div>
+        <div class="train-info">
+          <p>Train Route <span id="route-id"></span></p>
+          <p><strong><span id="price"></span></strong> / person (adult)</p>
+        </div>
+      </div>
+
+      <!-- Order Summary -->
+      <div class="order-summary">
+        <p><strong>Order Summary</strong></p>
+        <p>Ticket: <span id="ticket-price"></span></p>
+        <p><strong>TOTAL: <span id="total-price"></span></strong></p>
+        <button class="next-btn">BOOKING CONFIRM</button>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <img src="/StrawberryMorakot/SIIT_logo.png" alt="SIIT Logo" />
+  </footer>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const routeId = urlParams.get("routeId");
+    const origin = urlParams.get("origin");
+    const destination = urlParams.get("destination");
+    const departure = urlParams.get("departure");
+    const arrival = urlParams.get("arrival");
+    const price = urlParams.get("price");
+    const datee = urlParams.get("datee");
+
+    let username = sessionStorage.getItem("username");
+    let userId = sessionStorage.getItem("id");
+
+    if (!username || !userId) {
+      username = urlParams.get("username");
+      userId = urlParams.get("id");
+      sessionStorage.setItem("username", username);
+      sessionStorage.setItem("id", userId);
+    }
+
+    document.getElementById("route-id").textContent = routeId;
+    document.getElementById("origin").textContent = origin;
+    document.getElementById("destination").textContent = destination;
+    document.getElementById("departure-time").textContent = departure;
+    document.getElementById("arrival-time").textContent = arrival;
+    document.getElementById("price").textContent = price;
+    document.getElementById("ticket-price").textContent = price;
+    document.getElementById("total-price").textContent = price;
+
+    const dateElement = document.createElement("p");
+    dateElement.textContent = `Date: ${datee}`;
+    dateElement.style.fontSize = "18px";
+    dateElement.style.marginTop = "10px";
+    dateElement.style.color = "#555";
+    document.querySelector(".train-info").appendChild(dateElement);
+
+    document.querySelector(".next-btn").addEventListener("click", async () => {
+      if (!routeId || !username || !userId || !origin || !destination || !departure || !arrival || !price) {
+        console.error({ routeId, username, userId, origin, destination, departure, arrival, price });
+        alert("Missing required information to confirm booking.");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("route_id", routeId);
+      formData.append("username", username);
+      formData.append("id", userId);
+      formData.append("origin", origin);
+      formData.append("destination", destination);
+      formData.append("departure", departure);
+      formData.append("arrival", arrival);
+      formData.append("price", price);
+
+      try {
+        const response = await fetch("/StrawberryMorakot/Backend/confirm.php", {
+          method: "POST",
+          body: formData,
+        });
+
+        const result = await response.json();
+        if (result.status === "success") {
+          alert(result.message);
+          const redirectUrl = `/StrawberryMorakot/MyTicket/MyTicket.html?username=${username}&id=${userId}`;
+          window.location.href = redirectUrl;
+        } else {
+          console.error("Error Response:", result);
+          alert(result.message);
+        }
+      } catch (error) {
+        console.error("Fetch Error:", error);
+        alert("An error occurred while confirming the ticket.");
+      }
+    });
+  </script>
+</body>
+</html>

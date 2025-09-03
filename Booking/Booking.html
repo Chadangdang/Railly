@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>STRAWBERRY MORAKOT</title>
+  <link rel="stylesheet" href="../Booking/Booking.css">
+
+  <link rel="stylesheet" href="../index.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap');
+  </style>
+</head>
+<body>
+
+  <header>
+    <nav>
+      <div class="brand">STRAWBERRY MORAKOT</div>
+      <div class="main-nav-wrapper">
+        <ul class="main-nav">
+          <li><a href="../Home/Home.html">HOME</a></li>
+          <li><a href="../Booking/Booking.html">BOOKING</a></li>
+          <li><a href="../MyTicket/MyTicket.html">MY TICKET</a></li>
+          <li><a href="../Aboutus/Aboutus.html">ABOUT US</a></li>
+        </ul>
+      </div>
+      <ul class="auth-nav">
+        <li><a href="../Backend/logout.php" id="logout-btn">Log out</a></li>
+      </ul>                
+    </nav>
+  </header>
+
+  <main>
+    <div class="topper"><h2>BOOK YOUR TICKET</h2></div>
+    <div class="booking-form">
+      <select id="origin" required>
+        <option value="" disabled selected>Origin Station</option>
+        <option value="Bangkok">Bangkok</option>
+        <option value="Rangsit">Rangsit</option>
+        <option value="Ayutthaya">Ayutthaya</option>
+      </select>
+      <select id="dest" required>
+        <option value="" disabled selected>Destination Station</option>
+        <option value="Bangkok">Bangkok</option>
+        <option value="Rangsit">Rangsit</option>
+        <option value="Ayutthaya">Ayutthaya</option>
+      </select>
+      <input type="date" id="datee" placeholder="Choose Date" required>      
+      <div class="search-btn"><button id="search-btn">SEARCH</button></div>
+    </div>
+    <div id="ticket-results"></div>  
+  </main>
+
+  <footer>
+    <img src="../SIIT_logo.png" alt="SIIT_logo">
+  </footer>
+
+  <script>
+    
+    // Set date range for the date input
+    const today = new Date();
+    const dd = String(today.getDate()).padStart(2, '0');
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const yyyy = today.getFullYear();
+    
+    const minDate = `${yyyy}-${mm}-${dd}`;
+    const maxDate = new Date(today);
+    maxDate.setDate(today.getDate() + 7);
+    const maxDd = String(maxDate.getDate()).padStart(2, '0');
+    const maxMm = String(maxDate.getMonth() + 1).padStart(2, '0');
+    const maxYyyy = maxDate.getFullYear();
+    const maxDateStr = `${maxYyyy}-${maxMm}-${maxDd}`;
+    
+    const dateInput = document.getElementById('datee');
+    dateInput.setAttribute('min', minDate);
+    dateInput.setAttribute('max', maxDateStr);
+    
+    // Handle ticket search
+    document.getElementById('search-btn').addEventListener('click', function () {
+    const origin = document.getElementById('origin').value;
+    const destination = document.getElementById('dest').value;
+    const date = document.getElementById('datee').value;
+
+    if (!origin || !destination || !date) {
+        alert("Please fill all the fields!");
+        return;
+    }
+
+    fetch(`../Backend/getTickets.php?origin=${origin}&dest=${destination}&datee=${date}`)
+        .then(response => response.json())
+        .then(data => {
+            const ticketContainer = document.getElementById('ticket-results');
+            ticketContainer.innerHTML = ''; // Clear previous results
+
+            if (data.status === "error") {
+                ticketContainer.innerHTML = `<p>${data.message}</p>`;
+                return;
+            }
+
+            data.forEach(ticket => {
+                const ticketCard = document.createElement('div');
+                ticketCard.classList.add('ticket-card');
+                ticketCard.innerHTML = `
+                    <div class="ticket-details">
+                        <div>
+                            <span class="origin">${ticket.origin}</span>
+                            <span class="departure">${ticket.departure}</span>
+                        </div>
+                        <div>
+                            <span class="station">→</span>
+                        </div>
+                        <div>
+                            <span class="dest">${ticket.dest}</span>
+                            <span class="arrival">${ticket.arrival}</span>
+                        </div>
+                    </div>
+                    <div>
+                        <span class="date">${new Date(ticket.datee).toLocaleDateString()}</span>
+                    </div>
+                    <div>
+                        <span class="price">${ticket.price} THB</span>
+                    </div>
+                    <div>
+                        <span class="available-tickets">Available: ${ticket.available_ticket}</span>
+                    </div>
+                    <div>
+                        <button class="select-btn" onclick="selectTicket(${ticket.route_id})" ${ticket.available_ticket <= 0 ? 'disabled' : ''}>SELECT</button>
+                    </div>
+                `;
+                ticketContainer.appendChild(ticketCard);
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching tickets:', error);
+        });
+});
+
+    
+ function selectTicket(routeId) {
+    // Get the ticket card details
+    const ticketCard = document.querySelector(`button[onclick="selectTicket(${routeId})"]`).closest('.ticket-card');
+
+    const origin = ticketCard.querySelector('.origin').textContent;
+    const destination = ticketCard.querySelector('.dest').textContent;
+    const departure = ticketCard.querySelector('.departure').textContent;
+    const arrival = ticketCard.querySelector('.arrival').textContent;
+    const price = ticketCard.querySelector('.price').textContent;
+    const date = ticketCard.querySelector('.date').textContent;
+
+    // Get username and ID from the current URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const username = urlParams.get('username');
+    const id = urlParams.get('id');
+
+    // Ensure `username` and `id` are included
+    if (!username || !id) {
+        alert("Missing user information. Please log in again.");
+        return;
+    }
+
+    // Construct the ticket details object
+    const ticket = {
+        routeId: routeId,
+        origin: origin.trim(),
+        destination: destination.trim(),
+        departure: departure.trim(),
+        arrival: arrival.trim(),
+        price: price.trim(),
+        datee: date.trim(),
+        username: username,
+        id: id,
+    };
+
+    // Convert ticket details to query string
+    const queryParams = new URLSearchParams(ticket).toString();
+
+    // Redirect to BookingConfirmation.html with ticket details in the URL
+    window.location.href = `../BookingConfirmation/BookingConfirmation.html?${queryParams}`;
+}
+
+// Update navigation links to include `username` and `id`
+function updateNavLinks() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const username = urlParams.get('username');
+    const id = urlParams.get('id');
+
+    if (username && id) {
+        const mainNavLinks = document.querySelectorAll('.main-nav a');
+        mainNavLinks.forEach(link => {
+            const url = new URL(link.href, window.location.origin);
+            url.searchParams.set('username', username);
+            url.searchParams.set('id', id);
+            link.href = url.href;
+        });
+    }
+}
+
+// Call this function on page load to update navigation links
+updateNavLinks();
+
+    </script>    
+</body>
+</html>

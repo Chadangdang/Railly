@@ -1,0 +1,14 @@
+main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 0;
+    text-align: flex;
+  }
+
+h1 {
+    font-size: 32px;
+    font-weight: bold;
+    text-align: center;
+    color: #8e0037;
+}

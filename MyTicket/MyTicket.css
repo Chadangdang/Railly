@@ -1,0 +1,109 @@
+/* General Styling for the MyTicket Page */
+main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+  text-align: center;
+}
+
+/* Page Header Styling */
+main h2 {
+  font-size: 36px;
+  font-weight: bold;
+  color: #8e0037;
+  margin-bottom: 20px;
+}
+
+main h3 {
+  font-size: 24px;
+  font-weight: bold;
+  color: #fff;
+  margin-bottom: 10px;
+}
+
+/* Instructions Paragraph */
+main p {
+  font-size: 16px;
+  color: #fff;
+  margin: 10px 0 20px;
+  line-height: 1.5;
+  max-width: 800px;
+}
+
+/* Ticket Container */
+.ticket-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
+  margin-top: 20px;
+  width: 100%;
+}
+
+/* Individual Ticket Card */
+.ticket {
+  background-color: #fff;
+  color: #333;
+  border-radius: 15px;
+  padding: 20px 30px;
+  width: 90%;
+  max-width: 800px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 10px;
+}
+
+/* Train Time and Route */
+.train-time {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+}
+
+.train-time .arrow {
+  color: #8e0037;
+}
+
+/* Additional Information */
+.additional-info p {
+  font-size: 16px;
+  margin: 5px 0;
+  color: #555;
+}
+
+/* Barcode Section */
+.barcode img {
+  width: 150px;
+  height: auto;
+  margin: 10px 0 0 auto;
+}
+
+/* No Tickets Message */
+.no-tickets {
+  font-size: 18px;
+  color: #fff;
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 20px;
+  border-radius: 10px;
+  margin-top: 20px;
+  text-align: center;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .ticket {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .barcode img {
+    align-self: center;
+    height: 80px;
+  }
+}

@@ -1,0 +1,119 @@
+main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 0;
+  text-align: center;
+}
+
+/* Topper */
+main h2 {
+  font-size: 32px;
+  font-weight: bold;
+  color: #8e0037;
+  margin-bottom: 30px;
+}
+
+.booking-container {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 20px;
+}
+
+/* Train Details Section */
+.train-details {
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.train-schedule {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  margin-top: 20px;
+  margin-left: 15px;
+  margin-right: 15px;
+}
+
+.train-schedule .station {
+  text-align: center;
+}
+
+.train-schedule .station .time {
+  font-size: 16px;
+  color: #777;
+}
+
+.train-schedule .station .location {
+  font-size: 24px;
+  font-weight: bold;
+  color: #000;
+}
+
+.train-schedule .arrow {
+  font-size: 24px;
+  color: #8e0037;
+}
+
+.train-info {
+  font-size: 18px;
+  color: #555;
+  text-align: center;
+  margin-top: 40px;
+}
+
+.train-info strong {
+  color: #8e0037;
+  font-size: 20px;
+
+}
+
+.train-info p:last-child {
+  color: #0000;
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 15px;
+}
+
+
+/* Order Summary Section */
+.order-summary {
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 40px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.order-summary p {
+  font-size: 18px;
+  color: #555;
+  margin: 10px 0;
+}
+
+.order-summary strong {
+  font-size: 20px;
+  color: #333;
+}
+
+.order-summary .next-btn {
+  background: linear-gradient(to right, #004aad, #8e0037);
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  padding: 15px 30px;
+  cursor: pointer;
+  margin-top: 20px;
+  transition: background 0.3s ease;
+}
+
+.order-summary .next-btn:hover {
+  background: linear-gradient(to right, #8e0037, #004aad);
+}

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>STRAWBERRY MORAKOT</title>
+  <link rel="stylesheet" href="/StrawberryMorakot/Home/Home.css" />
+  <link rel="stylesheet" href="/StrawberryMorakot/index.css" />
+  <script src="/StrawberryMorakot/index.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap');
+  </style>
+</head>
+<body>
+  <header>
+    <nav>
+      <div class="brand">STRAWBERRY MORAKOT</div>
+      <div class="main-nav-wrapper">
+        <ul class="main-nav">
+          <li><a href="/StrawberryMorakot/Home/Home.html">HOME</a></li>
+          <li><a href="/StrawberryMorakot/Booking/Booking.html">BOOKING</a></li>
+          <li><a href="/StrawberryMorakot/MyTicket/MyTicket.html">MY TICKET</a></li>
+          <li><a href="/StrawberryMorakot/Aboutus/Aboutus.html">ABOUT US</a></li>
+        </ul>
+      </div>
+      <ul class="auth-nav">
+        <li><a href="/StrawberryMorakot/Backend/logout.php" id="logout-btn">Log out</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <h1>STRAWBERRY MORAKOT</h1>
+      <p>The easy way to book, manage, and track your train tickets.</p>
+      <p>Fast bookings, real-time updates, and seamless travel planning—all in one place.</p>
+      <button id="book-ticket-btn">BOOK YOUR TICKET NOW</button>
+    </section>
+  </main>
+
+  <footer>
+    <img src="/StrawberryMorakot/SIIT_logo.png" alt="SIIT_logo" />
+  </footer>
+
+  <script>
+    function getQueryParam(param) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(param);
+    }
+
+    const username = getQueryParam('username');
+    const id = getQueryParam('id');
+
+    function updateNavLinks() {
+      const mainNavLinks = document.querySelectorAll('.main-nav a');
+      mainNavLinks.forEach(link => {
+        const url = new URL(link.href, window.location.origin);
+        if (username && id) {
+          url.searchParams.set('username', username);
+          url.searchParams.set('id', id);
+        }
+        link.href = url.href;
+      });
+    }
+
+    updateNavLinks();
+
+    document.getElementById("book-ticket-btn").addEventListener("click", function() {
+      const bookingUrl = new URL('/StrawberryMorakot/Booking/Booking.html', window.location.origin);
+      if (username && id) {
+        bookingUrl.searchParams.set('username', username);
+        bookingUrl.searchParams.set('id', id);
+      }
+      window.location.href = bookingUrl.href;
+    });
+  </script>
+</body>
+</html>
