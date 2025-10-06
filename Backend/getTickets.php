@@ -1,58 +1,46 @@
 <?php
-// Database connection
-$host = "localhost";
-$username = "root";
-$password = "root";
-$dbname = "DB1"; // Replace with your database name
+declare(strict_types=1);
 
-$conn = new mysqli($host, $username, $password, $dbname);
+header('Content-Type: application/json');
 
-// Enable error reporting
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+require_once __DIR__ . '/db_connection.php';
 
-// Check connection
-if ($conn->connect_error) {
-    echo json_encode(["status" => "error", "message" => "Database connection failed: " . $conn->connect_error]);
+$origin = isset($_GET['origin']) ? trim((string) $_GET['origin']) : '';
+$destination = isset($_GET['dest']) ? trim((string) $_GET['dest']) : '';
+$date = isset($_GET['datee']) ? trim((string) $_GET['datee']) : '';
+
+if ($origin === '' || $destination === '' || $date === '') {
+    echo json_encode(['status' => 'error', 'message' => 'Missing required parameters: origin, destination, or date.']);
     exit;
 }
 
-// Get parameters from GET request
-$origin = $_GET['origin'] ?? null;
-$destination = $_GET['dest'] ?? null;
-$datee = $_GET['datee'] ?? null;
+$conn = get_db_connection();
 
-if (!$origin || !$destination || !$datee) {
-    echo json_encode(["status" => "error", "message" => "Missing required parameters: origin, destination, or date."]);
-    exit;
+try {
+    $stmt = $conn->prepare(
+        'SELECT route_id, origin, dest, departure, arrival, price, datee, available_ticket
+         FROM all_train
+         WHERE origin = ? AND dest = ? AND datee = ?'
+    );
+    $stmt->bind_param('sss', $origin, $destination, $date);
+    $stmt->execute();
+
+    $result = $stmt->get_result();
+    $tickets = $result->fetch_all(MYSQLI_ASSOC);
+
+    if (empty($tickets)) {
+        echo json_encode(['status' => 'error', 'message' => 'No tickets found for the given search criteria.']);
+    } else {
+        echo json_encode($tickets);
+    }
+} catch (mysqli_sql_exception $exception) {
+    error_log('getTickets error: ' . $exception->getMessage());
+    http_response_code(500);
+    echo json_encode(['status' => 'error', 'message' => 'Failed to retrieve tickets.']);
+} finally {
+    if (isset($stmt) && $stmt instanceof mysqli_stmt) {
+        $stmt->close();
+    }
+
+    $conn->close();
 }
-
-// Fetch tickets from the all_train table
-$sql = "SELECT route_id, origin, dest, departure, arrival, price, datee, available_ticket
-        FROM all_train
-        WHERE origin = ? AND dest = ? AND datee = ?";
-$stmt = $conn->prepare($sql);
-
-if (!$stmt) {
-    echo json_encode(["status" => "error", "message" => "Failed to prepare statement.", "sql_error" => $conn->error]);
-    exit;
-}
-
-$stmt->bind_param("sss", $origin, $destination, $datee); // Bind parameters
-$stmt->execute();
-$result = $stmt->get_result();
-
-$tickets = [];
-while ($row = $result->fetch_assoc()) {
-    $tickets[] = $row;
-}
-
-$stmt->close();
-$conn->close();
-
-if (empty($tickets)) {
-    echo json_encode(["status" => "error", "message" => "No tickets found for the given search criteria."]);
-} else {
-    echo json_encode($tickets);
-}
-?>

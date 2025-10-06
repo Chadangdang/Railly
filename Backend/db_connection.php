@@ -1,13 +1,24 @@
 <?php
-$servername = "sql110.infinityfree.com";  
-$username = "if0_38876323";               
-$password = "Chk2oo4o1";                 
-$dbname = "if0_38876323_db1";             
+declare(strict_types=1);
 
-$conn = new mysqli($servername, $username, $password, $dbname);
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+function get_db_connection(): mysqli
+{
+    $host = getenv('DB_HOST') ?: 'localhost';
+    $username = getenv('DB_USER') ?: 'root';
+    $password = getenv('DB_PASS') ?: '';
+    $database = getenv('DB_NAME') ?: 'railly';
+
+    try {
+        $connection = new mysqli($host, $username, $password, $database);
+        $connection->set_charset('utf8mb4');
+    } catch (mysqli_sql_exception $exception) {
+        error_log('Database connection failed: ' . $exception->getMessage());
+        http_response_code(500);
+        echo json_encode(['status' => 'error', 'message' => 'Database connection failed.']);
+        exit;
+    }
+
+    return $connection;
 }
-?>

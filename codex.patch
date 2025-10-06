@@ -1,0 +1,40 @@
+ (cd "$(git rev-parse --show-toplevel)" && git apply --3way <<'EOF' 
+diff --git a/index.css b/index.css
+index a80b4189c9bc6ac7604f7f0f4606ca6a0e21847f..020d85be00363f93d2093bfee583da5e3f8354b3 100644
+--- a/index.css
++++ b/index.css
+@@ -1,27 +1,29 @@
+-/* General Reset */
+-* {
++@import url('https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap');
++
++/* General Reset */
++* {
+     margin: 0;
+     padding: 0;
+     box-sizing: border-box;
+   }
+   
+   /* Body */
+   html, body {
+     height: 100%;
+     font-family: 'Jost', sans-serif;
+     background: linear-gradient(to bottom, #fff, #91021E, #1647A2); 
+     color: #fff;
+     display: flex;
+     flex-direction: column;
+   }
+   
+   /*--------------------------- HEADER ---------------------------*/
+   header {
+     width: 100%;
+     padding: 20px 40px;
+   }
+   
+   nav {
+     display: flex;
+     align-items: center;
+     justify-content: space-between;
+ 
+EOF
+)

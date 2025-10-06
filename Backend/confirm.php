@@ -1,121 +1,116 @@
 <?php
-// Database connection
-$host = "localhost";
-$username = "root";
-$password = "root";
-$dbname = "DB1"; // Replace with your database name
+declare(strict_types=1);
 
-$conn = new mysqli($host, $username, $password, $dbname);
+header('Content-Type: application/json');
 
-// Enable error reporting for debugging
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+require_once __DIR__ . '/db_connection.php';
 
-// Log POST data for debugging
-file_put_contents('debug.log', "POST Data: " . json_encode($_POST) . PHP_EOL, FILE_APPEND);
-
-// Check database connection
-if ($conn->connect_error) {
-    error_log("Database connection failed: " . $conn->connect_error);
-    echo json_encode(["status" => "error", "message" => "Database connection failed."]);
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405);
+    echo json_encode(['status' => 'error', 'message' => 'Method not allowed.']);
     exit;
 }
 
-// Retrieve POST parameters
-$route_id = $_POST['route_id'] ?? null;
-$username = $_POST['username'] ?? null;
-$user_id = $_POST['id'] ?? null;
-$origin = $_POST['origin'] ?? null;
-$destination = $_POST['destination'] ?? null;
-$departure = $_POST['departure'] ?? null;
-$arrival = $_POST['arrival'] ?? null;
-$price = $_POST['price'] ?? null;
+$routeId = isset($_POST['route_id']) ? (int) $_POST['route_id'] : 0;
+$username = isset($_POST['username']) ? trim((string) $_POST['username']) : '';
+$userIdRaw = isset($_POST['id']) ? trim((string) $_POST['id']) : '';
+$origin = isset($_POST['origin']) ? trim((string) $_POST['origin']) : '';
+$destination = isset($_POST['destination']) ? trim((string) $_POST['destination']) : '';
+$departure = isset($_POST['departure']) ? trim((string) $_POST['departure']) : '';
+$arrival = isset($_POST['arrival']) ? trim((string) $_POST['arrival']) : '';
+$priceRaw = isset($_POST['price']) ? (string) $_POST['price'] : '';
+$date = isset($_POST['datee']) ? trim((string) $_POST['datee']) : '';
+$type = isset($_POST['type']) ? (int) $_POST['type'] : 1;
 
-$datee = date('Y-m-d'); // Capture the current date
-$type = 1; // Assuming 'type' is a constant for now
+$sanitisedPrice = preg_replace('/[^0-9.]/', '', $priceRaw);
+$price = $sanitisedPrice !== '' ? number_format((float) $sanitisedPrice, 2, '.', '') : '';
+$date = $date !== '' ? $date : date('Y-m-d');
 
-// Validate required parameters
-if (!$route_id || !$username || !$user_id || !$origin || !$destination || !$departure || !$arrival || !$price) {
-    error_log("Missing required parameters. POST Data: " . json_encode($_POST));
-    echo json_encode(["status" => "error", "message" => "Missing required parameters."]);
+if (
+    $routeId <= 0 ||
+    $username === '' ||
+    $userIdRaw === '' ||
+    $origin === '' ||
+    $destination === '' ||
+    $departure === '' ||
+    $arrival === '' ||
+    $price === ''
+) {
+    echo json_encode(['status' => 'error', 'message' => 'Missing required parameters.']);
     exit;
 }
 
-// Clean and sanitize data
-$route_id = intval($route_id);
-$user_id = intval($user_id);
-$price = preg_replace('/[^0-9.]/', '', $price); // Remove "THB" and other non-numeric characters
-$price = floatval($price);
-
-// Check ticket availability in `all_train`
-$sql_check = "SELECT available_ticket FROM all_train WHERE route_id = ?";
-$stmt_check = $conn->prepare($sql_check);
-if (!$stmt_check) {
-    error_log("SQL Error (Check Availability): " . $conn->error);
-    echo json_encode(["status" => "error", "message" => "Database query failed while checking ticket availability."]);
+$userId = (int) $userIdRaw;
+if ($userId <= 0) {
+    echo json_encode(['status' => 'error', 'message' => 'Invalid user information.']);
     exit;
 }
 
-$stmt_check->bind_param("i", $route_id);
-$stmt_check->execute();
-$result = $stmt_check->get_result();
+$conn = get_db_connection();
 
-if ($result->num_rows === 0) {
-    error_log("Route ID not found: " . $route_id);
-    echo json_encode(["status" => "error", "message" => "Route ID not found."]);
-    exit;
+try {
+    $conn->begin_transaction();
+
+    $checkStmt = $conn->prepare('SELECT available_ticket FROM all_train WHERE route_id = ? FOR UPDATE');
+    $checkStmt->bind_param('i', $routeId);
+    $checkStmt->execute();
+
+    $routeResult = $checkStmt->get_result();
+    if ($routeResult->num_rows === 0) {
+        $conn->rollback();
+        echo json_encode(['status' => 'error', 'message' => 'Route ID not found.']);
+        return;
+    }
+
+    $availableTicket = (int) $routeResult->fetch_assoc()['available_ticket'];
+    if ($availableTicket <= 0) {
+        $conn->rollback();
+        echo json_encode(['status' => 'error', 'message' => 'No tickets available for this route.']);
+        return;
+    }
+
+    $insertStmt = $conn->prepare(
+        'INSERT INTO confirmed_ticket (route_id, username, user_id, origin, destination, departure, arrival, price, datee, type)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+    );
+    $insertStmt->bind_param(
+        'isissssssi',
+        $routeId,
+        $username,
+        $userId,
+        $origin,
+        $destination,
+        $departure,
+        $arrival,
+        $price,
+        $date,
+        $type
+    );
+    $insertStmt->execute();
+
+    $updateStmt = $conn->prepare('UPDATE all_train SET available_ticket = available_ticket - 1 WHERE route_id = ?');
+    $updateStmt->bind_param('i', $routeId);
+    $updateStmt->execute();
+
+    $conn->commit();
+    echo json_encode(['status' => 'success', 'message' => 'Booking confirmed successfully.']);
+} catch (mysqli_sql_exception $exception) {
+    $conn->rollback();
+    error_log('confirm error: ' . $exception->getMessage());
+    http_response_code(500);
+    echo json_encode(['status' => 'error', 'message' => 'Failed to confirm booking.']);
+} finally {
+    if (isset($checkStmt) && $checkStmt instanceof mysqli_stmt) {
+        $checkStmt->close();
+    }
+
+    if (isset($insertStmt) && $insertStmt instanceof mysqli_stmt) {
+        $insertStmt->close();
+    }
+
+    if (isset($updateStmt) && $updateStmt instanceof mysqli_stmt) {
+        $updateStmt->close();
+    }
+
+    $conn->close();
 }
-
-$row = $result->fetch_assoc();
-$available_ticket = intval($row['available_ticket']);
-
-if ($available_ticket <= 0) {
-    error_log("No tickets available for Route ID: " . $route_id);
-    echo json_encode(["status" => "error", "message" => "No tickets available for this route."]);
-    exit;
-}
-
-// Insert booking into `confirmed_ticket`
-$sql_insert = "INSERT INTO confirmed_ticket (route_id, username, user_id, origin, destination, departure, arrival, price, datee, type) 
-               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-$stmt_insert = $conn->prepare($sql_insert);
-if (!$stmt_insert) {
-    error_log("SQL Error (Insert Booking): " . $conn->error);
-    echo json_encode(["status" => "error", "message" => "Database query failed while confirming booking."]);
-    exit;
-}
-
-$stmt_insert->bind_param("isissssdsd", $route_id, $username, $user_id, $origin, $destination, $departure, $arrival, $price, $datee, $type);
-
-if (!$stmt_insert->execute()) {
-    error_log("Execution Error (Insert Booking): " . $stmt_insert->error);
-    echo json_encode(["status" => "error", "message" => "Failed to confirm booking."]);
-    exit;
-}
-
-// Update available tickets in `all_train`
-$sql_update = "UPDATE all_train SET available_ticket = available_ticket - 1 WHERE route_id = ?";
-$stmt_update = $conn->prepare($sql_update);
-if (!$stmt_update) {
-    error_log("SQL Error (Update Tickets): " . $conn->error);
-    echo json_encode(["status" => "error", "message" => "Database query failed while updating ticket availability."]);
-    exit;
-}
-
-$stmt_update->bind_param("i", $route_id);
-
-if (!$stmt_update->execute()) {
-    error_log("Execution Error (Update Tickets): " . $stmt_update->error);
-    echo json_encode(["status" => "error", "message" => "Failed to update available tickets."]);
-    exit;
-}
-
-// Return success response
-echo json_encode(["status" => "success", "message" => "Booking confirmed successfully."]);
-
-// Close connections
-$stmt_check->close();
-$stmt_insert->close();
-$stmt_update->close();
-$conn->close();
-?>

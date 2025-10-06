@@ -1,57 +1,51 @@
 <?php
-// Database connection
-$host = "localhost";
-$username = "root";
-$password = "root";
-$dbname = "DB1"; // Replace with your database name
+declare(strict_types=1);
 
-$conn = new mysqli($host, $username, $password, $dbname);
+header('Content-Type: application/json');
 
-// Enable error reporting
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+require_once __DIR__ . '/db_connection.php';
 
-// Check connection
-if ($conn->connect_error) {
-    echo json_encode(["status" => "error", "message" => "Database connection failed: " . $conn->connect_error]);
+$username = isset($_GET['username']) ? trim((string) $_GET['username']) : '';
+$userIdRaw = isset($_GET['id']) ? trim((string) $_GET['id']) : '';
+
+if ($username === '' || $userIdRaw === '') {
+    echo json_encode(['status' => 'error', 'message' => 'Missing required parameters: username or user_id.']);
     exit;
 }
 
-// Get username and user_id from GET request
-$username = $_GET['username'] ?? null;
-$user_id = $_GET['id'] ?? null;
-
-if (!$username || !$user_id) {
-    echo json_encode(["status" => "error", "message" => "Missing required parameters: username or user_id."]);
+$userId = (int) $userIdRaw;
+if ($userId <= 0) {
+    echo json_encode(['status' => 'error', 'message' => 'Invalid user identifier provided.']);
     exit;
 }
 
-// Fetch tickets for the user based on user_id
-$sql = "SELECT route_id, origin, destination, departure, arrival, price, datee, type 
-        FROM confirmed_ticket 
-        WHERE username = ? AND user_id = ?";
-$stmt = $conn->prepare($sql);
+$conn = get_db_connection();
 
-if (!$stmt) {
-    echo json_encode(["status" => "error", "message" => "Failed to prepare statement."]);
-    exit;
+try {
+    $stmt = $conn->prepare(
+        'SELECT route_id, origin, destination, departure, arrival, price, datee, type
+         FROM confirmed_ticket
+         WHERE username = ? AND user_id = ?'
+    );
+    $stmt->bind_param('si', $username, $userId);
+    $stmt->execute();
+
+    $result = $stmt->get_result();
+    $tickets = $result->fetch_all(MYSQLI_ASSOC);
+
+    if (empty($tickets)) {
+        echo json_encode(['status' => 'error', 'message' => 'No tickets found for this user.']);
+    } else {
+        echo json_encode(['status' => 'success', 'tickets' => $tickets]);
+    }
+} catch (mysqli_sql_exception $exception) {
+    error_log('getUserTickets error: ' . $exception->getMessage());
+    http_response_code(500);
+    echo json_encode(['status' => 'error', 'message' => 'Failed to retrieve user tickets.']);
+} finally {
+    if (isset($stmt) && $stmt instanceof mysqli_stmt) {
+        $stmt->close();
+    }
+
+    $conn->close();
 }
-
-$stmt->bind_param("si", $username, $user_id); // Bind username and user_id
-$stmt->execute();
-$result = $stmt->get_result();
-
-$tickets = [];
-while ($row = $result->fetch_assoc()) {
-    $tickets[] = $row;
-}
-
-$stmt->close();
-$conn->close();
-
-if (empty($tickets)) {
-    echo json_encode(["status" => "error", "message" => "No tickets found for this user."]);
-} else {
-    echo json_encode(["status" => "success", "tickets" => $tickets]);
-}
-?>

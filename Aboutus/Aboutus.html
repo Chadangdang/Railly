@@ -5,11 +5,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>STRAWBERRY MORAKOT</title>
-  <link rel="stylesheet" href="../Aboutus/Aboutus.css">
+  <link rel="stylesheet" href="./Aboutus.css">
   <link rel="stylesheet" href="../index.css">
-  <style>
-      @import url('https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap');
-  </style>
 </head>
 <body>
 
@@ -30,52 +27,16 @@
       </nav>
 </header>
 
-<main> 
-  
-<body>
+  <main>
     <h1>About Us</h1>
-</body>
-</main>
+  </main>
 
 <footer>
   <img src="../SIIT_logo.png" alt="SIIT_logo">
 </footer>
 
-<script>
-  // Save username and id in sessionStorage (if they exist in query parameters)
-  function saveSessionData() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const username = urlParams.get('username');
-    const id = urlParams.get('id');
+  <script src="../assets/js/user-session.js" defer></script>
+  <script src="./aboutus.js" defer></script>
 
-    if (username && id) {
-      sessionStorage.setItem('username', username);
-      sessionStorage.setItem('id', id);
-    }
-  }
-
-  // Update navigation links with username and id from sessionStorage
-  function updateNavLinks() {
-    const username = sessionStorage.getItem('username');
-    const id = sessionStorage.getItem('id');
-
-    if (username && id) {
-      const mainNavLinks = document.querySelectorAll('.main-nav a');
-      mainNavLinks.forEach(link => {
-        const url = new URL(link.href, window.location.origin);
-        url.searchParams.set('username', username);
-        url.searchParams.set('id', id);
-        link.href = url.href;
-      });
-    }
-  }
-
-  // Initialize the functions on page load
-  document.addEventListener('DOMContentLoaded', () => {
-    saveSessionData();
-    updateNavLinks();
-    displayUserInNav();
-  });
-</script>
-
+</body>
 </html>
