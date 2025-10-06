@@ -4,9 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>STRAWBERRY MORAKOT</title>
-  <link rel="stylesheet" href="/StrawberryMorakot/Home/Home.css" />
-  <link rel="stylesheet" href="/StrawberryMorakot/index.css" />
-  <script src="/StrawberryMorakot/index.js"></script>
+  <link rel="stylesheet" href="./Home.css" />
+  <link rel="stylesheet" href="../../index.css" />
+  <script src="../../assets/js/user-session.js" defer></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap');
   </style>
@@ -17,14 +17,14 @@
       <div class="brand">STRAWBERRY MORAKOT</div>
       <div class="main-nav-wrapper">
         <ul class="main-nav">
-          <li><a href="/StrawberryMorakot/Home/Home.html">HOME</a></li>
-          <li><a href="/StrawberryMorakot/Booking/Booking.html">BOOKING</a></li>
-          <li><a href="/StrawberryMorakot/MyTicket/MyTicket.html">MY TICKET</a></li>
-          <li><a href="/StrawberryMorakot/Aboutus/Aboutus.html">ABOUT US</a></li>
+          <li><a href="../Home/home.html">HOME</a></li>
+          <li><a href="../Booking/Booking.html">BOOKING</a></li>
+          <li><a href="../MyTicket/MyTicket.html">MY TICKET</a></li>
+          <li><a href="../Aboutus/Aboutus.html">ABOUT US</a></li>
         </ul>
       </div>
       <ul class="auth-nav">
-        <li><a href="/StrawberryMorakot/Backend/logout.php" id="logout-btn">Log out</a></li>
+        <li><a href="../../Backend/logout.php" id="logout-btn">Log out</a></li>
       </ul>
     </nav>
   </header>
@@ -39,7 +39,7 @@
   </main>
 
   <footer>
-    <img src="/StrawberryMorakot/SIIT_logo.png" alt="SIIT_logo" />
+    <img src="../../assets/img/SIIT_logo.png" alt="SIIT_logo" />
   </footer>
 
   <script>
@@ -54,7 +54,7 @@
     function updateNavLinks() {
       const mainNavLinks = document.querySelectorAll('.main-nav a');
       mainNavLinks.forEach(link => {
-        const url = new URL(link.href, window.location.origin);
+      const url = new URL(link.getAttribute('href'), window.location.href);
         if (username && id) {
           url.searchParams.set('username', username);
           url.searchParams.set('id', id);
@@ -66,7 +66,7 @@
     updateNavLinks();
 
     document.getElementById("book-ticket-btn").addEventListener("click", function() {
-      const bookingUrl = new URL('/StrawberryMorakot/Booking/Booking.html', window.location.origin);
+      const bookingUrl = new URL('../Booking/Booking.html', window.location.href);
       if (username && id) {
         bookingUrl.searchParams.set('username', username);
         bookingUrl.searchParams.set('id', id);

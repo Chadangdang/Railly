@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>STRAWBERRY MORAKOT</title>
-  <link rel="stylesheet" href="/StrawberryMorakot/MyTicket/MyTicket.css" />
-  <link rel="stylesheet" href="/StrawberryMorakot/index.css" />
+  <link rel="stylesheet" href="./MyTicket.css" />
+  <link rel="stylesheet" href="../../index.css" />
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900&display=swap');
   </style>
@@ -17,14 +17,14 @@
       <div class="brand">STRAWBERRY MORAKOT</div>
       <div class="main-nav-wrapper">
         <ul class="main-nav">
-          <li><a href="/StrawberryMorakot/Home/Home.html">HOME</a></li>
-          <li><a href="/StrawberryMorakot/Booking/Booking.html">BOOKING</a></li>
-          <li><a href="/StrawberryMorakot/MyTicket/MyTicket.html">MY TICKET</a></li>
-          <li><a href="/StrawberryMorakot/Aboutus/Aboutus.html">ABOUT US</a></li>
+          <li><a href="../Home/home.html">HOME</a></li>
+          <li><a href="../Booking/Booking.html">BOOKING</a></li>
+          <li><a href="../MyTicket/MyTicket.html">MY TICKET</a></li>
+          <li><a href="../Aboutus/Aboutus.html">ABOUT US</a></li>
         </ul>
       </div>
       <ul class="auth-nav">
-        <li><a href="/StrawberryMorakot/Backend/logout.php" id="logout-btn">Log out</a></li>
+        <li><a href="../../Backend/logout.php" id="logout-btn">Log out</a></li>
       </ul>
     </nav>
   </header>
@@ -43,8 +43,10 @@
   </main>
 
   <footer>
-    <img src="/StrawberryMorakot/SIIT_logo.png" alt="SIIT_logo" />
+    <img src="../../assets/img/SIIT_logo.png" alt="SIIT_logo" />
   </footer>
+
+  <script src="../../assets/js/user-session.js" defer></script>
 
   <script>
     document.addEventListener("DOMContentLoaded", () => {
@@ -67,7 +69,7 @@
       });
 
       // Fetch ticket data
-      fetch(`/StrawberryMorakot/Backend/getUserTickets.php?username=${username}&id=${userId}`)
+      fetch(`../../Backend/getUserTickets.php?username=${username}&id=${userId}`)
         .then(response => response.json())
         .then(data => {
           const ticketContainer = document.getElementById("ticket-results");

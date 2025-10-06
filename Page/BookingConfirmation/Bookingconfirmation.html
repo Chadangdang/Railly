@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>STRAWBERRY MORAKOT</title>
-  <link rel="stylesheet" href="/StrawberryMorakot/BookingConfirmation/Bookingconfirmation.css" />
-  <link rel="stylesheet" href="/StrawberryMorakot/index.css" />
+  <link rel="stylesheet" href="./Bookingconfirmation.css" />
+  <link rel="stylesheet" href="../../index.css" />
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap');
   </style>
@@ -52,7 +52,7 @@
 
   <!-- Footer -->
   <footer>
-    <img src="/StrawberryMorakot/SIIT_logo.png" alt="SIIT Logo" />
+    <img src="../../assets/img/SIIT_logo.png" alt="SIIT Logo" />
   </footer>
 
   <script>
@@ -109,7 +109,7 @@
       formData.append("price", price);
 
       try {
-        const response = await fetch("/StrawberryMorakot/Backend/confirm.php", {
+        const response = await fetch("../../Backend/confirm.php", {
           method: "POST",
           body: formData,
         });
@@ -117,7 +117,7 @@
         const result = await response.json();
         if (result.status === "success") {
           alert(result.message);
-          const redirectUrl = `/StrawberryMorakot/MyTicket/MyTicket.html?username=${username}&id=${userId}`;
+          const redirectUrl = `../MyTicket/MyTicket.html?username=${username}&id=${userId}`;
           window.location.href = redirectUrl;
         } else {
           console.error("Error Response:", result);

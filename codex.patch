@@ -1,40 +1,81 @@
  (cd "$(git rev-parse --show-toplevel)" && git apply --3way <<'EOF' 
-diff --git a/index.css b/index.css
-index a80b4189c9bc6ac7604f7f0f4606ca6a0e21847f..020d85be00363f93d2093bfee583da5e3f8354b3 100644
---- a/index.css
-+++ b/index.css
-@@ -1,27 +1,29 @@
--/* General Reset */
--* {
-+@import url('https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap');
+diff --git a/assets/js/user-session.js b/assets/js/user-session.js
+index cf0f095b588dae7bde102626ccc1df57ee89a0c4..73c46788b7144c0b38b8312b1f73751e7602c3db 100644
+--- a/assets/js/user-session.js
++++ b/assets/js/user-session.js
+@@ -48,44 +48,68 @@
+     function getUserContext() {
+       return readQueryContext() || getStoredContext();
+     }
+   
+     function clearUserContext() {
+       sessionStorage.removeItem(STORAGE_KEYS.username);
+       sessionStorage.removeItem(STORAGE_KEYS.id);
+     }
+   
+     function bindLogoutHandlers(selector) {
+       document.querySelectorAll(selector).forEach(function (element) {
+         element.addEventListener('click', function () {
+           clearUserContext();
+         });
+       });
+     }
+   
+     function applyUserContextToLinks(selector) {
+       var context = getUserContext();
+       if (!context.username || !context.id) {
+         return;
+       }
+   
+       var links = document.querySelectorAll(selector);
+       links.forEach(function (link) {
+-        var url = new URL(link.getAttribute('href'), window.location.origin);
+-        url.searchParams.set('username', context.username);
+-        url.searchParams.set('id', context.id);
+-        link.setAttribute('href', url.pathname + url.search + url.hash);
++        var href = link.getAttribute('href');
++        if (!href || href.trim() === '' || href.startsWith('#') || href.startsWith('javascript:')) {
++          return;
++        }
 +
-+/* General Reset */
-+* {
-     margin: 0;
-     padding: 0;
-     box-sizing: border-box;
-   }
++        var hashIndex = href.indexOf('#');
++        var hash = '';
++        if (hashIndex !== -1) {
++          hash = href.substring(hashIndex);
++          href = href.substring(0, hashIndex);
++        }
++
++        var queryIndex = href.indexOf('?');
++        var path = queryIndex !== -1 ? href.substring(0, queryIndex) : href;
++        var existingQuery = queryIndex !== -1 ? href.substring(queryIndex + 1) : '';
++
++        var params = new URLSearchParams(existingQuery);
++        params.set('username', context.username);
++        params.set('id', context.id);
++
++        var newHref = path;
++        var paramString = params.toString();
++        if (paramString) {
++          newHref += '?' + paramString;
++        }
++        newHref += hash;
++
++        link.setAttribute('href', newHref);
+       });
+     }
    
-   /* Body */
-   html, body {
-     height: 100%;
-     font-family: 'Jost', sans-serif;
-     background: linear-gradient(to bottom, #fff, #91021E, #1647A2); 
-     color: #fff;
-     display: flex;
-     flex-direction: column;
-   }
+     window.userSession = {
+       applyUserContextToLinks: applyUserContextToLinks,
+       bindLogoutHandlers: bindLogoutHandlers,
+       clearUserContext: clearUserContext,
+       getUserContext: getUserContext,
+       persistUserContext: persistUserContext
+     };
    
-   /*--------------------------- HEADER ---------------------------*/
-   header {
-     width: 100%;
-     padding: 20px 40px;
-   }
-   
-   nav {
-     display: flex;
-     align-items: center;
-     justify-content: space-between;
+     document.addEventListener('DOMContentLoaded', function () {
+       bindLogoutHandlers('#logout-btn');
+     });
+   })(window);
  
 EOF
 )

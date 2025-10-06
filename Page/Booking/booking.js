@@ -57,7 +57,7 @@ document.addEventListener('DOMContentLoaded', function () {
         datee: dateValue
       });
   
-      fetch('../Backend/getTickets.php?' + queryParams.toString())
+      fetch('../../Backend/getTickets.php?' + queryParams.toString())
         .then(function (response) {
           return response.json();
         })
@@ -212,6 +212,6 @@ document.addEventListener('DOMContentLoaded', function () {
         params.set('id', latestContext.id);
       }
   
-      window.location.href = '../BookingConfirmation/BookingConfirmation.html?' + params.toString();
+      window.location.href = '../BookingConfirmation/Bookingconfirmation.html?' + params.toString();
     }
   });

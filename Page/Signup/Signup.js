@@ -23,7 +23,7 @@ function togglePassword(id) {
     }
 
     // Send data to backend via AJAX (using Fetch API)
-    const response = await fetch('../Backend/Signup.php', {
+    const response = await fetch('../../Backend/Signup.php', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, email, password })
@@ -34,7 +34,7 @@ function togglePassword(id) {
     if (data.success) {
       // Redirect to home page after successful signup
       alert('Signup successful!');
-      window.location.href = "../Home/Home.html"; // Redirect to homepage
+      window.location.href = "../Unlogin/Unlogin_home.html"; // Redirect to homepage
     } else {
       alert('Signup failed. Please try again.');
     }

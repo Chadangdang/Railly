@@ -70,10 +70,34 @@
   
       var links = document.querySelectorAll(selector);
       links.forEach(function (link) {
-        var url = new URL(link.getAttribute('href'), window.location.origin);
-        url.searchParams.set('username', context.username);
-        url.searchParams.set('id', context.id);
-        link.setAttribute('href', url.pathname + url.search + url.hash);
+        var href = link.getAttribute('href');
+        if (!href || href.trim() === '' || href.startsWith('#') || href.startsWith('javascript:')) {
+          return;
+        }
+
+        var hashIndex = href.indexOf('#');
+        var hash = '';
+        if (hashIndex !== -1) {
+          hash = href.substring(hashIndex);
+          href = href.substring(0, hashIndex);
+        }
+
+        var queryIndex = href.indexOf('?');
+        var path = queryIndex !== -1 ? href.substring(0, queryIndex) : href;
+        var existingQuery = queryIndex !== -1 ? href.substring(queryIndex + 1) : '';
+
+        var params = new URLSearchParams(existingQuery);
+        params.set('username', context.username);
+        params.set('id', context.id);
+
+        var newHref = path;
+        var paramString = params.toString();
+        if (paramString) {
+          newHref += '?' + paramString;
+        }
+        newHref += hash;
+
+        link.setAttribute('href', newHref);
       });
     }
   
