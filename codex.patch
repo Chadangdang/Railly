@@ -1,171 +1,128 @@
  (cd "$(git rev-parse --show-toplevel)" && git apply --3way <<'EOF' 
 diff --git a/Page/Home/home.html b/Page/Home/home.html
-index 20de6a249bcdb5f3fa5606c4f1ecf84a3eb7cf83..b50d163d1216adbee50b0bcdd6e4fcb505f92bb0 100644
+index b50d163d1216adbee50b0bcdd6e4fcb505f92bb0..8494248430541439e01402889728fbd7e01177ac 100644
 --- a/Page/Home/home.html
 +++ b/Page/Home/home.html
-@@ -1,78 +1,91 @@
- <!DOCTYPE html>
- <html lang="en">
- <head>
-   <meta charset="UTF-8" />
-   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
--  <title>STRAWBERRY MORAKOT</title>
--  <link rel="stylesheet" href="./Home.css" />
-+  <title>RAILLY</title>
+@@ -6,86 +6,110 @@
+   <title>RAILLY</title>
    <link rel="stylesheet" href="../../index.css" />
-+  <link rel="stylesheet" href="./Home.css" />
+   <link rel="stylesheet" href="./Home.css" />
    <script src="../../assets/js/user-session.js" defer></script>
--  <style>
--    @import url('https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap');
--  </style>
--</head>
--<body>
--  <header>
--    <nav>
--      <div class="brand">STRAWBERRY MORAKOT</div>
--      <div class="main-nav-wrapper">
--        <ul class="main-nav">
--          <li><a href="../Home/home.html">HOME</a></li>
--          <li><a href="../Booking/Booking.html">BOOKING</a></li>
--          <li><a href="../MyTicket/MyTicket.html">MY TICKET</a></li>
--          <li><a href="../Aboutus/Aboutus.html">ABOUT US</a></li>
--        </ul>
--      </div>
--      <ul class="auth-nav">
--        <li><a href="../../Backend/logout.php" id="logout-btn">Log out</a></li>
--      </ul>
--    </nav>
--  </header>
--
--  <main>
--    <section class="hero">
--      <h1>STRAWBERRY MORAKOT</h1>
--      <p>The easy way to book, manage, and track your train tickets.</p>
--      <p>Fast bookings, real-time updates, and seamless travel planning—all in one place.</p>
--      <button id="book-ticket-btn">BOOK YOUR TICKET NOW</button>
--    </section>
--  </main>
--
--  <footer>
--    <img src="../../assets/img/SIIT_logo.png" alt="SIIT_logo" />
--  </footer>
--
--  <script>
--    function getQueryParam(param) {
--      const urlParams = new URLSearchParams(window.location.search);
--      return urlParams.get(param);
--    }
--
--    const username = getQueryParam('username');
--    const id = getQueryParam('id');
--
--    function updateNavLinks() {
--      const mainNavLinks = document.querySelectorAll('.main-nav a');
--      mainNavLinks.forEach(link => {
--      const url = new URL(link.getAttribute('href'), window.location.href);
--        if (username && id) {
--          url.searchParams.set('username', username);
--          url.searchParams.set('id', id);
--        }
--        link.href = url.href;
--      });
--    }
--
--    updateNavLinks();
--
--    document.getElementById("book-ticket-btn").addEventListener("click", function() {
--      const bookingUrl = new URL('../Booking/Booking.html', window.location.href);
--      if (username && id) {
--        bookingUrl.searchParams.set('username', username);
--        bookingUrl.searchParams.set('id', id);
--      }
--      window.location.href = bookingUrl.href;
--    });
--  </script>
--</body>
--</html>
-+  <style>
-+    @import url('https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap');
-+  </style>
-+</head>
-+<body class="home-page">
-+  <div class="home-background">
-+    <header class="home-header">
-+      <nav class="home-nav">
-+        <a class="brand" href="../Home/home.html">RAILLY</a>
-+        <div class="main-nav-wrapper">
-+          <ul class="main-nav">
-+            <li><a href="../Home/home.html" class="active">HOME</a></li>
-+            <li><a href="../Booking/Booking.html">BOOKING</a></li>
-+            <li><a href="../Booking/Booking.html#cart">CART</a></li>
-+            <li><a href="../MyTicket/MyTicket.html">MY TICKET</a></li>
-+            <li><a href="../Aboutus/Aboutus.html">ABOUT US</a></li>
-+          </ul>
-+        </div>
-+        <div class="auth-nav">
-+          <a href="../Login/Login.html" class="login-link">Log in</a>
-+          <a href="../Signup/Signup.html" class="signup-btn">Sign up</a>
-+        </div>
-+      </nav>
-+    </header>
-+
-+    <main class="home-main">
-+      <section class="hero">
-+        <h1>RAILLY</h1>
-+        <p>the easy way to book, manage, and track your train tickets. Fast bookings, real-time updates, and seamless travel planning—all in one place.</p>
-+        <button id="book-ticket-btn">BOOK YOUR TICKET NOW</button>
-+      </section>
-+    </main>
-+
-+    <footer class="home-footer">
-+      <p>CHADANG</p>
-+    </footer>
-+  </div>
-+
-+  <script>
-+    document.addEventListener('DOMContentLoaded', () => {
-+      const context = window.userSession ? window.userSession.getUserContext() : null;
-+
-+      if (window.userSession) {
-+        window.userSession.applyUserContextToLinks('.main-nav a, .brand');
-+      }
-+
-+      const loginLink = document.querySelector('.login-link');
-+      const signupBtn = document.querySelector('.signup-btn');
-+
-+      if (context && context.username && context.id) {
-+        if (loginLink) {
-+          loginLink.textContent = 'Log out';
-+          loginLink.href = '../../Backend/logout.php';
-+          loginLink.id = 'logout-btn';
-+          loginLink.classList.add('logout-link');
-+          if (window.userSession) {
-+            window.userSession.bindLogoutHandlers('#logout-btn');
-+          }
+   <style>
+     @import url('https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap');
+   </style>
+ </head>
+ <body class="home-page">
+   <div class="home-background">
+     <header class="home-header">
+       <nav class="home-nav">
+         <a class="brand" href="../Home/home.html">RAILLY</a>
+         <div class="main-nav-wrapper">
+           <ul class="main-nav">
+             <li><a href="../Home/home.html" class="active">HOME</a></li>
+             <li><a href="../Booking/Booking.html">BOOKING</a></li>
+             <li><a href="../Booking/Booking.html#cart">CART</a></li>
+             <li><a href="../MyTicket/MyTicket.html">MY TICKET</a></li>
+             <li><a href="../Aboutus/Aboutus.html">ABOUT US</a></li>
+           </ul>
+         </div>
+         <div class="auth-nav">
+           <a href="../Login/Login.html" class="login-link">Log in</a>
+           <a href="../Signup/Signup.html" class="signup-btn">Sign up</a>
++          <a
++            href="../UserProfile/userprofile.html"
++            class="user-profile-link is-hidden"
++            aria-label="View profile"
++            title="View profile"
++          >
++            <img src="../../assets/img/person.png" alt="User profile icon" />
++          </a>
+         </div>
+       </nav>
+     </header>
+ 
+     <main class="home-main">
+       <section class="hero">
+         <h1>RAILLY</h1>
+         <p>the easy way to book, manage, and track your train tickets. Fast bookings, real-time updates, and seamless travel planning—all in one place.</p>
+         <button id="book-ticket-btn">BOOK YOUR TICKET NOW</button>
+       </section>
+     </main>
+ 
+     <footer class="home-footer">
+       <p>CHADANG</p>
+     </footer>
+   </div>
+ 
+   <script>
+     document.addEventListener('DOMContentLoaded', () => {
+       const context = window.userSession ? window.userSession.getUserContext() : null;
+ 
+       if (window.userSession) {
+-        window.userSession.applyUserContextToLinks('.main-nav a, .brand');
++        window.userSession.applyUserContextToLinks('.main-nav a, .brand, .user-profile-link');
+       }
+ 
+       const loginLink = document.querySelector('.login-link');
+       const signupBtn = document.querySelector('.signup-btn');
++      const userProfileLink = document.querySelector('.user-profile-link');
+ 
+       if (context && context.username && context.id) {
+         if (loginLink) {
+-          loginLink.textContent = 'Log out';
+-          loginLink.href = '../../Backend/logout.php';
+-          loginLink.id = 'logout-btn';
+-          loginLink.classList.add('logout-link');
++          loginLink.classList.add('is-hidden');
 +        }
 +
 +        if (signupBtn) {
-+          signupBtn.textContent = context.username;
-+          signupBtn.href = '#';
-+          signupBtn.classList.add('user-pill');
++          signupBtn.classList.add('is-hidden');
 +        }
-+      }
 +
-+      const bookTicketButton = document.getElementById('book-ticket-btn');
-+      if (bookTicketButton) {
-+        bookTicketButton.addEventListener('click', () => {
-+          const bookingUrl = new URL('../Booking/Booking.html', window.location.href);
-+          if (context && context.username && context.id) {
-+            bookingUrl.searchParams.set('username', context.username);
-+            bookingUrl.searchParams.set('id', context.id);
-+          }
-+          window.location.href = bookingUrl.href;
-+        });
-+      }
-+    });
-+  </script>
-+</body>
-+</html>
++        if (userProfileLink) {
++          userProfileLink.classList.remove('is-hidden');
+           if (window.userSession) {
+-            window.userSession.bindLogoutHandlers('#logout-btn');
++            window.userSession.applyUserContextToLinks('.user-profile-link');
+           }
+         }
++      } else {
++        if (loginLink) {
++          loginLink.classList.remove('is-hidden');
++          loginLink.removeAttribute('id');
++          loginLink.classList.remove('logout-link');
++          loginLink.href = '../Login/Login.html';
++        }
+ 
+         if (signupBtn) {
+-          signupBtn.textContent = context.username;
+-          signupBtn.href = '#';
+-          signupBtn.classList.add('user-pill');
++          signupBtn.classList.remove('is-hidden', 'user-pill');
++          signupBtn.href = '../Signup/Signup.html';
++        }
++
++        if (userProfileLink) {
++          userProfileLink.classList.add('is-hidden');
+         }
+       }
+ 
+       const bookTicketButton = document.getElementById('book-ticket-btn');
+       if (bookTicketButton) {
+         bookTicketButton.addEventListener('click', () => {
+           const bookingUrl = new URL('../Booking/Booking.html', window.location.href);
+           if (context && context.username && context.id) {
+             bookingUrl.searchParams.set('username', context.username);
+             bookingUrl.searchParams.set('id', context.id);
+           }
+           window.location.href = bookingUrl.href;
+         });
+       }
+     });
+   </script>
+ </body>
+ </html>
  
 EOF
 )

@@ -28,6 +28,14 @@
         <div class="auth-nav">
           <a href="../Login/Login.html" class="login-link">Log in</a>
           <a href="../Signup/Signup.html" class="signup-btn">Sign up</a>
+          <a
+            href="../UserProfile/userprofile.html"
+            class="user-profile-link is-hidden"
+            aria-label="View profile"
+            title="View profile"
+          >
+            <img src="../../assets/img/person.png" alt="User profile icon" />
+          </a>
         </div>
       </nav>
     </header>
@@ -50,27 +58,43 @@
       const context = window.userSession ? window.userSession.getUserContext() : null;
 
       if (window.userSession) {
-        window.userSession.applyUserContextToLinks('.main-nav a, .brand');
+        window.userSession.applyUserContextToLinks('.main-nav a, .brand, .user-profile-link');
       }
 
       const loginLink = document.querySelector('.login-link');
       const signupBtn = document.querySelector('.signup-btn');
+      const userProfileLink = document.querySelector('.user-profile-link');
 
       if (context && context.username && context.id) {
         if (loginLink) {
-          loginLink.textContent = 'Log out';
-          loginLink.href = '../../Backend/logout.php';
-          loginLink.id = 'logout-btn';
-          loginLink.classList.add('logout-link');
-          if (window.userSession) {
-            window.userSession.bindLogoutHandlers('#logout-btn');
-          }
+          loginLink.classList.add('is-hidden');
         }
 
         if (signupBtn) {
-          signupBtn.textContent = context.username;
-          signupBtn.href = '#';
-          signupBtn.classList.add('user-pill');
+          signupBtn.classList.add('is-hidden');
+        }
+
+        if (userProfileLink) {
+          userProfileLink.classList.remove('is-hidden');
+          if (window.userSession) {
+            window.userSession.applyUserContextToLinks('.user-profile-link');
+          }
+        }
+      } else {
+        if (loginLink) {
+          loginLink.classList.remove('is-hidden');
+          loginLink.removeAttribute('id');
+          loginLink.classList.remove('logout-link');
+          loginLink.href = '../Login/Login.html';
+        }
+
+        if (signupBtn) {
+          signupBtn.classList.remove('is-hidden', 'user-pill');
+          signupBtn.href = '../Signup/Signup.html';
+        }
+
+        if (userProfileLink) {
+          userProfileLink.classList.add('is-hidden');
         }
       }
 
