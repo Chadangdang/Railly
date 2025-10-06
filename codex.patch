@@ -1,128 +1,202 @@
  (cd "$(git rev-parse --show-toplevel)" && git apply --3way <<'EOF' 
-diff --git a/Page/Home/home.html b/Page/Home/home.html
-index b50d163d1216adbee50b0bcdd6e4fcb505f92bb0..8494248430541439e01402889728fbd7e01177ac 100644
---- a/Page/Home/home.html
-+++ b/Page/Home/home.html
-@@ -6,86 +6,110 @@
-   <title>RAILLY</title>
-   <link rel="stylesheet" href="../../index.css" />
-   <link rel="stylesheet" href="./Home.css" />
-   <script src="../../assets/js/user-session.js" defer></script>
-   <style>
-     @import url('https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap');
-   </style>
- </head>
- <body class="home-page">
-   <div class="home-background">
-     <header class="home-header">
-       <nav class="home-nav">
-         <a class="brand" href="../Home/home.html">RAILLY</a>
-         <div class="main-nav-wrapper">
-           <ul class="main-nav">
-             <li><a href="../Home/home.html" class="active">HOME</a></li>
-             <li><a href="../Booking/Booking.html">BOOKING</a></li>
-             <li><a href="../Booking/Booking.html#cart">CART</a></li>
-             <li><a href="../MyTicket/MyTicket.html">MY TICKET</a></li>
-             <li><a href="../Aboutus/Aboutus.html">ABOUT US</a></li>
-           </ul>
-         </div>
-         <div class="auth-nav">
-           <a href="../Login/Login.html" class="login-link">Log in</a>
-           <a href="../Signup/Signup.html" class="signup-btn">Sign up</a>
-+          <a
-+            href="../UserProfile/userprofile.html"
-+            class="user-profile-link is-hidden"
-+            aria-label="View profile"
-+            title="View profile"
-+          >
-+            <img src="../../assets/img/person.png" alt="User profile icon" />
-+          </a>
-         </div>
-       </nav>
-     </header>
- 
-     <main class="home-main">
-       <section class="hero">
-         <h1>RAILLY</h1>
-         <p>the easy way to book, manage, and track your train tickets. Fast bookings, real-time updates, and seamless travel planning—all in one place.</p>
-         <button id="book-ticket-btn">BOOK YOUR TICKET NOW</button>
-       </section>
-     </main>
- 
-     <footer class="home-footer">
-       <p>CHADANG</p>
-     </footer>
-   </div>
- 
-   <script>
-     document.addEventListener('DOMContentLoaded', () => {
-       const context = window.userSession ? window.userSession.getUserContext() : null;
- 
-       if (window.userSession) {
--        window.userSession.applyUserContextToLinks('.main-nav a, .brand');
-+        window.userSession.applyUserContextToLinks('.main-nav a, .brand, .user-profile-link');
-       }
- 
-       const loginLink = document.querySelector('.login-link');
-       const signupBtn = document.querySelector('.signup-btn');
-+      const userProfileLink = document.querySelector('.user-profile-link');
- 
-       if (context && context.username && context.id) {
-         if (loginLink) {
--          loginLink.textContent = 'Log out';
--          loginLink.href = '../../Backend/logout.php';
--          loginLink.id = 'logout-btn';
--          loginLink.classList.add('logout-link');
-+          loginLink.classList.add('is-hidden');
-+        }
+diff --git a//dev/null b/Page/UserProfile/UserProfile.css
+index 0000000000000000000000000000000000000000..b2285fdfd837fc94b43ce7f27ba7a1c62a726457 100644
+--- a//dev/null
++++ b/Page/UserProfile/UserProfile.css
+@@ -0,0 +1,193 @@
++.user-profile-page {
++  min-height: 100vh;
++  margin: 0;
++  font-family: 'Jost', sans-serif;
++  color: #575757;
++  background: #ffffff;
++}
 +
-+        if (signupBtn) {
-+          signupBtn.classList.add('is-hidden');
-+        }
++.user-profile-wrapper {
++  position: relative;
++  min-height: 100vh;
++  display: flex;
++  flex-direction: column;
++  background: linear-gradient(
++    180deg,
++    rgba(255, 255, 255, 0.8) 3%,
++    rgba(145, 2, 30, 0.8) 46.5%,
++    rgba(22, 71, 162, 0.8) 100%
++  );
++}
 +
-+        if (userProfileLink) {
-+          userProfileLink.classList.remove('is-hidden');
-           if (window.userSession) {
--            window.userSession.bindLogoutHandlers('#logout-btn');
-+            window.userSession.applyUserContextToLinks('.user-profile-link');
-           }
-         }
-+      } else {
-+        if (loginLink) {
-+          loginLink.classList.remove('is-hidden');
-+          loginLink.removeAttribute('id');
-+          loginLink.classList.remove('logout-link');
-+          loginLink.href = '../Login/Login.html';
-+        }
- 
-         if (signupBtn) {
--          signupBtn.textContent = context.username;
--          signupBtn.href = '#';
--          signupBtn.classList.add('user-pill');
-+          signupBtn.classList.remove('is-hidden', 'user-pill');
-+          signupBtn.href = '../Signup/Signup.html';
-+        }
++.user-profile-wrapper::before {
++  content: '';
++  position: absolute;
++  inset: 0;
++  background: rgba(255, 255, 255, 0.15);
++  pointer-events: none;
++}
 +
-+        if (userProfileLink) {
-+          userProfileLink.classList.add('is-hidden');
-         }
-       }
- 
-       const bookTicketButton = document.getElementById('book-ticket-btn');
-       if (bookTicketButton) {
-         bookTicketButton.addEventListener('click', () => {
-           const bookingUrl = new URL('../Booking/Booking.html', window.location.href);
-           if (context && context.username && context.id) {
-             bookingUrl.searchParams.set('username', context.username);
-             bookingUrl.searchParams.set('id', context.id);
-           }
-           window.location.href = bookingUrl.href;
-         });
-       }
-     });
-   </script>
- </body>
- </html>
++.user-profile-wrapper > * {
++  position: relative;
++  z-index: 1;
++}
++
++
++.profile-header {
++  padding: 18px 40px 0;
++}
++
++.profile-main {
++  flex: 1;
++  display: flex;
++  flex-direction: column;
++  align-items: center;
++  justify-content: center;
++  padding: 120px 20px 80px;
++  text-align: center;
++  gap: 32px;
++}
++
++.profile-title {
++  width: 100%;
++  max-width: 800px;
++  font-size: 36px;
++  font-weight: 700;
++  line-height: 52px;
++  text-transform: uppercase;
++  background: linear-gradient(180deg, #91021e 0%, #29083d 100%);
++  -webkit-background-clip: text;
++  -webkit-text-fill-color: transparent;
++  background-clip: text;
++  color: transparent;
++  text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
++  margin-bottom: 24px;
++}
++
++.profile-info {
++  width: 100%;
++  max-width: 1266px;
++  display: flex;
++  flex-direction: column;
++  align-items: center;
++  gap: 24px;
++}
++
++.info-card {
++  width: 100%;
++  min-height: 81px;
++  display: flex;
++  align-items: center;
++  justify-content: center;
++  padding: 18px 40px;
++  background: #ffffff;
++  border-radius: 15px;
++  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
++}
++
++.info-card p {
++  font-size: 24px;
++  font-weight: 400;
++  line-height: 35px;
++  color: #575757;
++}
++
++.profile-status {
++  font-size: 16px;
++  color: #ffffff;
++  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.35);
++}
++
++.profile-status.error {
++  color: #ffe1e1;
++}
++
++.logout-wrapper {
++  display: flex;
++  justify-content: center;
++  width: 100%;
++}
++
++#logout-btn {
++  width: 100%;
++  max-width: 492px;
++  height: 56px;
++  display: inline-flex;
++  align-items: center;
++  justify-content: center;
++  border: none;
++  border-radius: 10px;
++  background: linear-gradient(90deg, #1647a2 0%, #91021e 100%);
++  color: #ffffff;
++  font-size: 20px;
++  font-weight: 700;
++  letter-spacing: 0.05em;
++  cursor: pointer;
++  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
++  transition: transform 0.3s ease, box-shadow 0.3s ease;
++}
++
++#logout-btn:hover,
++#logout-btn:focus {
++  transform: translateY(-2px);
++  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
++}
++
++.profile-footer {
++  text-align: center;
++  padding: 18px 0;
++  background: rgba(255, 254, 254, 0.95);
++  color: #000000;
++  font-size: 20px;
++  font-weight: 700;
++  letter-spacing: 0.08em;
++}
++
++@media (max-width: 1024px) {
++  .profile-main {
++    padding-top: 100px;
++  }
++
++  .profile-header .home-nav {
++    grid-template-columns: 1fr;
++    row-gap: 16px;
++    justify-items: center;
++  }
++
++  .profile-header .home-nav .auth-nav {
++    justify-self: center;
++  }
++
++  .profile-title {
++    font-size: 32px;
++  }
++}
++
++@media (max-width: 640px) {
++  .profile-header {
++    padding: 18px 20px 0;
++  }
++
++  .profile-header .home-nav .main-nav {
++    flex-wrap: wrap;
++    gap: 16px;
++  }
++
++  .profile-info {
++    gap: 16px;
++  }
++
++  .info-card {
++    padding: 16px 20px;
++    min-height: 72px;
++  }
++
++  .info-card p {
++    font-size: 20px;
++    line-height: 30px;
++  }
++
++  #logout-btn {
++    max-width: 320px;
++  }
++}
  
 EOF
 )

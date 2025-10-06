@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User Profile - Railly</title>
+    <link rel="stylesheet" href="../../index.css" />
+    <link rel="stylesheet" href="../Home/Home.css" />
+    <link rel="stylesheet" href="./UserProfile.css" />
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap');
+    </style>
+    <script src="../../assets/js/user-session.js" defer></script>
+    <script src="./userprofile.js" defer></script>
+  </head>
+  <body class="user-profile-page">
+    <div class="user-profile-wrapper">
+      <header class="profile-header home-header">
+        <nav class="home-nav">
+          <a class="brand" href="../Home/home.html">RAILLY</a>
+          <div class="main-nav-wrapper">
+            <ul class="main-nav">
+              <li><a href="../Home/home.html">HOME</a></li>
+              <li><a href="../Booking/Booking.html">BOOKING</a></li>
+              <li><a href="../Booking/Booking.html#cart">CART</a></li>
+              <li><a href="../MyTicket/MyTicket.html">MY TICKET</a></li>
+              <li><a href="../Aboutus/Aboutus.html">ABOUT US</a></li>
+            </ul>
+          </div>
+          <div class="auth-nav">
+            <a href="../Login/Login.html" class="login-link">Log in</a>
+            <a href="../Signup/Signup.html" class="signup-btn">Sign up</a>
+            <a
+              href="../UserProfile/userprofile.html"
+              class="user-profile-link is-hidden"
+              aria-label="View profile"
+              title="View profile"
+            >
+              <img src="../../assets/img/person.png" alt="User profile icon" />
+            </a>
+          </div>
+        </nav>
+      </header>
+
+      <main class="profile-main">
+        <h1 class="profile-title">User Profile</h1>
+        <div class="profile-info">
+          <div class="info-card">
+            <p id="user-name-value">User Name: Loading...</p>
+          </div>
+          <div class="info-card">
+            <p id="user-email-value">Email: Loading...</p>
+          </div>
+        </div>
+        <p id="profile-status" class="profile-status" hidden></p>
+        <div class="logout-wrapper">
+          <button type="button" id="logout-btn">LOG OUT</button>
+        </div>
+      </main>
+
+      <footer class="profile-footer">
+        <p>CHADANG</p>
+      </footer>
+    </div>
+  </body>
+</html>
