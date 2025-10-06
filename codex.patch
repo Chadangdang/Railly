@@ -1,88 +1,95 @@
  (cd "$(git rev-parse --show-toplevel)" && git apply --3way <<'EOF' 
-diff --git a/Page/MyTicket/MyTicket.html b/Page/MyTicket/MyTicket.html
-index 4ac66664373e684f278f911e8a530e6af59a9f12..a763c0b7401425c915fc64577fa57aec9ae37c43 100644
---- a/Page/MyTicket/MyTicket.html
-+++ b/Page/MyTicket/MyTicket.html
-@@ -28,70 +28,65 @@
-       </ul>
-     </nav>
-   </header>
+diff --git a/Page/Home/home.html b/Page/Home/home.html
+index 9f583e182b863deb2ab363adaeee5a470df5e05d..9676e764b200818e91067f1a1075005922cbbf81 100644
+--- a/Page/Home/home.html
++++ b/Page/Home/home.html
+@@ -34,85 +34,28 @@
+             aria-label="View profile"
+             title="View profile"
+           >
+             <img src="../../assets/img/person.png" alt="User profile icon" />
+           </a>
+         </div>
+       </nav>
+     </header>
  
-   <main>
-     <div class="topper"><h2>MY TICKET</h2></div>
-     <div><h3>Show Your Ticket to the Train Staff</h3></div>
-     <p>
-       Please present your E-ticket by showing the E-ticket below to the train staff when requested.
-       Simply scan the barcode at the station or on the train for a smooth and hassle-free boarding experience.
-     </p>
+     <main class="home-main">
+       <section class="hero">
+         <h1>RAILLY</h1>
+         <p>
+           the easy way to book, manage, and track your train tickets.<br>
+           Fast bookings, real-time updates, and seamless travel planning—all in one place.
+         </p>        
+         <button id="book-ticket-btn">BOOK YOUR TICKET NOW</button>
+       </section>
+     </main>
  
-     <div id="ticket-results" class="ticket-container">
-       <p class="no-tickets">Fetching your tickets...</p>
-     </div>
-   </main>
+     <footer class="home-footer">
+       <p>CHADANG</p>
+     </footer>
+   </div>
  
-   <footer>
-     <img src="../../assets/img/SIIT_logo.png" alt="SIIT_logo" />
-   </footer>
- 
-   <script src="../../assets/js/user-session.js" defer></script>
- 
-   <script>
-     document.addEventListener("DOMContentLoaded", () => {
--      const urlParams = new URLSearchParams(window.location.search);
--      const username = urlParams.get("username");
--      const userId = urlParams.get("id");
-+      const session = window.userSession;
-+      const context = session ? session.getUserContext() : { username: null, id: null };
- 
--      if (!username || !userId) {
--        alert("Missing user information. Please log in again.");
-+      if (!context.username || !context.id) {
-+        alert("Please log in to view your tickets.");
-+        window.location.href = "../Login/Login.html";
-         return;
-       }
- 
--      // Add username and id to all nav links
--      const mainNavLinks = document.querySelectorAll('.main-nav a');
--      mainNavLinks.forEach(link => {
--        const linkUrl = new URL(link.href, window.location.origin);
--        linkUrl.searchParams.set('username', username);
--        linkUrl.searchParams.set('id', userId);
--        link.href = linkUrl.href;
--      });
-+      if (session) {
-+        session.applyUserContextToLinks('.main-nav a');
-+      }
- 
-       // Fetch ticket data
--      fetch(`../../Backend/getUserTickets.php?username=${username}&id=${userId}`)
-+      fetch(`../../Backend/getUserTickets.php?username=${context.username}&id=${context.id}`)
-         .then(response => response.json())
-         .then(data => {
-           const ticketContainer = document.getElementById("ticket-results");
- 
-           if (data.status === "error") {
-             ticketContainer.innerHTML = `<p class="no-tickets">${data.message}</p>`;
-             return;
-           }
- 
-           if (data.tickets.length === 0) {
-             ticketContainer.innerHTML = `<p class="no-tickets">You have no tickets booked yet.</p>`;
-             return;
-           }
- 
-           ticketContainer.innerHTML = ""; // Clear loading text
- 
-           data.tickets.forEach(ticket => {
-             const ticketCard = document.createElement("div");
-             ticketCard.classList.add("ticket");
- 
-             ticketCard.innerHTML = `
-               <div class="ticket-details">
-                 <div class="train-time">
-                   <span>${ticket.departure}</span> 
-                   <span>${ticket.origin}</span> 
+-  <script>
+-    document.addEventListener('DOMContentLoaded', () => {
+-      const context = window.userSession ? window.userSession.getUserContext() : null;
+-
+-      if (window.userSession) {
+-        window.userSession.applyUserContextToLinks('.main-nav a, .brand, .user-profile-link');
+-      }
+-
+-      const loginLink = document.querySelector('.login-link');
+-      const signupBtn = document.querySelector('.signup-btn');
+-      const userProfileLink = document.querySelector('.user-profile-link');
+-
+-      if (context && context.username && context.id) {
+-        if (loginLink) {
+-          loginLink.classList.add('is-hidden');
+-        }
+-
+-        if (signupBtn) {
+-          signupBtn.classList.add('is-hidden');
+-        }
+-
+-        if (userProfileLink) {
+-          userProfileLink.classList.remove('is-hidden');
+-          if (window.userSession) {
+-            window.userSession.applyUserContextToLinks('.user-profile-link');
+-          }
+-        }
+-      } else {
+-        if (loginLink) {
+-          loginLink.classList.remove('is-hidden');
+-          loginLink.removeAttribute('id');
+-          loginLink.classList.remove('logout-link');
+-          loginLink.href = '../Login/Login.html';
+-        }
+-
+-        if (signupBtn) {
+-          signupBtn.classList.remove('is-hidden', 'user-pill');
+-          signupBtn.href = '../Signup/Signup.html';
+-        }
+-
+-        if (userProfileLink) {
+-          userProfileLink.classList.add('is-hidden');
+-        }
+-      }
+-
+-      const bookTicketButton = document.getElementById('book-ticket-btn');
+-      if (bookTicketButton) {
+-        bookTicketButton.addEventListener('click', () => {
+-          const bookingUrl = new URL('../Booking/Booking.html', window.location.href);
+-          if (context && context.username && context.id) {
+-            bookingUrl.searchParams.set('username', context.username);
+-            bookingUrl.searchParams.set('id', context.id);
+-          }
+-          window.location.href = bookingUrl.href;
+-        });
+-      }
+-    });
+-  </script>
++  <script src="./home.js" defer></script>
+ </body>
+ </html>
  
 EOF
 )
