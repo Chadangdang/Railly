@@ -207,15 +207,36 @@
 
 @media (max-width: 1024px) {
   .home-nav {
-    grid-template-columns: 1fr;
-    justify-items: center;
-    row-gap: 16px;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-areas:
+      "brand auth"
+      "menu  menu";
+    align-items: center;
+    column-gap: 16px;
+    row-gap: 12px;
   }
 
-  .brand,
-  .auth-nav,
-  .main-nav-wrapper {
-    justify-self: center;
+  .brand { 
+    grid-area: brand; 
+    justify-self: start; 
+  }
+
+  .auth-nav { 
+    grid-area: auth; 
+    justify-self: end; 
+  }
+
+  .main-nav-wrapper { 
+    grid-area: menu; 
+    justify-self: stretch; 
+    width: 100%;
+  }
+
+  .main-nav { 
+    flex-wrap: wrap; 
+    justify-content: center; 
+    gap: 16px; 
   }
 
   .home-main {
@@ -251,8 +272,12 @@
   }
 
   .auth-nav {
-    width: 100%;
-    justify-content: center;
+    width: auto;
+    justify-content: flex-end;
+  }
+
+  .brand {
+    justify-self: start;
   }
 
   .home-main {

@@ -148,18 +148,37 @@
   }
   
   @media (max-width: 1024px) {
-    .profile-main {
-      padding-top: 100px;
+    .profile-header .home-nav {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      grid-template-areas:
+        "brand auth"
+        "menu  menu";
+      align-items: center;
+      column-gap: 16px;
+      row-gap: 12px;
     }
   
-    .profile-header .home-nav {
-      grid-template-columns: 1fr;
-      row-gap: 16px;
-      justify-items: center;
+    .profile-header .home-nav .brand {
+      grid-area: brand;
+      justify-self: start;
     }
   
     .profile-header .home-nav .auth-nav {
-      justify-self: center;
+      grid-area: auth;
+      justify-self: end;
+    }
+  
+    .profile-header .home-nav .main-nav-wrapper {
+      grid-area: menu;
+      justify-self: stretch;
+      width: 100%;
+    }
+  
+    .profile-header .home-nav .main-nav {
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 16px;
     }
   
     .profile-title {
@@ -167,31 +186,32 @@
     }
   }
   
-  @media (max-width: 640px) {
+  @media (max-width: 768px) {
     .profile-header {
       padding: 18px 20px 0;
     }
   
+    .profile-header .home-nav .main-nav-wrapper {
+      width: 100%;
+      justify-content: center;
+    }
+  
     .profile-header .home-nav .main-nav {
       flex-wrap: wrap;
+      justify-content: center;
       gap: 16px;
+    }
+  
+    .profile-header .home-nav .auth-nav {
+      width: auto;
+      justify-content: flex-end;
+    }
+  
+    .profile-header .home-nav .brand {
+      justify-self: start;
     }
   
     .profile-info {
       gap: 16px;
     }
-  
-    .info-card {
-      padding: 16px 20px;
-      min-height: 72px;
-    }
-  
-    .info-card p {
-      font-size: 20px;
-      line-height: 30px;
-    }
-  
-    #logout-btn {
-      max-width: 320px;
-    }
-  }
+  }  

@@ -1,8 +1,44 @@
-document.addEventListener('DOMContentLoaded', function () {
-    var session = window.userSession;
-    if (!session) {
-      return;
+document.addEventListener('DOMContentLoaded', () => {
+  const session = window.userSession;
+  if (!session) {
+    return;
+  }
+
+  const context = session.getUserContext();
+  session.applyUserContextToLinks('.main-nav a, .brand, .user-profile-link');
+
+  const loginLink = document.querySelector('.login-link');
+  const signupBtn = document.querySelector('.signup-btn');
+  const userProfileLink = document.querySelector('.user-profile-link');
+
+  if (context && context.username && context.id) {
+    if (loginLink) {
+      loginLink.classList.add('is-hidden');
     }
-  
-    session.applyUserContextToLinks('.main-nav a');
-  });
+
+    if (signupBtn) {
+      signupBtn.classList.add('is-hidden');
+    }
+
+    if (userProfileLink) {
+      userProfileLink.classList.remove('is-hidden');
+      session.applyUserContextToLinks('.user-profile-link');
+    }
+  } else {
+    if (loginLink) {
+      loginLink.classList.remove('is-hidden');
+      loginLink.removeAttribute('id');
+      loginLink.classList.remove('logout-link');
+      loginLink.href = '../Login/Login.html';
+    }
+
+    if (signupBtn) {
+      signupBtn.classList.remove('is-hidden', 'user-pill');
+      signupBtn.href = '../Signup/Signup.html';
+    }
+
+    if (userProfileLink) {
+      userProfileLink.classList.add('is-hidden');
+    }
+  }
+});

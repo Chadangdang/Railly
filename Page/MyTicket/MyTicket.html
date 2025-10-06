@@ -50,26 +50,21 @@
 
   <script>
     document.addEventListener("DOMContentLoaded", () => {
-      const urlParams = new URLSearchParams(window.location.search);
-      const username = urlParams.get("username");
-      const userId = urlParams.get("id");
+      const session = window.userSession;
+      const context = session ? session.getUserContext() : { username: null, id: null };
 
-      if (!username || !userId) {
-        alert("Missing user information. Please log in again.");
+      if (!context.username || !context.id) {
+        alert("Please log in to view your tickets.");
+        window.location.href = "../Login/Login.html";
         return;
       }
 
-      // Add username and id to all nav links
-      const mainNavLinks = document.querySelectorAll('.main-nav a');
-      mainNavLinks.forEach(link => {
-        const linkUrl = new URL(link.href, window.location.origin);
-        linkUrl.searchParams.set('username', username);
-        linkUrl.searchParams.set('id', userId);
-        link.href = linkUrl.href;
-      });
+      if (session) {
+        session.applyUserContextToLinks('.main-nav a');
+      }
 
       // Fetch ticket data
-      fetch(`../../Backend/getUserTickets.php?username=${username}&id=${userId}`)
+      fetch(`../../Backend/getUserTickets.php?username=${context.username}&id=${context.id}`)
         .then(response => response.json())
         .then(data => {
           const ticketContainer = document.getElementById("ticket-results");

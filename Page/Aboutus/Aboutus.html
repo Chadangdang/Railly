@@ -1,42 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>STRAWBERRY MORAKOT</title>
-  <link rel="stylesheet" href="./Aboutus.css">
-  <link rel="stylesheet" href="../../index.css">
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RAILLY</title>
+    <link rel="stylesheet" href="../../index.css" />
+    <link rel="stylesheet" href="./Aboutus.css" />
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap');
+    </style>
+  </head>
+  <body class="about-page">
+    <div class="about-background">
+      <header class="about-header">
+        <nav class="about-nav">
+          <a class="brand" href="../Home/home.html">RAILLY</a>
+          <div class="main-nav-wrapper">
+            <ul class="main-nav">
+              <li><a href="../Home/home.html">HOME</a></li>
+              <li><a href="../Booking/Booking.html">BOOKING</a></li>
+              <li><a href="../Booking/Booking.html#cart">CART</a></li>
+              <li><a href="../MyTicket/MyTicket.html">MY TICKET</a></li>
+              <li><a href="../Aboutus/Aboutus.html" class="active">ABOUT US</a></li>
+            </ul>
+          </div>
+          <div class="auth-nav">
+            <a href="../Login/Login.html" class="login-link">Log in</a>
+            <a href="../Signup/Signup.html" class="signup-btn">Sign up</a>
+            <a
+              href="../UserProfile/userprofile.html"
+              class="user-profile-link is-hidden"
+              aria-label="View profile"
+              title="View profile"
+            >
+              <img src="../../assets/img/person.png" alt="User profile icon" />
+            </a>
+          </div>
+        </nav>
+      </header>
 
-  <header>
-    <nav>
-        <div class="brand">STRAWBERRY MORAKOT</div>
-        <div class="main-nav-wrapper">
-          <ul class="main-nav">
-            <li><a href="../Home/home.html">HOME</a></li>
-            <li><a href="../Booking/Booking.html">BOOKING</a></li>
-            <li><a href="../MyTicket/MyTicket.html">MY TICKET</a></li>
-            <li><a href="../Aboutus/Aboutus.html">ABOUT US</a></li>
-          </ul>
-        </div>
-        <ul class="auth-nav">
-          <li><a href="../../Backend/logout.php" id="logout-btn">Log out</a></li>
-        </ul>                
-      </nav>
-</header>
+      <main class="about-main">
+        <section class="about-hero">
+          <h1>ABOUT RAILLY</h1>
+          <p class="about-description">
+            Railly is a simple train-ticket web app that makes traveling easier. You can search routes,<br>check real-time seat
+            availability, confirm your booking in one click,<br>and keep your e-tickets safely in one place.<br> <br>The backend uses PHP +
+            MySQL for secure bookings,<br>while the frontend is built with HTML, CSS, and JavaScript,<br>designed in Figma for a clean
+            and responsive UI.
+          </p>
+        </section>
 
-  <main>
-    <h1>About Us</h1>
-  </main>
+        <section class="about-maker">
+          <h2>The Maker</h2>
+          <p class="maker-description">
+            Hi, I’m Chadang Phummarin (Kanomtian), a student from the Digital Engineering Department<br>at SIIT, Thammasat
+            University.<br>I created Railly as part of my coursework to combine what I learned<br>in database programming with my
+            interest in web design.<br> <br>Contact me: <a href="mailto:chadang.phu@gmail.com">chadang.phu@gmail.com</a>
+          </p>
+        </section>
+      </main>
 
-<footer>
-  <img src="../../assets/img/SIIT_logo.png" alt="SIIT_logo">
-</footer>
+      <footer class="about-footer">
+        <p>CHADANG</p>
+      </footer>
+    </div>
 
-  <script src="../../assets/js/user-session.js" defer></script>
-  <script src="./aboutus.js" defer></script>
-
-</body>
+    <script src="../../assets/js/user-session.js" defer></script>
+    <script src="./aboutus.js" defer></script>
+  </body>
 </html>
