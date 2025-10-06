@@ -1,81 +1,65 @@
  (cd "$(git rev-parse --show-toplevel)" && git apply --3way <<'EOF' 
-diff --git a/assets/js/user-session.js b/assets/js/user-session.js
-index cf0f095b588dae7bde102626ccc1df57ee89a0c4..73c46788b7144c0b38b8312b1f73751e7602c3db 100644
---- a/assets/js/user-session.js
-+++ b/assets/js/user-session.js
-@@ -48,44 +48,68 @@
-     function getUserContext() {
-       return readQueryContext() || getStoredContext();
-     }
-   
-     function clearUserContext() {
-       sessionStorage.removeItem(STORAGE_KEYS.username);
-       sessionStorage.removeItem(STORAGE_KEYS.id);
-     }
-   
-     function bindLogoutHandlers(selector) {
-       document.querySelectorAll(selector).forEach(function (element) {
-         element.addEventListener('click', function () {
-           clearUserContext();
-         });
-       });
-     }
-   
-     function applyUserContextToLinks(selector) {
-       var context = getUserContext();
-       if (!context.username || !context.id) {
-         return;
-       }
-   
-       var links = document.querySelectorAll(selector);
-       links.forEach(function (link) {
--        var url = new URL(link.getAttribute('href'), window.location.origin);
--        url.searchParams.set('username', context.username);
--        url.searchParams.set('id', context.id);
--        link.setAttribute('href', url.pathname + url.search + url.hash);
-+        var href = link.getAttribute('href');
-+        if (!href || href.trim() === '' || href.startsWith('#') || href.startsWith('javascript:')) {
-+          return;
+diff --git a/Backend/db_connection.php b/Backend/db_connection.php
+index 9519954c49beaec3e3f6372243881748c4755cad..a02ed78a953eeac795e3ddfd8a6309a3fa080650 100644
+--- a/Backend/db_connection.php
++++ b/Backend/db_connection.php
+@@ -1,24 +1,50 @@
+ <?php
+ declare(strict_types=1);
+ 
+ mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+ 
+ function get_db_connection(): mysqli
+ {
+     $host = getenv('DB_HOST') ?: 'localhost';
+     $username = getenv('DB_USER') ?: 'root';
+-    $password = getenv('DB_PASS') ?: '';
++    $password = getenv('DB_PASS');
+     $database = getenv('DB_NAME') ?: 'railly';
++    $port = getenv('DB_PORT');
+ 
+-    try {
+-        $connection = new mysqli($host, $username, $password, $database);
++    $password = $password === false ? '' : $password;
++    $port = $port === false ? (int) (ini_get('mysqli.default_port') ?: 3306) : (int) $port;
++
++    $createConnection = static function (string $host, string $username, string $password, string $database, int $port): mysqli {
++        $connection = new mysqli($host, $username, $password, $database, $port);
+         $connection->set_charset('utf8mb4');
++
++        return $connection;
++    };
++
++    try {
++        return $createConnection($host, $username, $password, $database, $port);
+     } catch (mysqli_sql_exception $exception) {
++        $fallbackPassword = 'root';
++        $fallbackPort = 8889;
++
++        $shouldAttemptFallback = $password === '';
++
++        if ($shouldAttemptFallback) {
++            try {
++                error_log('Primary DB connection failed. Attempting fallback connection using common MAMP defaults.');
++
++                return $createConnection($host, $username, $fallbackPassword, $database, $fallbackPort);
++            } catch (mysqli_sql_exception $fallbackException) {
++                error_log('Fallback DB connection failed: ' . $fallbackException->getMessage());
++            }
 +        }
 +
-+        var hashIndex = href.indexOf('#');
-+        var hash = '';
-+        if (hashIndex !== -1) {
-+          hash = href.substring(hashIndex);
-+          href = href.substring(0, hashIndex);
-+        }
-+
-+        var queryIndex = href.indexOf('?');
-+        var path = queryIndex !== -1 ? href.substring(0, queryIndex) : href;
-+        var existingQuery = queryIndex !== -1 ? href.substring(queryIndex + 1) : '';
-+
-+        var params = new URLSearchParams(existingQuery);
-+        params.set('username', context.username);
-+        params.set('id', context.id);
-+
-+        var newHref = path;
-+        var paramString = params.toString();
-+        if (paramString) {
-+          newHref += '?' + paramString;
-+        }
-+        newHref += hash;
-+
-+        link.setAttribute('href', newHref);
-       });
+         error_log('Database connection failed: ' . $exception->getMessage());
+         http_response_code(500);
+-        echo json_encode(['status' => 'error', 'message' => 'Database connection failed.']);
++        echo json_encode([
++            'status' => 'error',
++            'message' => 'Database connection failed. Please verify your database credentials and configuration.',
++        ]);
+         exit;
      }
-   
-     window.userSession = {
-       applyUserContextToLinks: applyUserContextToLinks,
-       bindLogoutHandlers: bindLogoutHandlers,
-       clearUserContext: clearUserContext,
-       getUserContext: getUserContext,
-       persistUserContext: persistUserContext
-     };
-   
-     document.addEventListener('DOMContentLoaded', function () {
-       bindLogoutHandlers('#logout-btn');
-     });
-   })(window);
+-
+-    return $connection;
+ }
  
 EOF
 )
