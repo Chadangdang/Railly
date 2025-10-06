@@ -1,202 +1,61 @@
  (cd "$(git rev-parse --show-toplevel)" && git apply --3way <<'EOF' 
-diff --git a//dev/null b/Page/UserProfile/UserProfile.css
-index 0000000000000000000000000000000000000000..b2285fdfd837fc94b43ce7f27ba7a1c62a726457 100644
---- a//dev/null
-+++ b/Page/UserProfile/UserProfile.css
-@@ -0,0 +1,193 @@
-+.user-profile-page {
-+  min-height: 100vh;
-+  margin: 0;
-+  font-family: 'Jost', sans-serif;
-+  color: #575757;
-+  background: #ffffff;
-+}
-+
-+.user-profile-wrapper {
-+  position: relative;
-+  min-height: 100vh;
-+  display: flex;
-+  flex-direction: column;
-+  background: linear-gradient(
-+    180deg,
-+    rgba(255, 255, 255, 0.8) 3%,
-+    rgba(145, 2, 30, 0.8) 46.5%,
-+    rgba(22, 71, 162, 0.8) 100%
-+  );
-+}
-+
-+.user-profile-wrapper::before {
-+  content: '';
-+  position: absolute;
-+  inset: 0;
-+  background: rgba(255, 255, 255, 0.15);
-+  pointer-events: none;
-+}
-+
-+.user-profile-wrapper > * {
-+  position: relative;
-+  z-index: 1;
-+}
-+
-+
-+.profile-header {
-+  padding: 18px 40px 0;
-+}
-+
-+.profile-main {
-+  flex: 1;
-+  display: flex;
-+  flex-direction: column;
-+  align-items: center;
-+  justify-content: center;
-+  padding: 120px 20px 80px;
-+  text-align: center;
-+  gap: 32px;
-+}
-+
-+.profile-title {
-+  width: 100%;
-+  max-width: 800px;
-+  font-size: 36px;
-+  font-weight: 700;
-+  line-height: 52px;
-+  text-transform: uppercase;
-+  background: linear-gradient(180deg, #91021e 0%, #29083d 100%);
-+  -webkit-background-clip: text;
-+  -webkit-text-fill-color: transparent;
-+  background-clip: text;
-+  color: transparent;
-+  text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-+  margin-bottom: 24px;
-+}
-+
-+.profile-info {
-+  width: 100%;
-+  max-width: 1266px;
-+  display: flex;
-+  flex-direction: column;
-+  align-items: center;
-+  gap: 24px;
-+}
-+
-+.info-card {
-+  width: 100%;
-+  min-height: 81px;
-+  display: flex;
-+  align-items: center;
-+  justify-content: center;
-+  padding: 18px 40px;
-+  background: #ffffff;
-+  border-radius: 15px;
-+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-+}
-+
-+.info-card p {
-+  font-size: 24px;
-+  font-weight: 400;
-+  line-height: 35px;
-+  color: #575757;
-+}
-+
-+.profile-status {
-+  font-size: 16px;
-+  color: #ffffff;
-+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.35);
-+}
-+
-+.profile-status.error {
-+  color: #ffe1e1;
-+}
-+
-+.logout-wrapper {
-+  display: flex;
-+  justify-content: center;
-+  width: 100%;
-+}
-+
-+#logout-btn {
-+  width: 100%;
-+  max-width: 492px;
-+  height: 56px;
-+  display: inline-flex;
-+  align-items: center;
-+  justify-content: center;
-+  border: none;
-+  border-radius: 10px;
-+  background: linear-gradient(90deg, #1647a2 0%, #91021e 100%);
-+  color: #ffffff;
-+  font-size: 20px;
-+  font-weight: 700;
-+  letter-spacing: 0.05em;
-+  cursor: pointer;
-+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-+  transition: transform 0.3s ease, box-shadow 0.3s ease;
-+}
-+
-+#logout-btn:hover,
-+#logout-btn:focus {
-+  transform: translateY(-2px);
-+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
-+}
-+
-+.profile-footer {
-+  text-align: center;
-+  padding: 18px 0;
-+  background: rgba(255, 254, 254, 0.95);
-+  color: #000000;
-+  font-size: 20px;
-+  font-weight: 700;
-+  letter-spacing: 0.08em;
-+}
-+
-+@media (max-width: 1024px) {
-+  .profile-main {
-+    padding-top: 100px;
+diff --git a/Page/Aboutus/aboutus.js b/Page/Aboutus/aboutus.js
+index 6de4d0f991f07073286c252b0a9613316da143b1..10819eff58dbd716fb9874e3cd8ffb8e892a0149 100644
+--- a/Page/Aboutus/aboutus.js
++++ b/Page/Aboutus/aboutus.js
+@@ -1,8 +1,44 @@
+-document.addEventListener('DOMContentLoaded', function () {
+-    var session = window.userSession;
+-    if (!session) {
+-      return;
+-    }
+-  
+-    session.applyUserContextToLinks('.main-nav a');
+-  });
++document.addEventListener('DOMContentLoaded', () => {
++  const session = window.userSession;
++  if (!session) {
++    return;
 +  }
 +
-+  .profile-header .home-nav {
-+    grid-template-columns: 1fr;
-+    row-gap: 16px;
-+    justify-items: center;
-+  }
++  const context = session.getUserContext();
++  session.applyUserContextToLinks('.main-nav a, .brand, .user-profile-link');
 +
-+  .profile-header .home-nav .auth-nav {
-+    justify-self: center;
-+  }
++  const loginLink = document.querySelector('.login-link');
++  const signupBtn = document.querySelector('.signup-btn');
++  const userProfileLink = document.querySelector('.user-profile-link');
 +
-+  .profile-title {
-+    font-size: 32px;
-+  }
-+}
++  if (context && context.username && context.id) {
++    if (loginLink) {
++      loginLink.classList.add('is-hidden');
++    }
 +
-+@media (max-width: 640px) {
-+  .profile-header {
-+    padding: 18px 20px 0;
-+  }
++    if (signupBtn) {
++      signupBtn.classList.add('is-hidden');
++    }
 +
-+  .profile-header .home-nav .main-nav {
-+    flex-wrap: wrap;
-+    gap: 16px;
-+  }
++    if (userProfileLink) {
++      userProfileLink.classList.remove('is-hidden');
++      session.applyUserContextToLinks('.user-profile-link');
++    }
++  } else {
++    if (loginLink) {
++      loginLink.classList.remove('is-hidden');
++      loginLink.removeAttribute('id');
++      loginLink.classList.remove('logout-link');
++      loginLink.href = '../Login/Login.html';
++    }
 +
-+  .profile-info {
-+    gap: 16px;
-+  }
++    if (signupBtn) {
++      signupBtn.classList.remove('is-hidden', 'user-pill');
++      signupBtn.href = '../Signup/Signup.html';
++    }
 +
-+  .info-card {
-+    padding: 16px 20px;
-+    min-height: 72px;
++    if (userProfileLink) {
++      userProfileLink.classList.add('is-hidden');
++    }
 +  }
-+
-+  .info-card p {
-+    font-size: 20px;
-+    line-height: 30px;
-+  }
-+
-+  #logout-btn {
-+    max-width: 320px;
-+  }
-+}
++});
  
 EOF
 )
