@@ -173,6 +173,7 @@
       grid-area: menu;
       justify-self: stretch;
       width: 100%;
+      justify-content: center;
     }
   
     .profile-header .home-nav .main-nav {
