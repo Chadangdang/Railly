@@ -3,75 +3,88 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>STRAWBERRY MORAKOT</title>
-  <link rel="stylesheet" href="./Home.css" />
+  <title>RAILLY</title>
   <link rel="stylesheet" href="../../index.css" />
+  <link rel="stylesheet" href="./Home.css" />
   <script src="../../assets/js/user-session.js" defer></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap');
   </style>
 </head>
-<body>
-  <header>
-    <nav>
-      <div class="brand">STRAWBERRY MORAKOT</div>
-      <div class="main-nav-wrapper">
-        <ul class="main-nav">
-          <li><a href="../Home/home.html">HOME</a></li>
-          <li><a href="../Booking/Booking.html">BOOKING</a></li>
-          <li><a href="../MyTicket/MyTicket.html">MY TICKET</a></li>
-          <li><a href="../Aboutus/Aboutus.html">ABOUT US</a></li>
-        </ul>
-      </div>
-      <ul class="auth-nav">
-        <li><a href="../../Backend/logout.php" id="logout-btn">Log out</a></li>
-      </ul>
-    </nav>
-  </header>
+<body class="home-page">
+  <div class="home-background">
+    <header class="home-header">
+      <nav class="home-nav">
+        <a class="brand" href="../Home/home.html">RAILLY</a>
+        <div class="main-nav-wrapper">
+          <ul class="main-nav">
+            <li><a href="../Home/home.html" class="active">HOME</a></li>
+            <li><a href="../Booking/Booking.html">BOOKING</a></li>
+            <li><a href="../Booking/Booking.html#cart">CART</a></li>
+            <li><a href="../MyTicket/MyTicket.html">MY TICKET</a></li>
+            <li><a href="../Aboutus/Aboutus.html">ABOUT US</a></li>
+          </ul>
+        </div>
+        <div class="auth-nav">
+          <a href="../Login/Login.html" class="login-link">Log in</a>
+          <a href="../Signup/Signup.html" class="signup-btn">Sign up</a>
+        </div>
+      </nav>
+    </header>
 
-  <main>
-    <section class="hero">
-      <h1>STRAWBERRY MORAKOT</h1>
-      <p>The easy way to book, manage, and track your train tickets.</p>
-      <p>Fast bookings, real-time updates, and seamless travel planning—all in one place.</p>
-      <button id="book-ticket-btn">BOOK YOUR TICKET NOW</button>
-    </section>
-  </main>
+    <main class="home-main">
+      <section class="hero">
+        <h1>RAILLY</h1>
+        <p>the easy way to book, manage, and track your train tickets. Fast bookings, real-time updates, and seamless travel planning—all in one place.</p>
+        <button id="book-ticket-btn">BOOK YOUR TICKET NOW</button>
+      </section>
+    </main>
 
-  <footer>
-    <img src="../../assets/img/SIIT_logo.png" alt="SIIT_logo" />
-  </footer>
+    <footer class="home-footer">
+      <p>CHADANG</p>
+    </footer>
+  </div>
 
   <script>
-    function getQueryParam(param) {
-      const urlParams = new URLSearchParams(window.location.search);
-      return urlParams.get(param);
-    }
+    document.addEventListener('DOMContentLoaded', () => {
+      const context = window.userSession ? window.userSession.getUserContext() : null;
 
-    const username = getQueryParam('username');
-    const id = getQueryParam('id');
-
-    function updateNavLinks() {
-      const mainNavLinks = document.querySelectorAll('.main-nav a');
-      mainNavLinks.forEach(link => {
-      const url = new URL(link.getAttribute('href'), window.location.href);
-        if (username && id) {
-          url.searchParams.set('username', username);
-          url.searchParams.set('id', id);
-        }
-        link.href = url.href;
-      });
-    }
-
-    updateNavLinks();
-
-    document.getElementById("book-ticket-btn").addEventListener("click", function() {
-      const bookingUrl = new URL('../Booking/Booking.html', window.location.href);
-      if (username && id) {
-        bookingUrl.searchParams.set('username', username);
-        bookingUrl.searchParams.set('id', id);
+      if (window.userSession) {
+        window.userSession.applyUserContextToLinks('.main-nav a, .brand');
       }
-      window.location.href = bookingUrl.href;
+
+      const loginLink = document.querySelector('.login-link');
+      const signupBtn = document.querySelector('.signup-btn');
+
+      if (context && context.username && context.id) {
+        if (loginLink) {
+          loginLink.textContent = 'Log out';
+          loginLink.href = '../../Backend/logout.php';
+          loginLink.id = 'logout-btn';
+          loginLink.classList.add('logout-link');
+          if (window.userSession) {
+            window.userSession.bindLogoutHandlers('#logout-btn');
+          }
+        }
+
+        if (signupBtn) {
+          signupBtn.textContent = context.username;
+          signupBtn.href = '#';
+          signupBtn.classList.add('user-pill');
+        }
+      }
+
+      const bookTicketButton = document.getElementById('book-ticket-btn');
+      if (bookTicketButton) {
+        bookTicketButton.addEventListener('click', () => {
+          const bookingUrl = new URL('../Booking/Booking.html', window.location.href);
+          if (context && context.username && context.id) {
+            bookingUrl.searchParams.set('username', context.username);
+            bookingUrl.searchParams.set('id', context.id);
+          }
+          window.location.href = bookingUrl.href;
+        });
+      }
     });
   </script>
 </body>

@@ -1,65 +1,171 @@
  (cd "$(git rev-parse --show-toplevel)" && git apply --3way <<'EOF' 
-diff --git a/Backend/db_connection.php b/Backend/db_connection.php
-index 9519954c49beaec3e3f6372243881748c4755cad..a02ed78a953eeac795e3ddfd8a6309a3fa080650 100644
---- a/Backend/db_connection.php
-+++ b/Backend/db_connection.php
-@@ -1,24 +1,50 @@
- <?php
- declare(strict_types=1);
- 
- mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
- 
- function get_db_connection(): mysqli
- {
-     $host = getenv('DB_HOST') ?: 'localhost';
-     $username = getenv('DB_USER') ?: 'root';
--    $password = getenv('DB_PASS') ?: '';
-+    $password = getenv('DB_PASS');
-     $database = getenv('DB_NAME') ?: 'railly';
-+    $port = getenv('DB_PORT');
- 
--    try {
--        $connection = new mysqli($host, $username, $password, $database);
-+    $password = $password === false ? '' : $password;
-+    $port = $port === false ? (int) (ini_get('mysqli.default_port') ?: 3306) : (int) $port;
+diff --git a/Page/Home/home.html b/Page/Home/home.html
+index 20de6a249bcdb5f3fa5606c4f1ecf84a3eb7cf83..b50d163d1216adbee50b0bcdd6e4fcb505f92bb0 100644
+--- a/Page/Home/home.html
++++ b/Page/Home/home.html
+@@ -1,78 +1,91 @@
+ <!DOCTYPE html>
+ <html lang="en">
+ <head>
+   <meta charset="UTF-8" />
+   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+-  <title>STRAWBERRY MORAKOT</title>
+-  <link rel="stylesheet" href="./Home.css" />
++  <title>RAILLY</title>
+   <link rel="stylesheet" href="../../index.css" />
++  <link rel="stylesheet" href="./Home.css" />
+   <script src="../../assets/js/user-session.js" defer></script>
+-  <style>
+-    @import url('https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap');
+-  </style>
+-</head>
+-<body>
+-  <header>
+-    <nav>
+-      <div class="brand">STRAWBERRY MORAKOT</div>
+-      <div class="main-nav-wrapper">
+-        <ul class="main-nav">
+-          <li><a href="../Home/home.html">HOME</a></li>
+-          <li><a href="../Booking/Booking.html">BOOKING</a></li>
+-          <li><a href="../MyTicket/MyTicket.html">MY TICKET</a></li>
+-          <li><a href="../Aboutus/Aboutus.html">ABOUT US</a></li>
+-        </ul>
+-      </div>
+-      <ul class="auth-nav">
+-        <li><a href="../../Backend/logout.php" id="logout-btn">Log out</a></li>
+-      </ul>
+-    </nav>
+-  </header>
+-
+-  <main>
+-    <section class="hero">
+-      <h1>STRAWBERRY MORAKOT</h1>
+-      <p>The easy way to book, manage, and track your train tickets.</p>
+-      <p>Fast bookings, real-time updates, and seamless travel planning—all in one place.</p>
+-      <button id="book-ticket-btn">BOOK YOUR TICKET NOW</button>
+-    </section>
+-  </main>
+-
+-  <footer>
+-    <img src="../../assets/img/SIIT_logo.png" alt="SIIT_logo" />
+-  </footer>
+-
+-  <script>
+-    function getQueryParam(param) {
+-      const urlParams = new URLSearchParams(window.location.search);
+-      return urlParams.get(param);
+-    }
+-
+-    const username = getQueryParam('username');
+-    const id = getQueryParam('id');
+-
+-    function updateNavLinks() {
+-      const mainNavLinks = document.querySelectorAll('.main-nav a');
+-      mainNavLinks.forEach(link => {
+-      const url = new URL(link.getAttribute('href'), window.location.href);
+-        if (username && id) {
+-          url.searchParams.set('username', username);
+-          url.searchParams.set('id', id);
+-        }
+-        link.href = url.href;
+-      });
+-    }
+-
+-    updateNavLinks();
+-
+-    document.getElementById("book-ticket-btn").addEventListener("click", function() {
+-      const bookingUrl = new URL('../Booking/Booking.html', window.location.href);
+-      if (username && id) {
+-        bookingUrl.searchParams.set('username', username);
+-        bookingUrl.searchParams.set('id', id);
+-      }
+-      window.location.href = bookingUrl.href;
+-    });
+-  </script>
+-</body>
+-</html>
++  <style>
++    @import url('https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap');
++  </style>
++</head>
++<body class="home-page">
++  <div class="home-background">
++    <header class="home-header">
++      <nav class="home-nav">
++        <a class="brand" href="../Home/home.html">RAILLY</a>
++        <div class="main-nav-wrapper">
++          <ul class="main-nav">
++            <li><a href="../Home/home.html" class="active">HOME</a></li>
++            <li><a href="../Booking/Booking.html">BOOKING</a></li>
++            <li><a href="../Booking/Booking.html#cart">CART</a></li>
++            <li><a href="../MyTicket/MyTicket.html">MY TICKET</a></li>
++            <li><a href="../Aboutus/Aboutus.html">ABOUT US</a></li>
++          </ul>
++        </div>
++        <div class="auth-nav">
++          <a href="../Login/Login.html" class="login-link">Log in</a>
++          <a href="../Signup/Signup.html" class="signup-btn">Sign up</a>
++        </div>
++      </nav>
++    </header>
 +
-+    $createConnection = static function (string $host, string $username, string $password, string $database, int $port): mysqli {
-+        $connection = new mysqli($host, $username, $password, $database, $port);
-         $connection->set_charset('utf8mb4');
++    <main class="home-main">
++      <section class="hero">
++        <h1>RAILLY</h1>
++        <p>the easy way to book, manage, and track your train tickets. Fast bookings, real-time updates, and seamless travel planning—all in one place.</p>
++        <button id="book-ticket-btn">BOOK YOUR TICKET NOW</button>
++      </section>
++    </main>
 +
-+        return $connection;
-+    };
++    <footer class="home-footer">
++      <p>CHADANG</p>
++    </footer>
++  </div>
 +
-+    try {
-+        return $createConnection($host, $username, $password, $database, $port);
-     } catch (mysqli_sql_exception $exception) {
-+        $fallbackPassword = 'root';
-+        $fallbackPort = 8889;
++  <script>
++    document.addEventListener('DOMContentLoaded', () => {
++      const context = window.userSession ? window.userSession.getUserContext() : null;
 +
-+        $shouldAttemptFallback = $password === '';
++      if (window.userSession) {
++        window.userSession.applyUserContextToLinks('.main-nav a, .brand');
++      }
 +
-+        if ($shouldAttemptFallback) {
-+            try {
-+                error_log('Primary DB connection failed. Attempting fallback connection using common MAMP defaults.');
++      const loginLink = document.querySelector('.login-link');
++      const signupBtn = document.querySelector('.signup-btn');
 +
-+                return $createConnection($host, $username, $fallbackPassword, $database, $fallbackPort);
-+            } catch (mysqli_sql_exception $fallbackException) {
-+                error_log('Fallback DB connection failed: ' . $fallbackException->getMessage());
-+            }
++      if (context && context.username && context.id) {
++        if (loginLink) {
++          loginLink.textContent = 'Log out';
++          loginLink.href = '../../Backend/logout.php';
++          loginLink.id = 'logout-btn';
++          loginLink.classList.add('logout-link');
++          if (window.userSession) {
++            window.userSession.bindLogoutHandlers('#logout-btn');
++          }
 +        }
 +
-         error_log('Database connection failed: ' . $exception->getMessage());
-         http_response_code(500);
--        echo json_encode(['status' => 'error', 'message' => 'Database connection failed.']);
-+        echo json_encode([
-+            'status' => 'error',
-+            'message' => 'Database connection failed. Please verify your database credentials and configuration.',
-+        ]);
-         exit;
-     }
--
--    return $connection;
- }
++        if (signupBtn) {
++          signupBtn.textContent = context.username;
++          signupBtn.href = '#';
++          signupBtn.classList.add('user-pill');
++        }
++      }
++
++      const bookTicketButton = document.getElementById('book-ticket-btn');
++      if (bookTicketButton) {
++        bookTicketButton.addEventListener('click', () => {
++          const bookingUrl = new URL('../Booking/Booking.html', window.location.href);
++          if (context && context.username && context.id) {
++            bookingUrl.searchParams.set('username', context.username);
++            bookingUrl.searchParams.set('id', context.id);
++          }
++          window.location.href = bookingUrl.href;
++        });
++      }
++    });
++  </script>
++</body>
++</html>
  
 EOF
 )
