@@ -1,94 +1,127 @@
  (cd "$(git rev-parse --show-toplevel)" && git apply --3way <<'EOF' 
-diff --git a/Page/Home/home.html b/Page/Home/home.html
-index 9f583e182b863deb2ab363adaeee5a470df5e05d..9676e764b200818e91067f1a1075005922cbbf81 100644
---- a/Page/Home/home.html
-+++ b/Page/Home/home.html
-@@ -34,85 +34,28 @@
-             aria-label="View profile"
-             title="View profile"
-           >
-             <img src="../../assets/img/person.png" alt="User profile icon" />
-           </a>
-         </div>
-       </nav>
-     </header>
+diff --git a/Page/Aboutus/Aboutus.html b/Page/Aboutus/Aboutus.html
+index b162cdba5f9c99e1cb7a4ad3abcf2b8c2cc4cb66..95bc606bb47273db7d94b566a0df0e550cfb981e 100644
+--- a/Page/Aboutus/Aboutus.html
++++ b/Page/Aboutus/Aboutus.html
+@@ -1,71 +1,71 @@
+ <!DOCTYPE html>
+ <html lang="en">
+   <head>
+     <meta charset="UTF-8" />
+     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+     <title>RAILLY</title>
+     <link rel="stylesheet" href="../../index.css" />
+     <link rel="stylesheet" href="./Aboutus.css" />
+     <style>
+       @import url('https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap');
+     </style>
+   </head>
+   <body class="about-page">
+-    <div class="about-background">
+-      <header class="about-header">
+-        <nav class="about-nav">
+-          <a class="brand" href="../Home/home.html">RAILLY</a>
+-          <div class="main-nav-wrapper">
+-            <ul class="main-nav">
+-              <li><a href="../Home/home.html">HOME</a></li>
+-              <li><a href="../Booking/Booking.html">BOOKING</a></li>
+-              <li><a href="../Booking/Booking.html#cart">CART</a></li>
+-              <li><a href="../MyTicket/MyTicket.html">MY TICKET</a></li>
+-              <li><a href="../Aboutus/Aboutus.html" class="active">ABOUT US</a></li>
+-            </ul>
+-          </div>
+-          <div class="auth-nav">
+-            <a href="../Login/Login.html" class="login-link">Log in</a>
+-            <a href="../Signup/Signup.html" class="signup-btn">Sign up</a>
+-            <a
+-              href="../UserProfile/userprofile.html"
+-              class="user-profile-link is-hidden"
+-              aria-label="View profile"
+-              title="View profile"
+-            >
+-              <img src="../../assets/img/person.png" alt="User profile icon" />
+-            </a>
+-          </div>
+-        </nav>
+-      </header>
++    <main class="about-main">
++      <section class="about-hero">
++        <header class="about-header">
++          <nav class="about-nav">
++            <a class="brand" href="../Home/home.html">RAILLY</a>
++            <div class="main-nav-wrapper">
++              <ul class="main-nav">
++                <li><a href="../Home/home.html">HOME</a></li>
++                <li><a href="../Booking/Booking.html">BOOKING</a></li>
++                <li><a href="../Booking/Booking.html#cart">CART</a></li>
++                <li><a href="../MyTicket/MyTicket.html">MY TICKET</a></li>
++                <li><a href="../Aboutus/Aboutus.html" class="active">ABOUT US</a></li>
++              </ul>
++            </div>
++            <div class="auth-nav">
++              <a href="../Login/Login.html" class="login-link">Log in</a>
++              <a href="../Signup/Signup.html" class="signup-btn">Sign up</a>
++              <a
++                href="../UserProfile/userprofile.html"
++                class="user-profile-link is-hidden"
++                aria-label="View profile"
++                title="View profile"
++              >
++                <img src="../../assets/img/person.png" alt="User profile icon" />
++              </a>
++            </div>
++          </nav>
++        </header>
  
-     <main class="home-main">
-       <section class="hero">
-         <h1>RAILLY</h1>
-         <p>
-           the easy way to book, manage, and track your train tickets.<br>
-           Fast bookings, real-time updates, and seamless travel planning—all in one place.
-         </p>        
-         <button id="book-ticket-btn">BOOK YOUR TICKET NOW</button>
-       </section>
-     </main>
+-      <main class="about-main">
+-        <section class="about-hero">
+-          <h1>ABOUT RAILLY</h1>
++        <div class="about-hero-content">
++          <h1 class="about-hero-title">ABOUT RAILLY</h1>
+           <p class="about-description">
+-            Railly is a simple train-ticket web app that makes traveling easier. You can search routes,<br>check real-time seat
+-            availability, confirm your booking in one click,<br>and keep your e-tickets safely in one place.<br> <br>The backend uses PHP +
+-            MySQL for secure bookings,<br>while the frontend is built with HTML, CSS, and JavaScript,<br>designed in Figma for a clean
+-            and responsive UI.
++            Railly is a simple train-ticket web app that makes traveling easier. You can search routes,<br />check real-time seat
++            availability, confirm your booking in one click,<br />and keep your e-tickets safely in one place.<br /> <br />The backend uses
++            PHP + MySQL for secure bookings,<br />while the frontend is built with HTML, CSS, and JavaScript,<br />designed in Figma for a
++            clean and responsive UI.
+           </p>
+-        </section>
++        </div>
++      </section>
  
-     <footer class="home-footer">
-       <p>CHADANG</p>
-     </footer>
-   </div>
+-        <section class="about-maker">
+-          <h2>The Maker</h2>
+-          <p class="maker-description">
+-            Hi, I’m Chadang Phummarin (Kanomtian), a student from the Digital Engineering Department<br>at SIIT, Thammasat
+-            University.<br>I created Railly as part of my coursework to combine what I learned<br>in database programming with my
+-            interest in web design.<br> <br>Contact me: <a href="mailto:chadang.phu@gmail.com">chadang.phu@gmail.com</a>
+-          </p>
+-        </section>
+-      </main>
++      <section class="about-maker">
++        <h2>The Maker</h2>
++        <p class="maker-description">
++          Hi, I’m Chadang Phummarin (Kanomtian), a student from the Digital Engineering Department<br />at SIIT, Thammasat University.<br />I
++          created Railly as part of my coursework to combine what I learned<br />in database programming with my interest in web design.<br />
++          <br />Contact me: <a href="mailto:chadang.phu@gmail.com">chadang.phu@gmail.com</a>
++        </p>
++      </section>
++    </main>
  
--  <script>
--    document.addEventListener('DOMContentLoaded', () => {
--      const context = window.userSession ? window.userSession.getUserContext() : null;
--
--      if (window.userSession) {
--        window.userSession.applyUserContextToLinks('.main-nav a, .brand, .user-profile-link');
--      }
--
--      const loginLink = document.querySelector('.login-link');
--      const signupBtn = document.querySelector('.signup-btn');
--      const userProfileLink = document.querySelector('.user-profile-link');
--
--      if (context && context.username && context.id) {
--        if (loginLink) {
--          loginLink.classList.add('is-hidden');
--        }
--
--        if (signupBtn) {
--          signupBtn.classList.add('is-hidden');
--        }
--
--        if (userProfileLink) {
--          userProfileLink.classList.remove('is-hidden');
--          if (window.userSession) {
--            window.userSession.applyUserContextToLinks('.user-profile-link');
--          }
--        }
--      } else {
--        if (loginLink) {
--          loginLink.classList.remove('is-hidden');
--          loginLink.removeAttribute('id');
--          loginLink.classList.remove('logout-link');
--          loginLink.href = '../Login/Login.html';
--        }
--
--        if (signupBtn) {
--          signupBtn.classList.remove('is-hidden', 'user-pill');
--          signupBtn.href = '../Signup/Signup.html';
--        }
--
--        if (userProfileLink) {
--          userProfileLink.classList.add('is-hidden');
--        }
--      }
--
--      const bookTicketButton = document.getElementById('book-ticket-btn');
--      if (bookTicketButton) {
--        bookTicketButton.addEventListener('click', () => {
--          const bookingUrl = new URL('../Booking/Booking.html', window.location.href);
--          if (context && context.username && context.id) {
--            bookingUrl.searchParams.set('username', context.username);
--            bookingUrl.searchParams.set('id', context.id);
--          }
--          window.location.href = bookingUrl.href;
--        });
--      }
--    });
--  </script>
-+  <script src="./home.js" defer></script>
- </body>
+-      <footer class="about-footer">
+-        <p>CHADANG</p>
+-      </footer>
+-    </div>
++    <footer class="about-footer">
++      <p>CHADANG</p>
++    </footer>
+ 
+     <script src="../../assets/js/user-session.js" defer></script>
+     <script src="./aboutus.js" defer></script>
+   </body>
  </html>
  
 EOF
