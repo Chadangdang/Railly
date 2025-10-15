@@ -5,7 +5,7 @@ session_start(); // Start the session
 session_unset();
 session_destroy();
 
-// Redirect to the unlogged-in home page
-header("Location: ../Unlogin/Unlogin_home.html");
+// Redirect to the home page
+header("Location: ../Home/home.html");
 exit();
 ?>

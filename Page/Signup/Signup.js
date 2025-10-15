@@ -34,7 +34,7 @@ function togglePassword(id) {
     if (data.success) {
       // Redirect to home page after successful signup
       alert('Signup successful!');
-      window.location.href = "../Unlogin/Unlogin_home.html"; // Redirect to homepage
+      window.location.href = "../Home/home.html"; // Redirect to homepage
     } else {
       alert('Signup failed. Please try again.');
     }

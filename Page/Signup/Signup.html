@@ -8,7 +8,7 @@
 </head>
 <body>
   <header>
-    <div class="brand"><a href="../Unlogin/Unlogin_home.html">STRAWBERRY MORAKOT</a></div>
+    <div class="brand"><a href="../Home/home.html">STRAWBERRY MORAKOT</a></div>
   </header>
 
   <div class="form-container">
@@ -58,9 +58,8 @@
       const data = await response.json();
 
       if (data.success) {
-        // Redirect to home page after successful signup
         alert('Signup successful!');
-        window.location.href = "../Unlogin/Unlogin_home.html"; // Redirect to homepage
+        window.location.href = "../Home/home.html";
       } else {
         alert('Signup failed. Please try again.');
       }
