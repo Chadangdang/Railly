@@ -29,7 +29,7 @@ if ($username === '' || $password === '') {
 $conn = get_db_connection();
 
 try {
-    $stmt = $conn->prepare('SELECT id, username, email, pass FROM signup WHERE username = ?');
+    $stmt = $conn->prepare('SELECT user_id, username, email, pass FROM user WHERE username = ?');
     $stmt->bind_param('s', $username);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -46,7 +46,7 @@ try {
         return;
     }
 
-    $_SESSION['user_id'] = $user['id'];
+    $_SESSION['user_id'] = $user['user_id'];
     $_SESSION['username'] = $user['username'];
     $_SESSION['email'] = $user['email'];
 
@@ -54,7 +54,7 @@ try {
         'success' => true,
         'message' => 'Login successful!',
         'user' => [
-            'id' => $user['id'],
+            'id' => $user['user_id'],
             'username' => $user['username'],
             'email' => $user['email']
         ]

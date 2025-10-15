@@ -18,15 +18,37 @@ $conn = get_db_connection();
 
 try {
     $stmt = $conn->prepare(
-        'SELECT route_id, origin, dest, departure, arrival, price, datee, available_ticket
-         FROM all_train
-         WHERE origin = ? AND dest = ? AND datee = ?'
+        'SELECT
+            s.service_id AS service_id,
+            r.origin,
+            r.dest,
+            r.depart_time,
+            r.arrival_time,
+            r.price_thb,
+            s.service_date,
+            s.available_ticket
+         FROM service AS s
+         INNER JOIN route AS r ON r.route_id = s.route_id
+         WHERE r.origin = ? AND r.dest = ? AND s.service_date = ?'
     );
     $stmt->bind_param('sss', $origin, $destination, $date);
     $stmt->execute();
 
     $result = $stmt->get_result();
-    $tickets = $result->fetch_all(MYSQLI_ASSOC);
+    $tickets = [];
+
+    while ($row = $result->fetch_assoc()) {
+        $tickets[] = [
+            'route_id' => (int) $row['service_id'],
+            'origin' => $row['origin'],
+            'dest' => $row['dest'],
+            'departure' => formatTimeForOutput($row['depart_time']),
+            'arrival' => formatTimeForOutput($row['arrival_time']),
+            'price' => formatPriceForOutput($row['price_thb']),
+            'datee' => $row['service_date'],
+            'available_ticket' => (int) $row['available_ticket'],
+        ];
+    }
 
     if (empty($tickets)) {
         echo json_encode(['status' => 'error', 'message' => 'No tickets found for the given search criteria.']);
@@ -43,4 +65,24 @@ try {
     }
 
     $conn->close();
+}
+
+function formatTimeForOutput(string $timeValue): string
+{
+    $timestamp = strtotime($timeValue);
+
+    if ($timestamp === false) {
+        return $timeValue;
+    }
+
+    return date('H:i', $timestamp);
+}
+
+function formatPriceForOutput(string $price): string
+{
+    if (!is_numeric($price)) {
+        return $price;
+    }
+
+    return number_format((float) $price, 2, '.', '');
 }

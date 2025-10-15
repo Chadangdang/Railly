@@ -11,31 +11,13 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-$routeId = isset($_POST['route_id']) ? (int) $_POST['route_id'] : 0;
+$serviceId = isset($_POST['route_id']) ? (int) $_POST['route_id'] : 0;
 $username = isset($_POST['username']) ? trim((string) $_POST['username']) : '';
 $userIdRaw = isset($_POST['id']) ? trim((string) $_POST['id']) : '';
-$origin = isset($_POST['origin']) ? trim((string) $_POST['origin']) : '';
-$destination = isset($_POST['destination']) ? trim((string) $_POST['destination']) : '';
-$departure = isset($_POST['departure']) ? trim((string) $_POST['departure']) : '';
-$arrival = isset($_POST['arrival']) ? trim((string) $_POST['arrival']) : '';
-$priceRaw = isset($_POST['price']) ? (string) $_POST['price'] : '';
-$date = isset($_POST['datee']) ? trim((string) $_POST['datee']) : '';
-$type = isset($_POST['type']) ? (int) $_POST['type'] : 1;
+$quantityRaw = isset($_POST['type']) ? (int) $_POST['type'] : 1;
+$quantity = $quantityRaw > 0 ? $quantityRaw : 1;
 
-$sanitisedPrice = preg_replace('/[^0-9.]/', '', $priceRaw);
-$price = $sanitisedPrice !== '' ? number_format((float) $sanitisedPrice, 2, '.', '') : '';
-$date = $date !== '' ? $date : date('Y-m-d');
-
-if (
-    $routeId <= 0 ||
-    $username === '' ||
-    $userIdRaw === '' ||
-    $origin === '' ||
-    $destination === '' ||
-    $departure === '' ||
-    $arrival === '' ||
-    $price === ''
-) {
+if ($serviceId <= 0 || $username === '' || $userIdRaw === '') {
     echo json_encode(['status' => 'error', 'message' => 'Missing required parameters.']);
     exit;
 }
@@ -49,59 +31,115 @@ if ($userId <= 0) {
 $conn = get_db_connection();
 
 try {
-    $conn->begin_transaction();
+    $userStmt = $conn->prepare('SELECT username FROM user WHERE user_id = ?');
+    $userStmt->bind_param('i', $userId);
+    $userStmt->execute();
 
-    $checkStmt = $conn->prepare('SELECT available_ticket FROM all_train WHERE route_id = ? FOR UPDATE');
-    $checkStmt->bind_param('i', $routeId);
-    $checkStmt->execute();
-
-    $routeResult = $checkStmt->get_result();
-    if ($routeResult->num_rows === 0) {
-        $conn->rollback();
-        echo json_encode(['status' => 'error', 'message' => 'Route ID not found.']);
+    $userResult = $userStmt->get_result();
+    if ($userResult->num_rows === 0) {
+        echo json_encode(['status' => 'error', 'message' => 'User not found.']);
         return;
     }
 
-    $availableTicket = (int) $routeResult->fetch_assoc()['available_ticket'];
-    if ($availableTicket <= 0) {
-        $conn->rollback();
-        echo json_encode(['status' => 'error', 'message' => 'No tickets available for this route.']);
+    $dbUser = $userResult->fetch_assoc();
+    if (strcasecmp($dbUser['username'], $username) !== 0) {
+        echo json_encode(['status' => 'error', 'message' => 'User information does not match.']);
         return;
     }
 
-    $insertStmt = $conn->prepare(
-        'INSERT INTO confirmed_ticket (route_id, username, user_id, origin, destination, departure, arrival, price, datee, type)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
-    );
-    $insertStmt->bind_param(
-        'isissssssi',
-        $routeId,
-        $username,
-        $userId,
-        $origin,
-        $destination,
-        $departure,
-        $arrival,
-        $price,
-        $date,
-        $type
-    );
-    $insertStmt->execute();
+    $transactionStarted = false;
 
-    $updateStmt = $conn->prepare('UPDATE all_train SET available_ticket = available_ticket - 1 WHERE route_id = ?');
-    $updateStmt->bind_param('i', $routeId);
-    $updateStmt->execute();
+    try {
+        $conn->begin_transaction();
+        $transactionStarted = true;
 
-    $conn->commit();
-    echo json_encode(['status' => 'success', 'message' => 'Booking confirmed successfully.']);
+        $serviceStmt = $conn->prepare(
+            'SELECT
+                s.available_ticket,
+                s.service_date,
+                r.origin,
+                r.dest,
+                r.depart_time,
+                r.arrival_time,
+                r.price_thb
+             FROM service AS s
+             INNER JOIN route AS r ON r.route_id = s.route_id
+             WHERE s.service_id = ?
+             FOR UPDATE'
+        );
+        $serviceStmt->bind_param('i', $serviceId);
+        $serviceStmt->execute();
+
+        $serviceResult = $serviceStmt->get_result();
+        if ($serviceResult->num_rows === 0) {
+            $conn->rollback();
+            echo json_encode(['status' => 'error', 'message' => 'Service not found for the provided route.']);
+            return;
+        }
+
+        $service = $serviceResult->fetch_assoc();
+        $availableTickets = (int) $service['available_ticket'];
+
+        if ($availableTickets < $quantity) {
+            $conn->rollback();
+            echo json_encode(['status' => 'error', 'message' => 'No tickets available for this service.']);
+            return;
+        }
+
+        $status = 'PAID';
+
+        $insertStmt = $conn->prepare(
+            'INSERT INTO paid_ticket (user_id, service_id, quantity, status) VALUES (?, ?, ?, ?)'
+        );
+        $insertStmt->bind_param('iiis', $userId, $serviceId, $quantity, $status);
+        $insertStmt->execute();
+
+        $ticketId = $conn->insert_id;
+
+        $updateStmt = $conn->prepare('UPDATE service SET available_ticket = available_ticket - ? WHERE service_id = ?');
+        $updateStmt->bind_param('ii', $quantity, $serviceId);
+        $updateStmt->execute();
+
+        $conn->commit();
+        $transactionStarted = false;
+
+        $remainingTickets = $availableTickets - $quantity;
+
+        echo json_encode([
+            'status' => 'success',
+            'message' => 'Booking confirmed successfully.',
+            'ticket' => [
+                'ticket_id' => (int) $ticketId,
+                'route_id' => $serviceId,
+                'origin' => $service['origin'],
+                'destination' => $service['dest'],
+                'departure' => formatTimeForOutput($service['depart_time']),
+                'arrival' => formatTimeForOutput($service['arrival_time']),
+                'datee' => $service['service_date'],
+                'price' => formatPriceForOutput($service['price_thb']),
+                'quantity' => $quantity,
+                'status' => $status,
+            ],
+            'remaining_tickets' => $remainingTickets,
+        ]);
+    } catch (mysqli_sql_exception $exception) {
+        if ($transactionStarted) {
+            $conn->rollback();
+        }
+
+        throw $exception;
+    }
 } catch (mysqli_sql_exception $exception) {
-    $conn->rollback();
     error_log('confirm error: ' . $exception->getMessage());
     http_response_code(500);
     echo json_encode(['status' => 'error', 'message' => 'Failed to confirm booking.']);
 } finally {
-    if (isset($checkStmt) && $checkStmt instanceof mysqli_stmt) {
-        $checkStmt->close();
+    if (isset($userStmt) && $userStmt instanceof mysqli_stmt) {
+        $userStmt->close();
+    }
+
+    if (isset($serviceStmt) && $serviceStmt instanceof mysqli_stmt) {
+        $serviceStmt->close();
     }
 
     if (isset($insertStmt) && $insertStmt instanceof mysqli_stmt) {
@@ -113,4 +151,24 @@ try {
     }
 
     $conn->close();
+}
+
+function formatTimeForOutput(string $timeValue): string
+{
+    $timestamp = strtotime($timeValue);
+
+    if ($timestamp === false) {
+        return $timeValue;
+    }
+
+    return date('H:i', $timestamp);
+}
+
+function formatPriceForOutput(string $price): string
+{
+    if (!is_numeric($price)) {
+        return $price;
+    }
+
+    return number_format((float) $price, 2, '.', '');
 }

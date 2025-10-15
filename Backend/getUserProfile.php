@@ -22,7 +22,7 @@ if ($id === null || $id === false || $id <= 0) {
 $conn = get_db_connection();
 
 try {
-    $stmt = $conn->prepare('SELECT username, email FROM signup WHERE id = ?');
+    $stmt = $conn->prepare('SELECT username, email, created_at FROM user WHERE user_id = ?');
     if (!$stmt) {
         throw new mysqli_sql_exception('Failed to prepare statement.');
     }
@@ -39,13 +39,19 @@ try {
 
     $user = $result->fetch_assoc();
 
-    echo json_encode([
+    $response = [
         'success' => true,
         'user' => [
             'username' => $user['username'],
             'email' => $user['email']
         ]
-    ]);
+    ];
+
+    if (isset($user['created_at'])) {
+        $response['user']['created_at'] = $user['created_at'];
+    }
+
+    echo json_encode($response);
 } catch (mysqli_sql_exception $exception) {
     error_log('getUserProfile error: ' . $exception->getMessage());
     http_response_code(500);
