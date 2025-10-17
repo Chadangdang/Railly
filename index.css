@@ -33,15 +33,22 @@
     width: 100%;
   }
 
-  .site-nav .brand {
-    font-size: 16px;
+  .site-nav .brand,
+  .auth-header .site-nav .brand {
+    font-size: 18px;
     font-weight: 700;
-    line-height: 23px;
     letter-spacing: 0.12em;
-    color: #000000;
     text-decoration: none;
     justify-self: start;
   }
+  
+  .site-header .site-nav .brand {
+    color: #000000;
+  }
+  
+  .auth-header .site-nav .brand {
+    color: #ffffff;
+  }  
 
   .site-nav .main-nav-wrapper {
     position: absolute;
@@ -186,15 +193,6 @@
     width: 100%;
   }
 
-  .auth-header .site-nav .brand {
-    font-size: 18px;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    color: #ffffff;
-    text-decoration: none;
-    justify-self: start;
-  }
-
   .auth-header .site-nav .main-nav-wrapper {
     position: absolute;
     top: 50%;
@@ -245,8 +243,23 @@
     margin-left: auto;
   }
 
-  .auth-header .site-nav .auth-nav a {
+  .site-header .auth-nav .login-link {
+    color: #000000;
+  }
+  
+  .site-header .auth-nav .signup-btn {
     color: #ffffff;
+  }
+  
+  .auth-header .auth-nav .login-link {
+    color: #ffffff;
+  }
+  
+  .auth-header .auth-nav .signup-btn {
+    color: #ffffff;
+  }
+
+  .auth-header .site-nav .auth-nav a {
     text-decoration: none;
     font-size: 16px;
     font-weight: 400;
