@@ -27,9 +27,10 @@
     position: relative;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
     column-gap: 32px;
     min-height: 29px;
+    width: 100%;
   }
 
   .site-nav .brand {
@@ -107,7 +108,7 @@
     gap: 16px;
     list-style: none;
     padding: 0;
-    margin: 0;
+    margin: 0 0 0 auto;
     justify-self: end;
   }
 
@@ -179,9 +180,10 @@
     position: relative;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
     column-gap: 32px;
     min-height: 29px;
+    width: 100%;
   }
 
   .auth-header .site-nav .brand {
@@ -240,6 +242,7 @@
     align-items: center;
     gap: 12px;
     justify-self: end;
+    margin-left: auto;
   }
 
   .auth-header .site-nav .auth-nav a {
@@ -289,6 +292,10 @@
       flex-wrap: wrap;
       justify-content: center;
       row-gap: 12px;
+    }
+
+    .site-nav .auth-nav {
+      margin-left: 0;
     }
 
     .site-nav .brand,
