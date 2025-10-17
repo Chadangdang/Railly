@@ -13,7 +13,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    padding: 0 20px 60px;
+    padding: 0 0 60px;
     background: linear-gradient(to bottom, #91021E, #1647A2);
     color: #333;
   }
