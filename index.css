@@ -6,17 +6,17 @@
     padding: 0;
     box-sizing: border-box;
   }
-  
+
   /* Body */
   html, body {
     height: 100%;
     font-family: 'Jost', sans-serif;
-    background: linear-gradient(to bottom, #fff, #91021E, #1647A2); 
+    background: linear-gradient(to bottom, #fff, #91021E, #1647A2);
     color: #fff;
     display: flex;
     flex-direction: column;
   }
-  
+
   /*--------------------------- HEADER ---------------------------*/
   .site-header {
     width: 100%;
@@ -31,40 +31,48 @@
   }
 
   .site-nav .brand {
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 700;
-    letter-spacing: 0.1em;
+    line-height: 23px;
+    letter-spacing: 0.12em;
     color: #000000;
     text-decoration: none;
     justify-self: start;
   }
 
   .site-nav .main-nav-wrapper {
-    border: 1px solid rgba(0, 0, 0, 0.27);
-    border-radius: 30px;
-    padding: 6px 26px;
     display: flex;
     align-items: center;
-    justify-self: center;
     justify-content: center;
-    background-color: rgba(255, 255, 255, 0.85);
+    justify-self: center;
+    width: 434px;
+    max-width: 100%;
+    height: 29px;
+    padding: 0 28px;
+    border: 1px solid rgba(0, 0, 0, 0.27);
+    border-radius: 30px;
+    background-color: transparent;
   }
 
   .site-nav .main-nav {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     list-style: none;
-    gap: 32px;
+    width: 100%;
     padding: 0;
     margin: 0;
+    column-gap: 24px;
   }
 
   .site-nav .main-nav a {
     font-size: 14px;
-    font-weight: 500;
+    font-weight: 400;
     line-height: 20px;
     color: #000000;
     text-decoration: none;
+    display: flex;
+    align-items: center;
     position: relative;
     transition: opacity 0.3s ease;
   }
@@ -87,7 +95,7 @@
   .site-nav .auth-nav {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 16px;
     list-style: none;
     padding: 0;
     margin: 0;
@@ -96,7 +104,9 @@
 
   .site-nav .auth-nav a {
     text-decoration: none;
-    font-weight: 600;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 23px;
     color: #000000;
     transition: opacity 0.3s ease;
   }
@@ -110,13 +120,14 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-width: 110px;
-    padding: 8px 24px;
+    width: 83px;
+    height: 29px;
+    padding: 0 18px;
     border-radius: 30px;
     background: linear-gradient(270deg, #1647A2 0%, #91021E 100%);
     color: #ffffff;
     font-size: 16px;
-    font-weight: 500;
+    font-weight: 400;
     text-decoration: none;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
   }
@@ -125,6 +136,15 @@
   .site-nav .auth-nav .signup-btn:focus {
     transform: translateY(-2px);
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
+  }
+
+  .site-nav .user-profile-link {
+    display: inline-flex;
+    width: 29px;
+    height: 29px;
+    border-radius: 50%;
+    align-items: center;
+    justify-content: center;
   }
 
   .site-nav .user-profile-link img {
@@ -136,12 +156,38 @@
   .site-nav .auth-nav .user-profile-link:focus {
     opacity: 0.8;
   }
-  
+
+  .auth-header .brand {
+    color: #ffffff;
+  }
+
+  .auth-header .main-nav-wrapper {
+    border-color: rgba(255, 255, 255, 0.27);
+  }
+
+  .auth-header .main-nav a {
+    color: #ffffff;
+  }
+
+  .auth-header .auth-nav a {
+    color: #ffffff;
+  }
+
+  .auth-header .auth-nav .signup-btn {
+    background: linear-gradient(270deg, #1647A2 0%, #29083D 100%);
+    color: #ffffff;
+  }
+
+  .auth-header .auth-nav .signup-btn:hover,
+  .auth-header .auth-nav .signup-btn:focus {
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.35);
+  }
+
   /* Main Section */
   main {
-    flex: 1; 
+    flex: 1;
     display: flex;
-    align-items: center; 
+    align-items: center;
     justify-content: flex-start;
     padding: 0 40px;
   }
@@ -149,11 +195,11 @@
   .hidden {
     display: none;
   }
-  
+
   #auth-icon {
     font-size: 1.5rem;
     cursor: pointer;
-  }  
+  }
   /*--------------------------- HEADER ---------------------------*/
 
   /*--------------------------- FOOTER ---------------------------*/
