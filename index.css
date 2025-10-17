@@ -83,7 +83,7 @@ html, body {
   border-radius: 30px;
   max-width: calc(100% - 80px);
   min-height: 0;
-  padding: 6px 32px;
+  padding: 5px 32px;
   justify-self: center;
   margin: 0 auto;
   z-index: 1;
@@ -252,7 +252,7 @@ html, body {
   }
 
   .site-nav .main-nav-wrapper {
-    padding: 10px 20px;
+    padding: 5px 20px;
   }
 
   .site-nav .main-nav {

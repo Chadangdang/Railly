@@ -49,63 +49,6 @@
   z-index: 1;
 }
 
-.about-header {
-  position: fixed;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100vw;
-  padding: 18px var(--layout-padding-inline) 0;
-  z-index: 1000;
-  pointer-events: auto;
-}
-
-:root {
-  --about-header-height: 76px;
-}
-.about-hero-content {
-  padding-top: calc(122px + var(--about-header-height));
-}
-
-
-.about-header .site-nav .main-nav-wrapper {
-  border: 1px solid rgba(0, 0, 0, 0.27);
-  border-radius: 30px;
-  padding: 6px 26px;
-}
-
-.about-header .site-nav .brand,
-.about-header .site-nav .main-nav a,
-.about-header .site-nav .login-link {
-  color: #000000;
-}
-
-.about-header .site-nav .signup-btn {
-  min-width: 110px;
-  padding: 8px 24px;
-  border-radius: 30px;
-  background: linear-gradient(270deg, #1647a2 0%, #91021e 100%);
-  color: #ffffff;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.about-header .site-nav .signup-btn:hover,
-.about-header .site-nav .signup-btn:focus {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
-}
-
-.about-header .site-nav .signup-btn.user-pill {
-  cursor: default;
-  pointer-events: none;
-  text-transform: uppercase;
-}
-
-.about-header .site-nav .user-profile-link img {
-  width: 23px;
-  height: 23px;
-}
-
 .is-hidden {
   display: none !important;
 }
@@ -177,36 +120,6 @@
 .maker-description a {
   color: inherit;
   text-decoration: underline;
-}
-
-.about-footer {
-  position: fixed;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100vw;
-  min-height: 47px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #fffefe;
-  z-index: 1000;
-}
-
-:root {
-  --about-footer-height: 60px;
-}
-.about-page {
-  padding-bottom: var(--about-footer-height);
-}
-
-
-.about-footer p {
-  font-size: 20px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  color: #000000;
-  margin: 0;
 }
 
 @media (max-width: 1024px) {

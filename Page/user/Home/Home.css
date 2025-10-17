@@ -27,48 +27,6 @@
   z-index: 1;
 }
 
-.home-header {
-  padding: 18px var(--layout-padding-inline) 0;
-}
-
-.home-header .site-nav .main-nav-wrapper {
-  border: 1px solid rgba(0, 0, 0, 0.27);
-  border-radius: 30px;
-  padding: 6px 26px;
-}
-
-.home-header .site-nav .brand,
-.home-header .site-nav .main-nav a,
-.home-header .site-nav .login-link {
-  color: #000000;
-}
-
-.home-header .site-nav .signup-btn {
-  min-width: 110px;
-  padding: 8px 24px;
-  border-radius: 30px;
-  background: linear-gradient(270deg, #1647A2 0%, #91021E 100%);
-  color: #ffffff;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.home-header .site-nav .signup-btn:hover,
-.home-header .site-nav .signup-btn:focus {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
-}
-
-.home-header .site-nav .signup-btn.user-pill {
-  cursor: default;
-  pointer-events: none;
-  text-transform: uppercase;
-}
-
-.home-header .site-nav .user-profile-link img {
-  width: 23px;
-  height: 23px;
-}
-
 .home-main {
   flex: 1;
   display: flex;
@@ -122,58 +80,7 @@
   box-shadow: 0 10px 18px rgba(0, 0, 0, 0.35);
 }
 
-.home-footer {
-  margin-top: auto;
-  min-height: 47px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #fffefe;
-  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
-}
-
-.home-footer p {
-  font-size: 20px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  color: #000000;
-}
-
 @media (max-width: 1024px) {
-  .home-header .site-nav {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    grid-template-areas:
-      "brand auth"
-      "menu  menu";
-    align-items: center;
-    column-gap: 16px;
-    row-gap: 12px;
-  }
-
-  .home-header .site-nav .brand { 
-    grid-area: brand; 
-    justify-self: start; 
-  }
-
-  .home-header .site-nav .auth-nav { 
-    grid-area: auth; 
-    justify-self: end; 
-  }
-
-  .home-header .site-nav .main-nav-wrapper { 
-    grid-area: menu; 
-    justify-self: stretch; 
-    width: 100%;
-    justify-content: center;
-  }
-
-  .home-header .site-nav .main-nav { 
-    flex-wrap: wrap; 
-    justify-content: center; 
-    gap: 16px; 
-  }
-
   .home-main {
     padding: 60px var(--layout-padding-inline);
   }
