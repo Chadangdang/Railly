@@ -4,12 +4,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Strawberry Morakot - Sign Up</title>
+  <link rel="stylesheet" href="../../index.css">
   <link rel="stylesheet" href="./Signup.css">
+  <script src="../../assets/js/user-session.js" defer></script>
+  <script src="../../assets/js/layout-loader.js" defer></script>
 </head>
-<body>
-  <header>
-    <div class="brand"><a href="../Home/home.html">STRAWBERRY MORAKOT</a></div>
-  </header>
+<body class="signup-page">
+  <div
+    data-include="../shared/header.html"
+    data-include-class="auth-header"
+  ></div>
 
   <div class="form-container">
     <h2>Sign Up</h2>
@@ -25,6 +29,11 @@
     </form>
     <p>Already have an account? <a href="../Login/Login.html">Log in here</a></p>
   </div>
+
+  <div
+    data-include="../shared/footer.html"
+    data-include-class="auth-footer"
+  ></div>
 
   <script>
     function togglePassword() {

@@ -6,16 +6,17 @@
   <title>STRAWBERRY MORAKOT</title>
   <link rel="stylesheet" href="./Bookingconfirmation.css" />
   <link rel="stylesheet" href="../../index.css" />
+  <script src="../../assets/js/user-session.js" defer></script>
+  <script src="../../assets/js/layout-loader.js" defer></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap');
   </style>
 </head>
 <body>
-  <header>
-    <nav>
-      <div class="brand">STRAWBERRY MORAKOT</div>
-    </nav>
-  </header>
+  <div
+    data-include="../shared/header.html"
+    data-nav-active="booking"
+  ></div>
 
   <!-- Main Content -->
   <main>
@@ -51,9 +52,7 @@
   </main>
 
   <!-- Footer -->
-  <footer>
-    <img src="../../assets/img/SIIT_logo.png" alt="SIIT Logo" />
-  </footer>
+  <div data-include="../shared/footer.html"></div>
 
   <script>
     const urlParams = new URLSearchParams(window.location.search);

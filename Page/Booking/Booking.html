@@ -6,25 +6,16 @@
   <title>STRAWBERRY MORAKOT</title>
   <link rel="stylesheet" href="./Booking.css">
   <link rel="stylesheet" href="../../index.css">
+  <script src="../../assets/js/user-session.js" defer></script>
+  <script src="../../assets/js/layout-loader.js" defer></script>
+  <script src="./booking.js" defer></script>
 </head>
 <body>
 
-  <header>
-    <nav>
-      <div class="brand">STRAWBERRY MORAKOT</div>
-      <div class="main-nav-wrapper">
-        <ul class="main-nav">
-          <li><a href="../Home/home.html">HOME</a></li>
-          <li><a href="../Booking/Booking.html">BOOKING</a></li>
-          <li><a href="../MyTicket/MyTicket.html">MY TICKET</a></li>
-          <li><a href="../Aboutus/Aboutus.html">ABOUT US</a></li>
-        </ul>
-      </div>
-      <ul class="auth-nav">
-        <li><a href="../../Backend/logout.php" id="logout-btn">Log out</a></li>
-      </ul>                
-    </nav>
-  </header>
+  <div
+    data-include="../shared/header.html"
+    data-nav-active="booking"
+  ></div>
 
   <main>
     <div class="topper"><h2>BOOK YOUR TICKET</h2></div>
@@ -47,11 +38,6 @@
     <div id="ticket-results"></div>  
   </main>
 
-  <footer>
-    <img src="../../assets/img/SIIT_logo.png" alt="SIIT_logo">
-  </footer>
-
-  <script src="../../assets/js/user-session.js" defer></script>
-  <script src="./booking.js" defer></script>
+  <div data-include="../shared/footer.html"></div>
 </body>
 </html>

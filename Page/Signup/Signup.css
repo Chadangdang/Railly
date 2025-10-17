@@ -5,32 +5,45 @@
     font-family: 'Jost', sans-serif;
   }
 
-body {
+.signup-page {
+    min-height: 100vh;
+    margin: 0;
+    width: 100%;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
-    height: 100vh;
+    justify-content: flex-start;
+    padding: 0 20px 60px;
     background: linear-gradient(to bottom, #91021E, #1647A2);
     color: #333;
   }
-  
-  header {
-    position: absolute;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 24px;
-    font-weight: bold;
-    text-align: center;
+
+  .signup-page .auth-header {
+    width: 100%;
+    padding: 24px 40px 0;
   }
 
-  header .brand a {
-    text-decoration: none;
-    color: #fff;
+  .signup-page .auth-header .site-nav {
+    grid-template-columns: auto;
+    justify-content: center;
+    row-gap: 16px;
+  }
+
+  .signup-page .auth-header .site-nav .main-nav-wrapper,
+  .signup-page .auth-header .site-nav .auth-nav {
+    display: none;
+  }
+
+  .signup-page .auth-header .site-nav .brand {
     font-size: 28px;
-    transition: color 0.3s, text-shadow 0.3s;
-}
+    color: #ffffff;
+    text-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+  }
   
+  .signup-page .form-container {
+    margin: 120px auto 40px;
+  }
+
   .form-container {
     background: #fff;
     border-radius: 20px;
@@ -117,4 +130,16 @@ body {
   
   .form-container a:hover {
     text-decoration: underline;
+  }
+
+  .signup-page .auth-footer {
+    width: 100%;
+    background: transparent;
+    box-shadow: none;
+    color: #ffffff;
+    padding-bottom: 20px;
+  }
+
+  .signup-page .auth-footer p {
+    color: inherit;
   }

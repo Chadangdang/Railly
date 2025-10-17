@@ -1,44 +1,54 @@
-document.addEventListener('DOMContentLoaded', () => {
-  const session = window.userSession;
-  if (!session) {
-    return;
+(function () {
+  'use strict';
+
+  function initAboutPage() {
+    var session = window.userSession;
+    if (!session) {
+      return;
+    }
+
+    var context = session.getUserContext();
+    session.applyUserContextToLinks('.about-header .main-nav a, .about-header .brand, .about-header .user-profile-link');
+
+    var loginLink = document.querySelector('.about-header .login-link');
+    var signupBtn = document.querySelector('.about-header .signup-btn');
+    var userProfileLink = document.querySelector('.about-header .user-profile-link');
+
+    if (context && context.username && context.id) {
+      if (loginLink) {
+        loginLink.classList.add('is-hidden');
+      }
+
+      if (signupBtn) {
+        signupBtn.classList.add('is-hidden');
+      }
+
+      if (userProfileLink) {
+        userProfileLink.classList.remove('is-hidden');
+        session.applyUserContextToLinks('.about-header .user-profile-link');
+      }
+    } else {
+      if (loginLink) {
+        loginLink.classList.remove('is-hidden');
+        loginLink.removeAttribute('id');
+        loginLink.classList.remove('logout-link');
+        loginLink.href = '../Login/Login.html';
+      }
+
+      if (signupBtn) {
+        signupBtn.classList.remove('is-hidden', 'user-pill');
+        signupBtn.href = '../Signup/Signup.html';
+      }
+
+      if (userProfileLink) {
+        userProfileLink.classList.add('is-hidden');
+      }
+    }
   }
 
-  const context = session.getUserContext();
-  session.applyUserContextToLinks('.main-nav a, .brand, .user-profile-link');
-
-  const loginLink = document.querySelector('.login-link');
-  const signupBtn = document.querySelector('.signup-btn');
-  const userProfileLink = document.querySelector('.user-profile-link');
-
-  if (context && context.username && context.id) {
-    if (loginLink) {
-      loginLink.classList.add('is-hidden');
-    }
-
-    if (signupBtn) {
-      signupBtn.classList.add('is-hidden');
-    }
-
-    if (userProfileLink) {
-      userProfileLink.classList.remove('is-hidden');
-      session.applyUserContextToLinks('.user-profile-link');
-    }
+  if (window.__layoutReady) {
+    initAboutPage();
   } else {
-    if (loginLink) {
-      loginLink.classList.remove('is-hidden');
-      loginLink.removeAttribute('id');
-      loginLink.classList.remove('logout-link');
-      loginLink.href = '../Login/Login.html';
-    }
-
-    if (signupBtn) {
-      signupBtn.classList.remove('is-hidden', 'user-pill');
-      signupBtn.href = '../Signup/Signup.html';
-    }
-
-    if (userProfileLink) {
-      userProfileLink.classList.add('is-hidden');
-    }
+    document.addEventListener('layout:ready', initAboutPage, { once: true });
   }
-});
+})();

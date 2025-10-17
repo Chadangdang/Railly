@@ -9,36 +9,18 @@
     <style>
       @import url('https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap');
     </style>
+    <script src="../../assets/js/user-session.js" defer></script>
+    <script src="../../assets/js/layout-loader.js" defer></script>
+    <script src="./aboutus.js" defer></script>
   </head>
   <body class="about-page">
     <main class="about-main">
       <section class="about-hero">
-        <header class="about-header">
-          <nav class="about-nav">
-            <a class="brand" href="../Home/home.html">RAILLY</a>
-            <div class="main-nav-wrapper">
-              <ul class="main-nav">
-                <li><a href="../Home/home.html">HOME</a></li>
-                <li><a href="../Booking/Booking.html">BOOKING</a></li>
-                <li><a href="../Booking/Booking.html#cart">CART</a></li>
-                <li><a href="../MyTicket/MyTicket.html">MY TICKET</a></li>
-                <li><a href="../Aboutus/Aboutus.html" class="active">ABOUT US</a></li>
-              </ul>
-            </div>
-            <div class="auth-nav">
-              <a href="../Login/Login.html" class="login-link">Log in</a>
-              <a href="../Signup/Signup.html" class="signup-btn">Sign up</a>
-              <a
-                href="../UserProfile/userprofile.html"
-                class="user-profile-link is-hidden"
-                aria-label="View profile"
-                title="View profile"
-              >
-                <img src="../../assets/img/person.png" alt="User profile icon" />
-              </a>
-            </div>
-          </nav>
-        </header>
+        <div
+          data-include="../shared/header.html"
+          data-include-class="about-header"
+          data-nav-active="about"
+        ></div>
 
         <div class="about-hero-content">
           <h1 class="about-hero-title">ABOUT RAILLY</h1>
@@ -61,11 +43,9 @@
       </section>
     </main>
 
-    <footer class="about-footer">
-      <p>CHADANG</p>
-    </footer>
-
-    <script src="../../assets/js/user-session.js" defer></script>
-    <script src="./aboutus.js" defer></script>
+    <div
+      data-include="../shared/footer.html"
+      data-include-class="about-footer"
+    ></div>
   </body>
 </html>

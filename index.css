@@ -18,77 +18,122 @@
   }
   
   /*--------------------------- HEADER ---------------------------*/
-  header {
+  .site-header {
     width: 100%;
-    padding: 20px 40px;
-  }
-  
-  nav {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  
-  /* Brand */
-  .brand {
-    font-size: 1.5em;
-    font-weight: bold;
-    color: #000;
-  }
-  
-  /* Main Navigation Styling */
-  nav {
-    position: relative;
-  }
-  .main-nav-wrapper {
-    border: 2px solid rgba(165, 165, 165, 0.8); 
-    border-radius: 50px; 
-    padding: 5px 20px; 
-    display: flex;
-    gap: 20px;
-    align-items: center;
-  }
-  .main-nav {
-    display: flex;
-    list-style: none;
-    gap: 25px;
-  }
-  
-  .main-nav a {
-    text-decoration: none;
-    color: #000;
-    font-weight: 600;
-  }
-  
-  /* Auth Navigation Styling */
-  .auth-nav {
-    display: flex;
-    list-style: none;
-    gap: 10px;
-  }
-  
-  .auth-nav a {
-    text-decoration: none;
-    font-weight: 600;
-    color: #000;
-  }
-  
-  .auth-nav .signup-btn {
-    padding: 5px 20px;
-    border-radius: 50px;
-    background: linear-gradient(to right, #91021E,#29083D,#1647A2 );
-    color: #fff;
+    padding: 18px 40px 0;
   }
 
-  #auth-button.logged-in {
-    background: none;
-    color: #000;
-    font-size: 1.2em;
-    padding: 0;
+  .site-nav {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    column-gap: 32px;
   }
-  
-  /* Hover, Sign up */
-  .auth-nav a:hover, .main-nav a:hover {
+
+  .site-nav .brand {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: #000000;
+    text-decoration: none;
+    justify-self: start;
+  }
+
+  .site-nav .main-nav-wrapper {
+    border: 1px solid rgba(0, 0, 0, 0.27);
+    border-radius: 30px;
+    padding: 6px 26px;
+    display: flex;
+    align-items: center;
+    justify-self: center;
+    justify-content: center;
+    background-color: rgba(255, 255, 255, 0.85);
+  }
+
+  .site-nav .main-nav {
+    display: flex;
+    align-items: center;
+    list-style: none;
+    gap: 32px;
+    padding: 0;
+    margin: 0;
+  }
+
+  .site-nav .main-nav a {
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    color: #000000;
+    text-decoration: none;
+    position: relative;
+    transition: opacity 0.3s ease;
+  }
+
+  .site-nav .main-nav a.active::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -6px;
+    height: 2px;
+    background: linear-gradient(270deg, #1647A2 0%, #91021E 100%);
+  }
+
+  .site-nav .main-nav a:hover,
+  .site-nav .main-nav a:focus {
+    opacity: 0.8;
+  }
+
+  .site-nav .auth-nav {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    justify-self: end;
+  }
+
+  .site-nav .auth-nav a {
+    text-decoration: none;
+    font-weight: 600;
+    color: #000000;
+    transition: opacity 0.3s ease;
+  }
+
+  .site-nav .auth-nav .login-link:hover,
+  .site-nav .auth-nav .login-link:focus {
+    opacity: 0.7;
+  }
+
+  .site-nav .auth-nav .signup-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 110px;
+    padding: 8px 24px;
+    border-radius: 30px;
+    background: linear-gradient(270deg, #1647A2 0%, #91021E 100%);
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .site-nav .auth-nav .signup-btn:hover,
+  .site-nav .auth-nav .signup-btn:focus {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
+  }
+
+  .site-nav .user-profile-link img {
+    width: 23px;
+    height: 23px;
+  }
+
+  .site-nav .auth-nav .user-profile-link:hover,
+  .site-nav .auth-nav .user-profile-link:focus {
     opacity: 0.8;
   }
   
@@ -112,14 +157,20 @@
   /*--------------------------- HEADER ---------------------------*/
 
   /*--------------------------- FOOTER ---------------------------*/
-  footer {
-    text-align: center;
-    padding: 2px 0;
-    background-color: #fff;
-    color: #000;
+  .site-footer {
+    margin-top: auto;
+    min-height: 47px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fffefe;
+    color: #000000;
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
   }
-  
-  footer img {
-    height: 50px;
+
+  .site-footer p {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
   }
    /*--------------------------- FOOTER ---------------------------*/
