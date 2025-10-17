@@ -24,17 +24,20 @@
   padding: 18px 40px 0;
 }
 
+
 .site-nav {
   position: relative;
-  display: flex;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-areas: 'brand nav auth';
   align-items: center;
-  justify-content: flex-start;
   column-gap: 32px;
   min-height: 29px;
   width: 100%;
 }
 
 .site-nav .brand {
+  grid-area: brand;
   font-size: 18px;
   font-weight: 700;
   letter-spacing: 0.12em;
@@ -46,10 +49,7 @@
 
 /* ---------- Main Nav Wrapper ---------- */
 .site-nav .main-nav-wrapper {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  grid-area: nav;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -58,6 +58,8 @@
   max-width: calc(100% - 80px);
   min-height: 29px;
   padding: 6px 32px;
+  justify-self: center;
+  margin: 0 auto;
   z-index: 1;
 }
 
@@ -108,11 +110,12 @@
 
 /* ---------- Auth Nav ---------- */
 .site-nav .auth-nav {
+  grid-area: auth;
   display: flex;
   align-items: center;
   gap: 16px;
   list-style: none;
-  margin-left: auto;
+  justify-self: end;
   padding: 0;
 }
 
@@ -179,46 +182,59 @@
 }
 
 /* Responsive */
-@media (max-width: 1024px) {
+@media (max-width: 1100px) {
   .site-nav {
-    flex-wrap: wrap;
-    justify-content: center;
-    row-gap: 12px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-areas:
+      'brand auth'
+      'nav nav';
+    row-gap: 16px;
+    column-gap: 16px;
+    align-items: start;
+  }
+
+  .site-nav .brand {
+    justify-self: start;
   }
 
   .site-nav .auth-nav {
-    margin-left: 0;
+    justify-self: end;
   }
 
   .site-nav .main-nav-wrapper {
-    position: static;
-    transform: none;
+    width: 100%;
+    max-width: none;
+  }
+
+  .site-nav .main-nav {
     width: 100%;
     justify-content: center;
+    gap: 16px 24px;
+    flex-wrap: wrap;
   }
 }
 
 @media (max-width: 768px) {
+  .site-header,
+  .auth-header {
+    padding: 18px 24px 0;
+  }
+
   .site-nav {
-    gap: 12px;
+    row-gap: 12px;
   }
 
   .site-nav .main-nav-wrapper {
-    padding: 10px 24px;
+    padding: 10px 20px;
   }
 
   .site-nav .main-nav {
-    column-gap: 16px;
+    gap: 12px 16px;
   }
 
   .site-nav .auth-nav {
-    justify-content: center;
-    width: 100%;
-    order: 3;
+    gap: 12px;
   }
-
-  .site-nav .brand { order: 1; }
-  .site-nav .main-nav-wrapper { order: 2; }
 }
 /*--------------------------- HEADER ---------------------------*/
 
