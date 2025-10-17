@@ -22,7 +22,7 @@ if ($id === null || $id === false || $id <= 0) {
 $conn = get_db_connection();
 
 try {
-    $stmt = $conn->prepare('SELECT username, email, created_at FROM user WHERE user_id = ?');
+    $stmt = $conn->prepare('SELECT username, email, created_at FROM customers WHERE customer_id = ?');
     if (!$stmt) {
         throw new mysqli_sql_exception('Failed to prepare statement.');
     }

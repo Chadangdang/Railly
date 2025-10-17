@@ -18,10 +18,10 @@ if (!is_array($payload)) {
     exit;
 }
 
-$username = isset($payload['username']) ? trim((string) $payload['username']) : '';
+$identifier = isset($payload['username']) ? trim((string) $payload['username']) : '';
 $password = isset($payload['password']) ? trim((string) $payload['password']) : '';
 
-if ($username === '' || $password === '') {
+if ($identifier === '' || $password === '') {
     echo json_encode(['success' => false, 'message' => 'All fields are required.']);
     exit;
 }
@@ -29,8 +29,8 @@ if ($username === '' || $password === '') {
 $conn = get_db_connection();
 
 try {
-    $stmt = $conn->prepare('SELECT user_id, username, email, pass FROM user WHERE username = ?');
-    $stmt->bind_param('s', $username);
+    $stmt = $conn->prepare('SELECT customer_id, username, email, password_hash FROM customers WHERE username = ? OR email = ?');
+    $stmt->bind_param('ss', $identifier, $identifier);
     $stmt->execute();
     $result = $stmt->get_result();
 
@@ -41,12 +41,12 @@ try {
 
     $user = $result->fetch_assoc();
 
-    if (!password_verify($password, $user['pass'])) {
+    if (!password_verify($password, $user['password_hash'])) {
         echo json_encode(['success' => false, 'message' => 'Invalid password.']);
         return;
     }
 
-    $_SESSION['user_id'] = $user['user_id'];
+    $_SESSION['user_id'] = $user['customer_id'];
     $_SESSION['username'] = $user['username'];
     $_SESSION['email'] = $user['email'];
 
@@ -54,7 +54,7 @@ try {
         'success' => true,
         'message' => 'Login successful!',
         'user' => [
-            'id' => $user['user_id'],
+            'id' => $user['customer_id'],
             'username' => $user['username'],
             'email' => $user['email']
         ]

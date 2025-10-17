@@ -29,7 +29,7 @@ if ($username === '' || $email === '' || $password === '') {
 $conn = get_db_connection();
 
 try {
-    $checkStmt = $conn->prepare('SELECT user_id FROM user WHERE username = ? OR email = ?');
+    $checkStmt = $conn->prepare('SELECT customer_id FROM customers WHERE username = ? OR email = ?');
     $checkStmt->bind_param('ss', $username, $email);
     $checkStmt->execute();
     $existing = $checkStmt->get_result();
@@ -41,7 +41,7 @@ try {
 
     $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
-    $insertStmt = $conn->prepare('INSERT INTO user (username, email, pass) VALUES (?, ?, ?)');
+    $insertStmt = $conn->prepare('INSERT INTO customers (username, email, password_hash) VALUES (?, ?, ?)');
     $insertStmt->bind_param('sss', $username, $email, $hashedPassword);
     $insertStmt->execute();
 
