@@ -27,14 +27,14 @@
 }
 
 .login-card {
-  width: min(518px, 100%);
+  width: min(480px, 100%);
   background: #FFFFFF;
   border-radius: 20px;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-  padding: 56px 64px 48px;
+  padding: 48px 56px 40px;
   display: flex;
   flex-direction: column;
-  gap: 48px;
+  gap: 40px;
 }
 
 .auth-tabs {
@@ -43,6 +43,7 @@
   align-items: center;
   justify-content: center;
   width: min(283px, 100%);
+  height: 46px;
   background: #FFFFFF;
   border-radius: 40px;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
@@ -58,7 +59,7 @@
   font-size: 20px;
   line-height: 29px;
   text-align: center;
-  padding: 12px 0;
+  padding: 0;
   color: #000000;
   text-decoration: none;
   cursor: pointer;
@@ -66,6 +67,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  height: 100%;
 }
 
 .tab-button.active {
@@ -77,13 +79,13 @@
 .form-content {
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  gap: 28px;
 }
 
 .input-group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 4px;
 }
 
 .input-label {
@@ -110,7 +112,7 @@
 
 .underline-input:focus {
   outline: none;
-  border-bottom-color: #0AB1F8;
+  border-bottom-color: #000000;
 }
 
 .toggle-password {
@@ -122,8 +124,8 @@
   border: none;
   padding: 0;
   cursor: pointer;
-  height: 24px;
-  width: 24px;
+  height: 18px;
+  width: 18px;
 }
 
 .toggle-password img {
@@ -139,7 +141,7 @@
 }
 
 .signup-redirect a {
-  color: #F3447A;
+  color: #91021E;
   font-weight: 600;
   text-decoration: none;
 }
