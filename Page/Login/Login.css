@@ -18,6 +18,15 @@
     color: #333;
   }
 
+  .login-page .site-header {
+    width: 100%;
+    align-self: stretch;
+  }
+
+  .login-page .site-nav {
+    width: 100%;
+  }
+
   .login-page .form-container {
     margin: 120px auto 40px;
   }

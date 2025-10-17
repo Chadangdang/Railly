@@ -18,6 +18,15 @@
     color: #333;
   }
 
+  .signup-page .site-header {
+    width: 100%;
+    align-self: stretch;
+  }
+
+  .signup-page .site-nav {
+    width: 100%;
+  }
+
   .signup-page .form-container {
     margin: 120px auto 40px;
   }
