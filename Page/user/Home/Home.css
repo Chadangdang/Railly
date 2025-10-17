@@ -28,7 +28,7 @@
 }
 
 .home-header {
-  padding: 18px 40px 0;
+  padding: 18px var(--layout-padding-inline) 0;
 }
 
 .home-header .site-nav .main-nav-wrapper {
@@ -73,7 +73,7 @@
   flex: 1;
   display: flex;
   align-items: center;
-  padding: 0 67px 80px;
+  padding: 0 var(--layout-padding-inline) 80px;
 }
 
 .hero {
@@ -175,7 +175,7 @@
   }
 
   .home-main {
-    padding: 60px 40px;
+    padding: 60px var(--layout-padding-inline);
   }
 
   .hero h1 {
@@ -196,7 +196,7 @@
 
 @media (max-width: 768px) {
   .home-main {
-    padding: 40px 24px 60px;
+    padding: 40px var(--layout-padding-inline) 60px;
   }
 
   .hero {

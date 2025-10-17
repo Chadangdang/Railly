@@ -4,6 +4,7 @@ main {
   align-items: center;
   margin-top: 0;
   text-align: center;
+  padding: 60px var(--layout-padding-inline) 80px;
 }
 
 /* Topper */

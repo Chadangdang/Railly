@@ -5,6 +5,7 @@ main {
   align-items: center;
   margin-top: 20px;
   text-align: center;
+  padding: 60px var(--layout-padding-inline) 80px;
 }
 
 /* Page Header Styling */
