@@ -69,10 +69,6 @@
   height: 23px;
 }
 
-.is-hidden {
-  display: none !important;
-}
-
 .home-main {
   flex: 1;
   display: flex;

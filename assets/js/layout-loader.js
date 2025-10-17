@@ -83,7 +83,7 @@
     function handleComponentInsertion(placeholder, fragmentRoot) {
       applyExtraClasses(fragmentRoot, placeholder);
   
-      if (fragmentRoot.classList.contains('site-header')) {
+      if (fragmentRoot.matches('.site-header, .auth-header')) {
         var activePage = placeholder.getAttribute('data-nav-active');
         applyActiveNav(fragmentRoot, activePage);
         updateAuthState(fragmentRoot);
@@ -138,6 +138,8 @@
       Promise.allSettled(loaders).then(function () {
         window.__layoutReady = true;
         document.dispatchEvent(new CustomEvent(READY_EVENT));
+        document.querySelectorAll('.site-header, .auth-header')
+        .forEach(function (el) { updateAuthState(el); });
       });
     });
   })();
