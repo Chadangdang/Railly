@@ -15,81 +15,112 @@
     data-include-class="auth-header"
   ></div>
 
-  <div class="form-container">
-    <h2>Login</h2>
-    <form id="login-form" class="form-content" onsubmit="handleLogin(event)">
-      <input type="text" placeholder="User Name" required id="username" autocomplete="off">
-      <div class="password-container">
-          <input type="password" placeholder="Enter Password" required id="pass">
-          <span class="toggle-password" onclick="togglePassword()">👁️</span>
+  <main class="login-main">
+    <div class="login-card">
+      <div class="auth-tabs">
+        <button class="tab-button active" type="button">Log in</button>
+        <a class="tab-button" href="../Signup/Signup.html">Sign up</a>
       </div>
-      <button type="submit" class="submit-btn">Log in</button>
-    </form>    
-    <p>Don't have an account? <a href="../Signup/Signup.html">Sign up here</a></p>
-  </div>
+
+      <form id="login-form" class="form-content" onsubmit="handleLogin(event)">
+        <div class="input-group">
+          <label class="input-label" for="username">User Name or Email</label>
+          <input
+            type="text"
+            id="username"
+            class="underline-input"
+            autocomplete="off"
+            required
+          >
+        </div>
+
+        <div class="input-group">
+          <label class="input-label" for="pass">Enter Password</label>
+          <div class="password-input">
+            <input
+              type="password"
+              id="pass"
+              class="underline-input"
+              required
+            >
+            <button
+              type="button"
+              class="toggle-password"
+              aria-label="Toggle password visibility"
+              onclick="togglePassword()"
+            >
+              <img
+                src="../../assets/img/eyeoff.png"
+                alt=""
+                id="toggle-password-icon"
+              >
+            </button>
+          </div>
+        </div>
+
+        <p class="signup-redirect">
+          Don’t have an account?
+          <a href="../Signup/Signup.html">Sign up here</a>
+        </p>
+
+        <button type="submit" class="submit-btn">Log in</button>
+      </form>
+    </div>
+  </main>
 
   <script>
-    // Toggle password visibility
+    const passwordField = document.getElementById('pass');
+    const togglePasswordIcon = document.getElementById('toggle-password-icon');
+
     function togglePassword() {
-      const passwordField = document.getElementById('pass');
-      if (passwordField.type === 'password') {
-        passwordField.type = 'text';
-      } else {
-        passwordField.type = 'password';
-      }
+      const isHidden = passwordField.type === 'password';
+      passwordField.type = isHidden ? 'text' : 'password';
+      togglePasswordIcon.src = isHidden
+        ? '../../assets/img/eye.png'
+        : '../../assets/img/eyeoff.png';
     }
 
-    // Handle login form submission
     async function handleLogin(event) {
       event.preventDefault();
-  
-      // Get the username and password from the input fields
+
       const username = document.getElementById('username').value.trim();
       const password = document.getElementById('pass').value.trim();
-  
-      // Log the username and password values for debugging
+
       console.log('Username:', username);
       console.log('Password:', password);
-  
+
       try {
-        // Send a POST request to the PHP script with username and password
         const response = await fetch('../../Backend/Login.php', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username, password }) // Correct JSON body
+          body: JSON.stringify({ username, password })
         });
-  
-        // Log the raw server response for debugging
+
         console.log('Server response status:', response.status);
-  
-        // Parse the JSON response from the server
+
         const responseData = await response.json();
-        console.log('Login data:', responseData); // Log the parsed response data
-  
-        // Check if login was successful
-        // Check if login was successful
-    if (responseData.success) {
-      const userId = responseData.user.id; // Fetch the ID from the response
-      const username = responseData.user.username;
+        console.log('Login data:', responseData);
 
-      // Store login state and user information in localStorage
-      localStorage.setItem('isLoggedIn', 'true');
-      localStorage.setItem('username', username);
-      localStorage.setItem('userId', userId);
-      localStorage.setItem('loginExpiry', Date.now() + 60 * 60 * 1000); // 1-hour session expiry
+        if (responseData.success) {
+          const userId = responseData.user.id;
+          const loggedInUsername = responseData.user.username;
 
-      alert(responseData.message);
+          localStorage.setItem('isLoggedIn', 'true');
+          localStorage.setItem('username', loggedInUsername);
+          localStorage.setItem('userId', userId);
+          localStorage.setItem('loginExpiry', Date.now() + 60 * 60 * 1000);
 
-      // Redirect to homepage with username and ID in URL
-      window.location.href = `../Home/home.html?username=${encodeURIComponent(username)}&id=${encodeURIComponent(userId)}`;
-    } else {
-      alert(responseData.message); // Display error message from server
+          alert(responseData.message);
+
+          window.location.href = `../Home/home.html?username=${encodeURIComponent(loggedInUsername)}&id=${encodeURIComponent(userId)}`;
+        } else {
+          alert(responseData.message);
+        }
+      } catch (error) {
+        console.error('Login error:', error);
+        alert('An error occurred while logging in.');
+      }
     }
-  } catch (error) {
-    console.error('Login error:', error);
-    alert('An error occurred while logging in.');
-  }
-}
   </script>
 </body>
 </html>
