@@ -31,87 +31,24 @@
   padding: 18px 40px 0;
 }
 
-.home-header .site-nav {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  align-items: center;
-  column-gap: 32px;
-}
-
-.home-header .site-nav .brand {
-  font-size: 18px;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  color: #000000;
-  text-decoration: none;
-  justify-self: start;
-}
-
 .home-header .site-nav .main-nav-wrapper {
   border: 1px solid rgba(0, 0, 0, 0.27);
   border-radius: 30px;
   padding: 6px 26px;
-  display: flex;
-  align-items: center;
-  justify-self: center;
-  justify-content: center;
 }
 
-.home-header .site-nav .main-nav {
-  display: flex;
-  align-items: center;
-  list-style: none;
-  gap: 32px;
-  justify-content: center;
-}
-
-.home-header .site-nav .main-nav a {
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 20px;
-  color: #000000;
-  text-decoration: none;
-  position: relative;
-  transition: opacity 0.3s ease;
-}
-
-.home-header .site-nav .main-nav a:hover,
-.home-header .site-nav .main-nav a:focus {
-  opacity: 0.8;
-}
-
-.home-header .site-nav .auth-nav {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  justify-self: end;
-}
-
+.home-header .site-nav .brand,
+.home-header .site-nav .main-nav a,
 .home-header .site-nav .login-link {
-  font-size: 16px;
-  font-weight: 400;
   color: #000000;
-  text-decoration: none;
-  transition: opacity 0.3s ease;
-}
-
-.home-header .site-nav .login-link:hover,
-.home-header .site-nav .login-link:focus {
-  opacity: 0.7;
 }
 
 .home-header .site-nav .signup-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
   min-width: 110px;
   padding: 8px 24px;
   border-radius: 30px;
   background: linear-gradient(270deg, #1647A2 0%, #91021E 100%);
   color: #ffffff;
-  font-size: 16px;
-  font-weight: 400;
-  text-decoration: none;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
@@ -262,26 +199,6 @@
 }
 
 @media (max-width: 768px) {
-  .home-header .site-nav .main-nav-wrapper {
-    width: 100%;
-    justify-content: center;
-  }
-
-  .home-header .site-nav .main-nav {
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 16px;
-  }
-
-  .home-header .site-nav .auth-nav {
-    width: auto;
-    justify-content: flex-end;
-  }
-
-  .home-header .site-nav .brand {
-    justify-self: start;
-  }
-
   .home-main {
     padding: 40px 24px 60px;
   }

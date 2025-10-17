@@ -36,6 +36,39 @@
   .profile-header {
     padding: 18px 40px 0;
   }
+
+  .profile-header .site-nav .main-nav-wrapper {
+    border: 1px solid rgba(0, 0, 0, 0.27);
+    border-radius: 30px;
+    padding: 6px 26px;
+  }
+
+  .profile-header .site-nav .brand,
+  .profile-header .site-nav .main-nav a,
+  .profile-header .site-nav .login-link {
+    color: #000000;
+  }
+
+  .profile-header .site-nav .signup-btn {
+    min-width: 110px;
+    padding: 8px 24px;
+    border-radius: 30px;
+    background: linear-gradient(270deg, #1647a2 0%, #91021e 100%);
+    color: #ffffff;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .profile-header .site-nav .signup-btn:hover,
+  .profile-header .site-nav .signup-btn:focus {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
+  }
+
+  .profile-header .site-nav .signup-btn.user-pill {
+    cursor: default;
+    pointer-events: none;
+    text-transform: uppercase;
+  }
   
   .profile-main {
     flex: 1;
@@ -147,72 +180,12 @@
     color: #000000;
   }
   
-  @media (max-width: 1024px) {
-    .profile-header .site-nav {
-      display: grid;
-      grid-template-columns: auto 1fr;
-      grid-template-areas:
-        "brand auth"
-        "menu  menu";
-      align-items: center;
-      column-gap: 16px;
-      row-gap: 12px;
-    }
-  
-    .profile-header .site-nav .brand {
-      grid-area: brand;
-      justify-self: start;
-    }
-  
-    .profile-header .site-nav .auth-nav {
-      grid-area: auth;
-      justify-self: end;
-    }
-  
-    .profile-header .site-nav .main-nav-wrapper {
-      grid-area: menu;
-      justify-self: stretch;
-      width: 100%;
-      justify-content: center;
-    }
-  
-    .profile-header .site-nav .main-nav {
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 16px;
-    }
-  
-    .profile-title {
-      font-size: 25px;
-    }
-  }
-  
   @media (max-width: 768px) {
     .profile-header {
       padding: 18px 20px 0;
     }
-  
-    .profile-header .site-nav .main-nav-wrapper {
-      width: 100%;
-      justify-content: center;
-    }
-  
-    .profile-header .site-nav .main-nav {
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 16px;
-    }
-  
-    .profile-header .site-nav .auth-nav {
-      width: auto;
-      justify-content: flex-end;
-    }
-  
-    .profile-header .site-nav .brand {
-      justify-self: start;
-    }
-  
+
     .profile-info {
       gap: 16px;
     }
-  }  
+  }
