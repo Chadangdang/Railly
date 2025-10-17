@@ -11,7 +11,7 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: url('../../assets/img/train_bg.png') center/cover no-repeat;
+  background: url('../../../assets/img/train_bg.png') center/cover no-repeat;
   overflow: hidden;
 }
 

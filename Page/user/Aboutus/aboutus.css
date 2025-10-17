@@ -19,7 +19,7 @@
   min-height: 660px;
   width: 100vw;
   margin: 0 calc(50% - 50vw);
-  background: url('../../assets/img/about_train_bg.png') center top / cover no-repeat;
+  background: url('../../../assets/img/about_train_bg.png') center top / cover no-repeat;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -293,7 +293,7 @@
   }
 
   .about-hero {
-    background: url('../../assets/img/about_train_bg.png') center top / cover no-repeat;
+    background: url('../../../assets/img/about_train_bg.png') center top / cover no-repeat;
   }
 
   .about-header .site-nav .main-nav-wrapper {
@@ -340,7 +340,7 @@
   }
 
   .about-hero {
-    background: url('../../assets/img/about_train_bg.png') center top / cover no-repeat;
+    background: url('../../../assets/img/about_train_bg.png') center top / cover no-repeat;
   }
 
   .about-hero-title,

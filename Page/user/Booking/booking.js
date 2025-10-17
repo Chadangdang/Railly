@@ -42,7 +42,7 @@
       datee: dateValue
     });
 
-    fetch('../../Backend/getTickets.php?' + queryParams.toString())
+    fetch('../../../Backend/getTickets.php?' + queryParams.toString())
       .then(function (response) {
         return response.json();
       })

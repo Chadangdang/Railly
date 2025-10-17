@@ -14,7 +14,7 @@
       const emailElement = document.getElementById('user-email-value');
 
       try {
-        const response = await fetch(`../../Backend/getUserProfile.php?id=${encodeURIComponent(userId)}`);
+        const response = await fetch(`../../../Backend/getUserProfile.php?id=${encodeURIComponent(userId)}`);
 
         if (!response.ok) {
           throw new Error('Failed to load user profile.');
