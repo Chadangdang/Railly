@@ -1,28 +1,57 @@
-function togglePassword(id) {
-    const passwordField = document.getElementById(id);
-    const toggleIcon = document.getElementById('toggle-password');
-    if (passwordField.type === 'password') {
-      passwordField.type = 'text';
-      toggleIcon.classList.add('visible'); // Add class to indicate state
-    } else {
-      passwordField.type = 'password';
-      toggleIcon.classList.remove('visible'); // Remove class to revert state
+const passwordField = document.getElementById('password');
+const togglePasswordButton = document.getElementById('toggle-password');
+const togglePasswordIcon = document.getElementById('toggle-password-icon');
+const signupForm = document.getElementById('signup-form');
+const termsCheckbox = document.getElementById('terms');
+const termsError = document.getElementById('terms-error');
+
+if (togglePasswordButton && passwordField && togglePasswordIcon) {
+  togglePasswordButton.addEventListener('click', () => {
+    const isHidden = passwordField.type === 'password';
+    passwordField.type = isHidden ? 'text' : 'password';
+    togglePasswordIcon.src = isHidden
+      ? '../../../assets/img/eye.png'
+      : '../../../assets/img/eyeoff.png';
+  });
+}
+
+if (termsCheckbox && termsError) {
+  termsCheckbox.addEventListener('change', () => {
+    if (termsCheckbox.checked) {
+      termsError.textContent = '';
+      termsError.classList.remove('show');
     }
+  });
+}
+
+if (signupForm) {
+  signupForm.addEventListener('submit', handleSignup);
+}
+
+async function handleSignup(event) {
+  event.preventDefault();
+
+  const username = document.getElementById('username').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value.trim();
+
+  if (!termsCheckbox || !termsCheckbox.checked) {
+    if (termsError) {
+      termsError.textContent = 'Please agree to the terms & conditions before signing up.';
+      termsError.classList.add('show');
+    }
+    if (termsCheckbox) {
+      termsCheckbox.focus();
+    }
+    return;
   }
 
-  async function handleSignup(event) {
-    event.preventDefault(); // Prevent form submission
-    const username = document.getElementById('username').value;
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-    const terms = document.getElementById('terms').checked;
+  if (termsError) {
+    termsError.textContent = '';
+    termsError.classList.remove('show');
+  }
 
-    if (!terms) {
-      alert('You must agree to the terms and conditions.');
-      return;
-    }
-
-    // Send data to backend via AJAX (using Fetch API)
+  try {
     const response = await fetch('../../../Backend/Signup.php', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -32,10 +61,13 @@ function togglePassword(id) {
     const data = await response.json();
 
     if (data.success) {
-      // Redirect to home page after successful signup
       alert('Signup successful!');
-      window.location.href = "../Home/home.html"; // Redirect to homepage
+      window.location.href = '../Home/home.html';
     } else {
-      alert('Signup failed. Please try again.');
+      alert(data.message || 'Signup failed. Please try again.');
     }
+  } catch (error) {
+    console.error('Signup error:', error);
+    alert('An error occurred while signing up.');
   }
+}
