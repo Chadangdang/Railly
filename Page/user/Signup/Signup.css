@@ -67,7 +67,7 @@
 }
 
 .auth-tabs.active-signup::before {
-  transform: translateX(calc(100% + 4px));
+  transform: translateX(calc(100% - 4px));
 }
 
 .tab-button {
