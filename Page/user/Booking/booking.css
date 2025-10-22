@@ -1,188 +1,395 @@
-main {
+@import url('https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap');
+
+:root {
+  --booking-card-width: 1123px;
+  --booking-radius-lg: 20px;
+  --booking-radius-md: 15px;
+  --booking-text-color: #575757;
+  --booking-gradient: linear-gradient(90deg, #1647a2 0%, #91021e 100%);
+  --booking-accent-gradient: linear-gradient(90deg, #0ab1f8 0%, #f3447a 100%);
+  --booking-heading-gradient: linear-gradient(180deg, #91021e 0%, #29083d 100%);
+}
+
+body.booking-page {
+  margin: 0;
+  min-height: 100vh;
+  font-family: 'Jost', sans-serif;
+  color: var(--booking-text-color);
+  background: #ffffff;
+}
+
+.booking-page-wrapper {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.8) 3%,
+      rgba(145, 2, 30, 0.8) 46.5%,
+      rgba(22, 71, 162, 0.8) 100%
+    ),
+    url('../../../assets/img/train_bg.png') center/cover no-repeat;
+}
+
+.booking-page-wrapper::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.15);
+  pointer-events: none;
+}
+
+.booking-page-wrapper > * {
+  position: relative;
+  z-index: 1;
+}
+
+.booking-main {
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 0;
+  gap: 40px;
+  padding: 48px var(--layout-padding-inline) 96px;
   text-align: center;
-  padding: 60px var(--layout-padding-inline) 80px;
 }
 
-/* Topper */
-main h2 {
-  font-size: 32px;
-  font-weight: bold;
-  color: #8e0037;
-  margin-bottom: 30px;
+.booking-title {
+  width: 100%;
+  max-width: 800px;
+  margin: 0;
+  font-size: 25px;
+  font-weight: 700;
+  line-height: 52px;
+  text-transform: uppercase;
+  background: var(--booking-heading-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
 }
 
-/* White box */
-.booking-form {
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.search-panel {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.search-form {
+  width: 100%;
+  max-width: var(--booking-card-width);
   display: flex;
   flex-direction: column;
-  align-items: center;
-  background-color: white;
-  padding: 30px;
-  border-radius: 15px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  gap: 15px;
-  width: 90%;
-  max-width: 2000px;
+  gap: 24px;
+  padding: 32px;
+  border-radius: var(--booking-radius-lg);
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0px 4px 24px rgba(0, 0, 0, 0.18);
+  backdrop-filter: blur(3px);
 }
 
-/* Dropdowns, date input, and button */
-.booking-form select,
-.booking-form button {
-  padding: 15px;
-  font-size: 16px;
-  border-radius: 10px;
-  border: 1px solid #ddd;
+.search-fields {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-align: left;
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.55);
+}
+
+.field select,
+.field input[type='date'] {
+  width: 100%;
+  height: 51px;
+  padding: 0 48px 0 18px;
+  font-size: 18px;
+  border-radius: var(--booking-radius-md);
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  background-color: #ffffff;
+  color: #575757;
   appearance: none;
-  background: white;
-  color: #555;
-  text-align: left;
-  width: 100%;
-  max-width: 300px;
-  outline: none;
-  transition: border-color 0.3s ease;
-}
-
-/* Date input */
-.booking-form input[type="date"] {
-  -webkit-appearance: none; 
-  -moz-appearance: textfield; 
-  appearance: none; 
-  padding: 15px;
-  font-size: 16px;
-  border-radius: 10px;
-  border: 1px solid #ddd;
-  background: white;
-  color: #555;
-  text-align: left;
-  width: 100%;
-  max-width: 300px;
-  outline: none;
-  transition: border-color 0.3s ease;
-}
-
-/* hover effect */
-.booking-form input[type="date"]:hover {
-  border-color: #8e0037;
-}
-
-
-/* date picker */
-.booking-form select:hover, 
-.booking-form input[type="date"]:hover {
-  border-color: #8e0037;
-}
-
-.booking-form select option {
-  color: #333;
-}
-
-/* SEARCH button */
-.booking-form button {
-  background: linear-gradient(to right, #004aad, #8e0037);
-  color: white;
-  padding: 10px 150px;
-  font-weight: bold;
-  border: none;
-  cursor: pointer;
-  transition: background 0.3s ease;
-  margin-top: 5px;
-  width: 100%;
-  max-width: 400px;
-}
-
-.booking-form button:hover {
-  background: linear-gradient(to right, #8e0037, #004aad);
-}
-
-/* dropdowns / date input */
-.booking-form select, 
-.booking-form input[type="date"] {
-  background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="%23555" d="M7 10l5 5 5-5H7z"/></svg>');
+  -webkit-appearance: none;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23737373' d='M6 8a1 1 0 0 1-.71-.29l-5-5A1 1 0 0 1 1.71.29L6 4.59l4.29-4.3A1 1 0 0 1 11.71 2.7l-5 5A1 1 0 0 1 6 8Z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
-  background-position: right 15px center;
-  background-size: 12px;
+  background-position: right 18px center;
 }
 
-#ticket-results {
-  margin-top: 20px;
+.field input[type='date'] {
+  background-image: none;
+}
+
+.field select:focus,
+.field input[type='date']:focus {
+  border-color: #91021e;
+  box-shadow: 0 0 0 3px rgba(145, 2, 30, 0.15);
+  outline: none;
+}
+
+.search-actions {
+  display: flex;
+  justify-content: center;
+}
+
+.search-actions button {
+  min-width: 260px;
+  height: 52px;
+  padding: 0 56px;
+  border: none;
+  border-radius: 10px;
+  background: var(--booking-gradient);
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.search-actions button:hover,
+.search-actions button:focus {
+  transform: translateY(-1px);
+  box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.25);
+  outline: none;
+}
+
+.tickets-section {
   width: 100%;
+  max-width: var(--booking-card-width);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  text-align: left;
+  color: #ffffff;
 }
 
-/* Ticket Card Styling */
-#ticket-results {
-  margin-top: 20px;
+.tickets-header h2 {
+  margin: 0;
+  font-size: 32px;
+  font-weight: 500;
+  text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+}
+
+.tickets-subheading {
+  margin: 6px 0 0;
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.ticket-results {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
   width: 100%;
 }
 
 .ticket-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 28px;
+  padding: 26px 34px;
+  border-radius: var(--booking-radius-lg);
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: 0px 4px 24px rgba(0, 0, 0, 0.18);
+  color: #2f2f2f;
+}
+
+.ticket-icon {
+  width: 88px;
+  height: 88px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  background-color: white;
-  color: black;
-  padding: 20px;
-  margin: 15px 0;
-  border-radius: 15px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  font-family: 'Jost', sans-serif;
-  gap: 15px;
+  justify-content: center;
 }
 
-.ticket-card div {
+.ticket-icon img {
+  max-width: 100%;
+  height: auto;
+}
+
+.ticket-info {
   display: flex;
-  align-items: center;
-  text-align: left;
-   /* Ensures even spacing across the card */
+  flex-direction: column;
+  gap: 12px;
 }
 
-.ticket-card .station {
-  font-size: 16px;
-  font-weight: bold;
-}
-
-.ticket-card .time {
-  font-size: 14px;
-  color: gray;
-}
-
-.ticket-card .price {
+.ticket-date {
   font-size: 18px;
-  font-weight: bold;
-  color: #8e0037;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: #91021e;
 }
 
-.ticket-card .from-price {
-  font-size: 12px;
-  color: gray;
+.ticket-times {
+  display: flex;
+  align-items: center;
+  gap: 26px;
+  flex-wrap: wrap;
 }
 
-.ticket-card .select-btn {
-  background: linear-gradient(to right, #004aad, #8e0037);
-  color: white;
-  padding: 10px 20px;
+.time-block {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 120px;
+}
+
+.time-block .time {
+  font-size: 36px;
+  font-weight: 500;
+  color: #000000;
+}
+
+.time-block .station {
+  font-size: 20px;
+  color: #a6a3a3;
+}
+
+.travel-duration {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  min-width: 160px;
+}
+
+.travel-duration span {
+  font-size: 16px;
+  color: #1647a2;
+  font-weight: 500;
+}
+
+.travel-duration::before {
+  content: '';
+  width: 120px;
+  height: 4px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #91021e 0%, #1647a2 100%);
+}
+
+.ticket-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+  min-width: 200px;
+}
+
+.ticket-availability {
+  font-size: 16px;
+  color: #1647a2;
+  font-weight: 600;
+}
+
+.ticket-price {
+  font-size: 24px;
+  font-weight: 700;
+  color: #91021e;
+}
+
+.ticket-actions button {
+  width: 207px;
+  height: 52px;
   border: none;
   border-radius: 10px;
-  font-weight: bold;
+  background: var(--booking-accent-gradient);
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 600;
   cursor: pointer;
-  transition: background 0.3s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.18);
 }
 
-.ticket-card .select-btn:hover {
-  background: linear-gradient(to right, #8e0037, #004aad);
+.ticket-actions button:hover,
+.ticket-actions button:focus {
+  transform: translateY(-1px);
+  box-shadow: 0px 8px 18px rgba(243, 68, 122, 0.35);
+  outline: none;
 }
 
-/* Ensuring each section in the ticket card is inline */
-.ticket-card > div {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  flex-wrap: nowrap;
+.ticket-actions button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  box-shadow: none;
 }
 
-.ticket-card > div span {
-  margin: 0 10px;
+.ticket-results p {
+  margin: 0;
+  padding: 24px;
+  border-radius: var(--booking-radius-lg);
+  background: rgba(255, 255, 255, 0.9);
+  color: #2f2f2f;
+  text-align: center;
+  box-shadow: 0px 4px 18px rgba(0, 0, 0, 0.15);
+}
+
+@media (max-width: 1024px) {
+  .search-fields {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .ticket-card {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .ticket-info {
+    align-items: center;
+  }
+
+  .ticket-actions {
+    align-items: center;
+    min-width: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .booking-main {
+    padding-inline: 24px;
+  }
+
+  .search-fields {
+    grid-template-columns: 1fr;
+  }
+
+  .search-actions button {
+    width: 100%;
+  }
+
+  .tickets-header h2 {
+    font-size: 26px;
+  }
+
+  .ticket-times {
+    justify-content: center;
+  }
+
+  .ticket-actions button {
+    width: 100%;
+  }
 }
