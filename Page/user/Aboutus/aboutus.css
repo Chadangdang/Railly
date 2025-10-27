@@ -4,6 +4,13 @@
   font-family: 'Jost', sans-serif;
   color: #000000;
   background: transparent;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+html.about-page-root {
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .about-page-wrapper {

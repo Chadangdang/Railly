@@ -2,6 +2,8 @@
   'use strict';
 
   function initAboutPage() {
+    document.documentElement.classList.add('about-page-root');
+
     if (!window.userSession) {
       return;
     }
