@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>RAILLY - About us</title>
     <link rel="stylesheet" href="../../../index.css" />
-    <link rel="stylesheet" href="./Aboutus.css" />
+    <link rel="stylesheet" href="./aboutus.css" />
     <style>
       @import url('https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap');
     </style>
@@ -14,35 +14,38 @@
     <script src="./aboutus.js" defer></script>
   </head>
   <body class="about-page">
-    <div
-      data-include="../shared/header.html"
-      data-include-class="site-header"
-      data-nav-active="about"
-    ></div>
+    <div class="about-page-wrapper">
+      <div
+        data-include="../shared/header.html"
+        data-include-class="site-header"
+        data-nav-active="about"
+      ></div>
 
-    <main class="page-content about-main">
-      <section class="about-hero">
-        <div class="about-hero-content">
-          <h1 class="about-hero-title">ABOUT RAILLY</h1>
-          <p class="about-description">
-            Railly is a simple train-ticket web app that makes traveling easier. You can search routes,<br />check real-time seat
-            availability, confirm your booking in one click,<br />and keep your e-tickets safely in one place.<br /> <br />The backend uses
-            PHP + MySQL for secure bookings,<br />while the frontend is built with HTML, CSS, and JavaScript,<br />designed in Figma for a
-            clean and responsive UI.
+      <main class="page-content about-main">
+        <section class="about-hero">
+          <div class="about-hero-content">
+            <h1 class="about-hero-title">ABOUT RAILLY</h1>
+            <p class="about-description">
+              Railly is a simple train-ticket web app that makes traveling easier. You can search routes,
+              check real-time seat availability, confirm your booking in one click, and keep your e-tickets safely in one place.
+              <br /><br />The backend uses PHP + MySQL for secure bookings, while the frontend is built with HTML, CSS, and
+              JavaScript, designed in Figma for a clean and responsive UI.
+            </p>
+          </div>
+        </section>
+
+        <section class="about-maker">
+          <h2 class="about-maker-title">The Maker</h2>
+          <p class="maker-description">
+            Hi, I’m Chadang Phummarin (Kanomtian), a student from the Digital Engineering Department at SIIT, Thammasat University.
+            I created Railly as part of my coursework to combine what I learned in database programming with my interest in web
+            design.
+            <br /><br />Contact me: <a href="mailto:chadang.phu@gmail.com">chadang.phu@gmail.com</a>
           </p>
-        </div>
-      </section>
+        </section>
+      </main>
 
-      <section class="about-maker">
-        <h2>The Maker</h2>
-        <p class="maker-description">
-          Hi, I’m Chadang Phummarin (Kanomtian), a student<br />from the Digital Engineering Department at SIIT, Thammasat University.<br />I
-          created Railly as part of my coursework to combine what I learned<br />in database programming with my interest in web design.<br />
-          <br />Contact me: <a href="mailto:chadang.phu@gmail.com">chadang.phu@gmail.com</a>
-        </p>
-      </section>
-    </main>
-
-    <div data-include="../shared/footer.html"></div>
+      <div data-include="../shared/footer.html"></div>
+    </div>
   </body>
 </html>
