@@ -24,6 +24,7 @@ html, body {
 
 :root {
     --layout-padding-inline: 25px;
+    --header-offset: 96px;
   }
 
 @media (max-width: 1024px) {
@@ -32,38 +33,41 @@ html, body {
       --nav-pill-width: clamp(420px, 56vw, 720px);
       --nav-pill-vpad: 4px;
       --nav-link-lh: 18px;
-      --nav-pill-hpad: 24px;  
+      --nav-pill-hpad: 24px;
+      --header-offset: 132px;
     }
   }
 
 @media (max-width: 768px) {
     :root {
       --layout-padding-inline: 24px;
+      --header-offset: 148px;
     }
   }
 
 @media (max-width: 480px) {
     :root {
       --layout-padding-inline: 16px;
+      --header-offset: 164px;
     }
   }
 
   /*--------------------------- HEADER ---------------------------*/
 .site-header,
 .auth-header {
-  position: sticky;
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
   z-index: 1000;
   width: 100%;
-  padding: 18px var(--layout-padding-inline) 0;
-  background: rgba(255, 255, 255, 0.92);
+  padding: 18px var(--layout-padding-inline);
   backdrop-filter: blur(6px);
 }
 
-.auth-header {
-  background: rgba(22, 71, 162, 0.85);
+.site-header + *,
+.auth-header + * {
+  margin-top: var(--header-offset);
 }
 
 
@@ -260,7 +264,7 @@ html, body {
 @media (max-width: 768px) {
   .site-header,
   .auth-header {
-    padding: 18px var(--layout-padding-inline) 0;
+    padding: 18px var(--layout-padding-inline);
   }
 
   .site-nav {
