@@ -10,33 +10,6 @@
   --booking-heading-gradient: linear-gradient(180deg, #91021e 0%, #29083d 100%);
 }
 
-body.booking-page {
-  margin: 0;
-  min-height: 100vh;
-  font-family: 'Jost', sans-serif;
-  color: var(--booking-text-color);
-  background: #ffffff;
-}
-
-body.booking-page::-webkit-scrollbar {
-  width: 12px;
-}
-
-body.booking-page::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-body.booking-page::-webkit-scrollbar-thumb {
-  background: rgb(248, 248, 248);
-  border-radius: 999px;
-  border: 3px solid transparent;
-  background-clip: padding-box;
-}
-
-body.booking-page {
-  scrollbar-color: rgba(0, 0, 0, 0.534) transparent;
-}
-
 .booking-page-wrapper {
   position: relative;
   min-height: 100vh;

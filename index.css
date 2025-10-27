@@ -23,6 +23,29 @@ html, body {
     padding-bottom: 0;
   }
 
+  body,
+  .page-content {
+    scrollbar-color: rgba(0, 0, 0, 0.534) transparent;
+  }
+
+  body::-webkit-scrollbar,
+  .page-content::-webkit-scrollbar {
+    width: 12px;
+  }
+
+  body::-webkit-scrollbar-track,
+  .page-content::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  body::-webkit-scrollbar-thumb,
+  .page-content::-webkit-scrollbar-thumb {
+    background: rgb(248, 248, 248);
+    border-radius: 999px;
+    border: 3px solid transparent;
+    background-clip: padding-box;
+  }
+
 :root {
     --layout-padding-inline: 25px;
     --header-offset: 96px;
