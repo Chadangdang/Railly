@@ -1,22 +1,24 @@
 /* General Styling for the MyTicket Page */
-main {
+.myticket-main {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 20px;
+  margin-top: 0;
   text-align: center;
-  padding: 60px var(--layout-padding-inline) 80px;
+  padding: calc(var(--header-offset) + 60px)
+    var(--layout-padding-inline)
+    calc(var(--footer-height, 44px) + 80px);
 }
 
 /* Page Header Styling */
-main h2 {
+.myticket-main h2 {
   font-size: 36px;
   font-weight: bold;
   color: #8e0037;
   margin-bottom: 20px;
 }
 
-main h3 {
+.myticket-main h3 {
   font-size: 24px;
   font-weight: bold;
   color: #fff;
@@ -24,7 +26,7 @@ main h3 {
 }
 
 /* Instructions Paragraph */
-main p {
+.myticket-main p {
   font-size: 16px;
   color: #fff;
   margin: 10px 0 20px;

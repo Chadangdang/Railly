@@ -19,7 +19,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 40px var(--layout-padding-inline) 80px;
+  padding: calc(var(--header-offset) + 40px)
+    var(--layout-padding-inline)
+    calc(var(--footer-height, 44px) + 80px);
 }
 
 .signup-card {

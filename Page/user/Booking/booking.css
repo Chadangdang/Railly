@@ -51,7 +51,9 @@ body.booking-page {
   flex-direction: column;
   align-items: center;
   gap: 40px;
-  padding: 48px var(--layout-padding-inline) 96px;
+  padding: calc(var(--header-offset) + 48px)
+    var(--layout-padding-inline)
+    calc(var(--footer-height, 44px) + 96px);
   text-align: center;
 }
 

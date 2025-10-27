@@ -39,7 +39,9 @@
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    padding: 30px var(--layout-padding-inline) 80px;
+    padding: calc(var(--header-offset) + 30px)
+      var(--layout-padding-inline)
+      calc(var(--footer-height, 44px) + 80px);
     text-align: center;
     gap: 32px;
   }

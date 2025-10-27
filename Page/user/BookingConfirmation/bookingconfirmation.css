@@ -1,14 +1,16 @@
-main {
+.booking-confirm-main {
   display: flex;
   flex-direction: column;
   align-items: center;
   margin-top: 0;
   text-align: center;
-  padding: 60px var(--layout-padding-inline) 80px;
+  padding: calc(var(--header-offset) + 60px)
+    var(--layout-padding-inline)
+    calc(var(--footer-height, 44px) + 80px);
 }
 
 /* Topper */
-main h2 {
+.booking-confirm-main h2 {
   font-size: 32px;
   font-weight: bold;
   color: #8e0037;
