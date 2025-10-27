@@ -6,7 +6,7 @@
     var bookTicketButton = document.getElementById('book-ticket-btn');
 
     if (session) {
-      session.applyUserContextToLinks('.home-header .main-nav a, .home-header .brand, .home-header .user-profile-link');
+      session.applyUserContextToLinks('.site-header .main-nav a, .site-header .brand, .site-header .user-profile-link');
     }
 
     if (bookTicketButton) {

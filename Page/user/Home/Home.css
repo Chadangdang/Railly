@@ -40,7 +40,7 @@
   
   min-height: calc(100vh - var(--header-offset) - var(--footer-height));
   overflow: auto;
-  transform: translateY(-100px);
+  transform: translateY(-30px);
 }
 
 .hero {
