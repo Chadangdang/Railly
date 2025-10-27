@@ -10,6 +10,7 @@
   /* Body */
 html, body {
     height: 100%;
+    overflow: hidden;
     font-family: 'Jost', sans-serif;
     background: linear-gradient(to bottom, #fff, #91021E, #1647A2);
     color: #fff;
@@ -19,7 +20,7 @@ html, body {
 
   body {
     width: 100%;
-    padding-bottom: 80px;
+    padding-bottom: 0;
   }
 
 :root {
@@ -49,8 +50,24 @@ html, body {
     :root {
       --layout-padding-inline: 16px;
       --header-offset: 164px;
+      --footer-height: 44px;
     }
   }
+
+  :root {
+  --layout-padding-inline: 25px;
+  --header-offset: 96px;
+  --footer-height: 44px;
+}
+
+.page-content {
+  flex: 1 0 auto;
+  padding: calc(var(--header-offset) + 12px) var(--layout-padding-inline)
+           calc(var(--footer-height) + 12px);
+  min-height: calc(100vh - var(--header-offset) - var(--footer-height));
+  overflow: auto;
+}
+
 
   /*--------------------------- HEADER ---------------------------*/
 .site-header,
@@ -64,12 +81,6 @@ html, body {
   padding: 18px var(--layout-padding-inline);
   backdrop-filter: blur(6px);
 }
-
-.site-header + *,
-.auth-header + * {
-  margin-top: var(--header-offset);
-}
-
 
 .site-nav {
   position: relative;
@@ -291,7 +302,7 @@ html, body {
     left: 0;
     right: 0;
     bottom: 0;
-    min-height: 47px;
+    height: var(--footer-height);
     display: flex;
     align-items: center;
     justify-content: center;
