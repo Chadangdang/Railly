@@ -301,11 +301,13 @@
   position: relative;
   display: grid;
   grid-template-columns:
-    auto auto minmax(150px, 1fr) minmax(140px, 0.75fr) minmax(150px, 1fr) auto minmax(150px, auto);
+    auto auto minmax(160px, max-content) minmax(120px, max-content)
+    minmax(160px, max-content) auto minmax(150px, max-content);
   align-items: center;
-  column-gap: 20px;
+  justify-items: center;
+  column-gap: 16px;
   row-gap: 12px;
-  padding: 18px 28px;
+  padding: 20px 32px;
   border-radius: var(--booking-radius-lg);
   background: #ffffff;
   box-shadow: 0px 18px 36px rgba(18, 53, 102, 0.1);
@@ -322,6 +324,7 @@
   border-radius: 16px;
   background: linear-gradient(135deg, rgba(22, 71, 162, 0.12), rgba(243, 68, 122, 0.12));
   box-shadow: inset 0 0 0 1px rgba(22, 71, 162, 0.18);
+  justify-self: start;
 }
 
 .ticket-icon img {
@@ -336,16 +339,16 @@
   text-transform: uppercase;
   color: #1f1f1f;
   white-space: nowrap;
-  justify-self: flex-start;
+  justify-self: start;
 }
 
 .time-block {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: 4px;
-  min-width: 150px;
-  text-align: left;
+  align-items: center;
+  gap: 6px;
+  min-width: 160px;
+  text-align: center;
 }
 
 .time-block .time {
@@ -362,18 +365,24 @@
   text-transform: uppercase;
 }
 
+.time-block--origin,
+.time-block--destination {
+  justify-self: center;
+}
+
 .schedule-connector {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
-  min-width: 140px;
+  gap: 10px;
+  min-width: 120px;
+  justify-self: center;
 }
 
 .schedule-connector__line {
   position: relative;
   display: block;
-  width: 140px;
+  width: 130px;
   height: 6px;
   border-radius: 999px;
   background: linear-gradient(90deg, #91021e 0%, #1647a2 100%);
@@ -396,12 +405,16 @@
   content: '';
   position: absolute;
   top: 50%;
-  right: -14px;
-  width: 0;
-  height: 0;
-  border-top: 7px solid transparent;
-  border-bottom: 7px solid transparent;
-  border-left: 12px solid #1647a2;
+  right: -10px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: #1647a2;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23ffffff' d='M4.2 2.5a.7.7 0 0 1 .98 0l2.9 2.9a.7.7 0 0 1 0 .98l-2.9 2.9a.7.7 0 0 1-.99-.99L6.6 6 4.2 3.56a.7.7 0 0 1 0-.99Z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 6px 6px;
+  box-shadow: 0 0 0 2px #ffffff;
   transform: translateY(-50%);
 }
 
@@ -425,16 +438,16 @@
 .ticket-actions {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: 6px;
-  min-width: 150px;
+  align-items: stretch;
+  gap: 8px;
+  min-width: 170px;
   text-align: left;
   justify-self: end;
 }
 
 .ticket-actions button {
   min-width: 0;
-  padding: 10px 16px;
+  padding: 12px 18px;
   border: none;
   border-radius: 10px;
   background: var(--booking-accent-gradient);
@@ -444,12 +457,15 @@
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   box-shadow: 0px 3px 12px rgba(0, 0, 0, 0.18);
+  width: 100%;
 }
 
 .ticket-availability {
   font-size: 13px;
   font-weight: 600;
   color: #1647a2;
+  text-transform: uppercase;
+  text-align: center;
 }
 
 .ticket-actions button:hover,

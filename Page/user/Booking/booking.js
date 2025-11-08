@@ -347,6 +347,14 @@
     actions.className = 'ticket-actions';
 
     var availableCount = normaliseNumber(ticket.available_ticket);
+    var availabilityText = formatAvailability(ticket);
+    if (availabilityText) {
+      var availabilityElement = document.createElement('div');
+      availabilityElement.className = 'ticket-availability';
+      availabilityElement.textContent = availabilityText;
+      actions.appendChild(availabilityElement);
+    }
+
     var button = document.createElement('button');
     button.type = 'button';
     button.textContent = availableCount > 0 ? 'ADD TO CART' : 'SOLD OUT';
@@ -355,14 +363,6 @@
       redirectToConfirmation(ticket);
     });
     actions.appendChild(button);
-
-    var availabilityText = formatAvailability(ticket);
-    if (availabilityText) {
-      var availabilityElement = document.createElement('div');
-      availabilityElement.className = 'ticket-availability';
-      availabilityElement.textContent = availabilityText;
-      actions.appendChild(availabilityElement);
-    }
 
     card.appendChild(actions);
 
