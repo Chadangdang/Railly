@@ -1,0 +1,392 @@
+/* Cart Container */
+html{
+    scroll-behavior: smooth;
+}
+.cart-container {
+    max-width: 900px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.cart-title {
+    text-align: center;
+    font-size: 48px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: #000;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+}
+
+.cart-subtitle {
+    text-align: center;
+    font-size: 14px;
+    font-weight: 400;
+    color: #000;
+    margin-bottom: 32px;
+}
+
+/* Cart Items */
+.cart-items {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 200px;
+}
+
+.cart-item {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 16px 0;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    padding-left: 20px;
+    border-radius: 20px;
+    background-color: rgba(194, 187, 187, 0.938);
+    margin-bottom: 10px;
+    opacity: 0.8;
+    color: black;
+}
+
+
+
+.cart-item.selected {
+    opacity: 1.0;
+    border-style: solid;
+    border-color: #F3447A;
+    border-radius: 20px;
+    background-color: white;
+    color: black;
+}
+
+/* .cart-item:not(.selected) {
+    opacity: 0.6;
+    color: black;
+} */
+
+.cart-item-content {
+    padding: 34px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* Ticket Icon */
+.ticket-icon {
+    color: #000;
+    display: inline-block;
+    margin-bottom: 4px;
+}
+
+.ticket-icon svg {
+    width: 24px;
+    height: 24px;
+}
+
+/* Trip Info */
+.trip-info {
+    margin-right: 100px;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.trip-date {
+    font-size: 16px;
+    font-weight: 600;
+    color: #000;
+}
+
+.trip-route {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.trip-time {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 4px;
+}
+
+.trip-time .time {
+    font-size: 16px;
+    font-weight: 400;
+    color: #000;
+}
+
+.trip-time .location {
+    font-size: 16px;
+    font-weight: 400;
+    color: #000;
+}
+
+.trip-duration {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.duration-text {
+    font-size: 14px;
+    font-weight: 400;
+    color: #000;
+    white-space: nowrap;
+}
+
+/* Quantity and Price Row */
+.quantity-price-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: 8px;
+}
+
+/* Quantity Control */
+.quantity-control {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: transparent;
+    padding: 0;
+}
+
+.qty-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 2px solid #000;
+    background: transparent;
+    color: #000;
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    line-height: 1;
+}
+
+.qty-btn:hover {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.qty-btn:active {
+    transform: scale(0.95);
+}
+
+.qty-display {
+    font-size: 16px;
+    font-weight: 500;
+    color: #000;
+    min-width: 24px;
+    text-align: center;
+}
+
+/* Item Total */
+.item-total {
+    font-size: 16px;
+    font-weight: 500;
+    color: #000;
+    margin-left: auto;
+}
+
+.total-amount {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+/* Payment Summary */
+.payment-summary {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: var(--footer-height);
+    background: #fffefe;
+    padding: 24px var(--layout-padding-inline);
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 48px;
+    color: #000;
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
+    z-index: 999;
+}
+
+.summary-details {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.summary-row {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.summary-row .label {
+    font-size: 30px;
+    font-weight: 600;
+    color: #000;
+    margin-bottom: 4px;
+}
+
+.summary-row.detail-info {
+    padding-left: 0;
+    font-size: 24px;
+    margin-bottom: 4px;
+}
+
+.detail-label {
+    font-weight: 400;
+    color: #000;
+}
+
+.detail-value {
+    font-weight: 400;
+    color: #000;
+    margin-left: 4px;
+}
+
+.summary-total {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 24px;
+    min-width: 280px;
+}
+
+.total-row {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+}
+
+.total-label {
+    font-size: 30px;
+    font-weight: 600;
+    color: #000;
+}
+
+.total-value {
+    font-size: 50px;
+    font-weight: 700;
+    color: #000;
+}
+
+.purchase-btn {
+    width: 100%;
+    padding: 14px 20px;
+    border: none;
+    border-radius: 30px;
+    background: linear-gradient(270deg, #1647A2 0%, #91021E 100%);
+    color: #fff;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.purchase-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(145, 2, 30, 0.4);
+}
+
+.purchase-btn:active {
+    transform: translateY(0);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .payment-summary {
+        grid-template-columns: 1fr;
+        gap: 24px;
+        padding: 20px var(--layout-padding-inline);
+    }
+    
+    .summary-total {
+        align-items: stretch;
+    }
+    
+    .total-row {
+        align-items: flex-start;
+    }
+    
+    .cart-items {
+        margin-bottom: 280px;
+    }
+}
+
+@media (max-width: 768px) {
+    .cart-title {
+        font-size: 36px;
+    }
+    
+    .cart-item-content {
+        padding: 20px;
+    }
+    
+    .trip-route {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+    }
+    
+    .payment-summary {
+        padding: 18px var(--layout-padding-inline);
+        gap: 20px;
+    }
+    
+    .total-value {
+        font-size: 28px;
+    }
+    
+    .cart-items {
+        margin-bottom: 300px;
+    }
+}
+
+@media (max-width: 480px) {
+    .cart-title {
+        font-size: 28px;
+    }
+    
+    .cart-subtitle {
+        font-size: 12px;
+    }
+    
+    .cart-item-content {
+        padding: 16px;
+    }
+    
+    .trip-time .time,
+    .trip-time .location {
+        font-size: 14px;
+    }
+    
+    .quantity-price-row {
+        flex-wrap: wrap;
+    }
+    
+    .payment-summary {
+        padding: 16px var(--layout-padding-inline);
+        gap: 16px;
+    }
+    
+    .summary-total {
+        min-width: auto;
+    }
+    
+    .cart-items {
+        margin-bottom: 320px;
+    }
+}

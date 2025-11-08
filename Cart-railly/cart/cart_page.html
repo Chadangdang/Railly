@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RAILLY</title>
+  <link rel="stylesheet" href="../../../index.css" />
+  <link rel="stylesheet" href="./cart_page.css" />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap');
+  </style>
+</head>
+<body>
+    <!-- Header -->
+<body class="home-page">
+  <div class="home-background">
+    <div
+      data-include="../shared/header.html"
+      data-include-class="site-header"
+      data-nav-active="CART">
+    </div>
+            
+    <main class="page-content">
+      <div class="cart-container">
+        <h1 class="cart-title">CART</h1>
+        <p class="cart-subtitle">Select only one order to continue payment process</p>
+
+        <div class="cart-items">
+          <!-- Cart 1 -->
+          <div class="cart-item selected" data-id="1" data-price="20">
+            <div class="cart-item-content">
+              <div class="ticket-icon"><img src="ticket.png" alt="">
+                </svg>
+              </div>
+              <div class="trip-info">
+                <div class="trip-date">30 SEP 2024</div>
+                <div class="trip-route">
+                  <div class="trip-time">
+                    <span class="time">11:00</span>
+                    <span class="location">Bangkok</span>
+                  </div>
+                  <div class="trip-duration">
+                    <span class="duration-text">Travel time: 2 hours 00 minutes</span>
+                  </div>
+                  <div class="trip-time">
+                    <span class="time">13:00</span>
+                    <span class="location">Ayutthaya</span>
+                  </div>
+                </div>
+              </div>
+              <div class="quantity-price-row">
+                <div class="quantity-control">
+                  <button class="qty-btn minus" data-id="1">-</button>
+                  <span class="qty-display" data-id="1">0</span>
+                  <button class="qty-btn plus" data-id="1">+</button>
+                </div>
+                <div class="item-total">
+                  <span class="total-amount" data-id="1">00.00</span> Baht
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cart  2 -->
+          <div class="cart-item selected" data-id="2" data-price="20">
+            <div class="cart-item-content">
+              <div class="ticket-icon"><img src="ticket.png" alt="">
+                </svg>
+              </div>
+              <div class="trip-info">
+                <div class="trip-date">02 OCT 2024</div>
+                <div class="trip-route">
+                  <div class="trip-time">
+                    <span class="time">06:00</span>
+                    <span class="location">Bangkok</span>
+                  </div>
+                  <div class="trip-duration">
+                    <span class="duration-text">Travel time: 2 hours 00 minutes</span>
+                  </div>
+                  <div class="trip-time">
+                    <span class="time">08:00</span>
+                    <span class="location">Ayutthaya</span>
+                  </div>
+                </div>
+              </div>
+              <div class="quantity-price-row">
+                <div class="quantity-control">
+                  <button class="qty-btn minus" data-id="2">-</button>
+                  <span class="qty-display" data-id="2">0</span>
+                  <button class="qty-btn plus" data-id="2">+</button>
+                </div>
+                <div class="item-total">
+                  <span class="total-amount" data-id="2">00.00</span> Baht
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cart 3 -->
+          <div class="cart-item selected" data-id="3" data-price="20">
+            <div class="cart-item-content">
+              <div class="ticket-icon"><img src="ticket.png" alt="">
+              </div>
+              <div class="trip-info">
+                <div class="trip-date">10 OCT 2024</div>
+                <div class="trip-route">
+                  <div class="trip-time">
+                    <span class="time">09:00</span>
+                    <span class="location">Bangkok</span>
+                  </div>
+                  <div class="trip-duration">
+                    <span class="duration-text">Travel time: 2 hours 00 minutes</span>
+                  </div>
+                  <div class="trip-time">
+                    <span class="time">11:00</span>
+                    <span class="location">Ayutthaya</span>
+                  </div>
+                </div>
+              </div>
+              <div class="quantity-price-row">
+                <div class="quantity-control">
+                  <button class="qty-btn minus" data-id="3">-</button>
+                  <span class="qty-display" data-id="3">0</span>
+                  <button class="qty-btn plus" data-id="3">+</button>
+                </div>
+                <div class="item-total">
+                  <span class="total-amount" data-id="3">00.00</span> Baht
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cart 4 -->
+          <div class="cart-item selected" data-id="4" data-price="20">
+            <div class="cart-item-content">
+              <div class="ticket-icon"><img src="ticket.png" alt="">
+                </svg>
+              </div>
+              <div class="trip-info">
+                <div class="trip-date">01 NOV 2024</div>
+                <div class="trip-route">
+                  <div class="trip-time">
+                    <span class="time">17:00</span>
+                    <span class="location">Bangkok</span>
+                  </div>
+                  <div class="trip-duration">
+                    <span class="duration-text">Travel time: 2 hours 00 minutes</span>
+                  </div>
+                  <div class="trip-time">
+                    <span class="time">19:00</span>
+                    <span class="location">Ayutthaya</span>
+                  </div>
+                </div>
+              </div>
+              <div class="quantity-price-row">
+                <div class="quantity-control">
+                  <button class="qty-btn minus" data-id="4">-</button>
+                  <span class="qty-display" data-id="4">0</span>
+                  <button class="qty-btn plus" data-id="4">+</button>
+                </div>
+                <div class="item-total">
+                  <span class="total-amount" data-id="4">00.00</span> Baht
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cart 5 -->
+          <div class="cart-item selected" data-id="5" data-price="20">
+            <div class="cart-item-content">
+              <div class="ticket-icon"><img src="ticket.png" alt="">
+              </div>
+              <div class="trip-info">
+                <div class="trip-date">02 NOV 2024</div>
+                <div class="trip-route">
+                  <div class="trip-time">
+                    <span class="time">19:00</span>
+                    <span class="location">Bangkok</span>
+                  </div>
+                  <div class="trip-duration">
+                    <span class="duration-text">Travel time: 2 hours 00 minutes</span>
+                  </div>
+                  <div class="trip-time">
+                    <span class="time">21:00</span>
+                    <span class="location">Ayutthaya</span>
+                  </div>
+                </div>
+              </div>
+              <div class="quantity-price-row">
+                <div class="quantity-control">
+                  <button class="qty-btn minus" data-id="5">-</button>
+                  <span class="qty-display" data-id="5">0</span>
+                  <button class="qty-btn plus" data-id="5">+</button>
+                </div>
+                <div class="item-total">
+                  <span class="total-amount" data-id="5">00.00</span> Baht
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Payment Summary -->
+        <div class="payment-summary">
+          <div class="summary-details">
+            <div class="summary-row">
+              <span class="label">Travel date</span>
+            </div>
+            <div class="summary-row detail-info">
+              <span class="detail-label">Departure: <span class="detail-value" id="departure-info">-</span></span>
+            </div>
+            <div class="summary-row detail-info">
+              <span class="detail-label">Arrived: <span class="detail-value" id="arrival-info">-</span></span>
+            </div>
+            <div class="summary-row">
+              <span class="label">Payment</span>
+            </div>
+            <div class="summary-row detail-info">
+              <span class="detail-label">Ticket x<span id="ticket-quantity">0</span></span>
+            </div>
+          </div>
+          <div class="summary-total">
+            <div class="total-row">
+              <span class="total-label">TOTAL</span>
+              <span class="total-value"><span id="grand-total">0</span> BTH</span>
+            </div>
+            <button class="purchase-btn">PURCHASE</button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <p>RAILLY</p>
+    </footer>
+
+    <script src="cart_page.js"></script>
+</body>
+</html>
