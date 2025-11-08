@@ -42,8 +42,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 40px;
-  padding: calc(var(--header-offset) + 48px)
+  gap: 32px;
+  padding: calc(var(--header-offset) + 24px)
     var(--layout-padding-inline)
     calc(var(--footer-height, 44px) + 96px);
   text-align: center;
@@ -84,25 +84,47 @@
 }
 
 .search-form {
+  position: relative;
   width: 100%;
   max-width: var(--booking-card-width);
   display: flex;
   flex-direction: column;
   gap: 24px;
-  padding: 32px;
+  padding: 33px 24px 63px;
   border-radius: var(--booking-radius-lg);
-  background: rgba(255, 255, 255, 0.95);
-  box-shadow: 0px 4px 24px rgba(0, 0, 0, 0.18);
-  backdrop-filter: blur(3px);
+  background: #ffffff;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
 }
 
 .search-fields {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  justify-content: space-between;
 }
 
+.field-group {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  max-width: 529px;
+  min-height: 51px;
+  padding: 1px 16px;
+  border-radius: var(--booking-radius-md);
+  background: #ffffff;
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.12);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+
 .field {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -111,44 +133,119 @@
   color: rgba(0, 0, 0, 0.55);
 }
 
+.field-select {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
 .field select,
 .field input[type='date'] {
   width: 100%;
   height: 51px;
-  padding: 0 48px 0 18px;
+  padding: 0 42px 0 18px;
   font-size: 18px;
+  font-family: 'Jost', sans-serif;
+  border: none;
   border-radius: var(--booking-radius-md);
-  border: 1px solid rgba(0, 0, 0, 0.2);
-  background-color: #ffffff;
-  color: #575757;
+  background-color: transparent;
+  color: #737373;
+  cursor: pointer;
   appearance: none;
   -webkit-appearance: none;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23737373' d='M6 8a1 1 0 0 1-.71-.29l-5-5A1 1 0 0 1 1.71.29L6 4.59l4.29-4.3A1 1 0 0 1 11.71 2.7l-5 5A1 1 0 0 1 6 8Z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 18px center;
+}
+
+.field-select select {
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  height: 49px;
+  padding: 0 30px 0 4px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13' height='11' viewBox='0 0 13 11'%3E%3Cpath fill='%23737373' d='M6.5 11a1 1 0 0 1-.7-.29L.3 5.2A1 1 0 0 1 1.7 3.8L6.5 8.6l4.8-4.8a1 1 0 1 1 1.4 1.4l-5.5 5.5a1 1 0 0 1-.7.3Z'/%3E%3C/svg%3E");
+  background-size: 13px 11px;
+  background-position: right 0 center;
+  color: #737373;
+}
+
+.field-group:focus-within,
+.field-date:focus-within {
+  border-color: #91021e;
+  box-shadow: 0 0 0 3px rgba(145, 2, 30, 0.12);
+}
+
+.field select:focus,
+.field select:focus-visible,
+.field input[type='date']:focus,
+.field input[type='date']:focus-visible {
+  outline: none;
+}
+
+.field-date {
+  position: relative;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 529px;
+  min-height: 51px;
+  padding: 1px 16px;
+  border-radius: var(--booking-radius-md);
+  background: #ffffff;
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.12);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.field-date input[type='date'] {
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 0 30px 0 4px;
+  color: rgba(0, 0, 0, 0.49);
+}
+
+.field-date::after {
+  content: '';
+  position: absolute;
+  right: 24px;
+  width: 13px;
+  height: 11px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13' height='11' viewBox='0 0 13 11'%3E%3Cpath fill='rgba(0,0,0,0.5)' d='M6.5 11a1 1 0 0 1-.7-.29L.3 5.2A1 1 0 0 1 1.7 3.8L6.5 8.6l4.8-4.8a1 1 0 1 1 1.4 1.4l-5.5 5.5a1 1 0 0 1-.7.3Z'/%3E%3C/svg%3E")
+    center / contain no-repeat;
+  pointer-events: none;
+}
+
+.field-divider {
+  width: 1px;
+  align-self: stretch;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0.5) 50%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  opacity: 0.6;
 }
 
 .field input[type='date'] {
   background-image: none;
 }
 
-.field select:focus,
-.field input[type='date']:focus {
-  border-color: #91021e;
-  box-shadow: 0 0 0 3px rgba(145, 2, 30, 0.15);
-  outline: none;
-}
-
 .search-actions {
+  position: absolute;
+  bottom: -24px;
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
   justify-content: center;
+  width: 100%;
 }
 
 .search-actions button {
-  min-width: 260px;
-  height: 52px;
-  padding: 0 56px;
+  width: min(513px, 100%);
+  height: 49px;
+  padding: 0 32px;
   border: none;
   border-radius: 10px;
   background: var(--booking-gradient);

@@ -25,20 +25,23 @@
         <h2 id="booking-search-title" class="visually-hidden">Search tickets</h2>
         <form id="booking-search-form" class="search-form" autocomplete="off">
           <div class="search-fields">
-            <label class="field" for="origin">
-              <span class="field-label">Origin Station</span>
-              <select id="origin" name="origin" required>
-                <option value="" disabled selected>Origin Station</option>
-              </select>
-            </label>
-            <label class="field" for="dest">
-              <span class="field-label">Destination Station</span>
-              <select id="dest" name="dest" required>
-                <option value="" disabled selected>Destination Station</option>
-              </select>
-            </label>
-            <label class="field" for="datee">
-              <span class="field-label">Choose Date</span>
+            <div class="field-group" role="group" aria-label="Select origin and destination stations">
+              <label class="field field-select" for="origin">
+                <span class="field-label visually-hidden">Origin Station</span>
+                <select id="origin" name="origin" required>
+                  <option value="" disabled selected>Origin Station</option>
+                </select>
+              </label>
+              <span class="field-divider" aria-hidden="true"></span>
+              <label class="field field-select" for="dest">
+                <span class="field-label visually-hidden">Destination Station</span>
+                <select id="dest" name="dest" required>
+                  <option value="" disabled selected>Destination Station</option>
+                </select>
+              </label>
+            </div>
+            <label class="field field-date" for="datee">
+              <span class="field-label visually-hidden">Choose Date</span>
               <input type="date" id="datee" name="datee" required>
             </label>
           </div>
