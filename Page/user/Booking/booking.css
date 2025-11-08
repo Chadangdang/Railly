@@ -208,11 +208,13 @@
 .field-date::after {
   content: '';
   position: absolute;
-  right: 24px;
+  top: 50%;
+  right: 18px;
   width: 13px;
   height: 11px;
   background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13' height='11' viewBox='0 0 13 11'%3E%3Cpath fill='rgba(0,0,0,0.5)' d='M6.5 11a1 1 0 0 1-.7-.29L.3 5.2A1 1 0 0 1 1.7 3.8L6.5 8.6l4.8-4.8a1 1 0 1 1 1.4 1.4l-5.5 5.5a1 1 0 0 1-.7.3Z'/%3E%3C/svg%3E")
     center / contain no-repeat;
+  transform: translateY(-50%);
   pointer-events: none;
 }
 
