@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>RAILLY - My ticket</title>
-  <link rel="stylesheet" href="./MyTicket.css" />
+  <link rel="stylesheet" href="./myticket.css" />
   <link rel="stylesheet" href="../../../index.css" />
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900&display=swap');
@@ -19,29 +19,197 @@
     data-nav-active="myticket"
   ></div>
 
-  <main class="page-content myticket-main">
-    <div class="topper"><h2>MY TICKET</h2></div>
-    <div><h3>Show Your Ticket to the Train Staff</h3></div>
-    <p>
-      Please present your E-ticket by showing the E-ticket below to the train staff when requested.
-      Simply scan the barcode at the station or on the train for a smooth and hassle-free boarding experience.
-    </p>
+  <div class="myticket-page-wrapper">
+    <main class="page-content myticket-main">
+      <header class="myticket-hero" aria-labelledby="myticket-heading">
+        <h1 id="myticket-heading" class="myticket-title">MY TICKET</h1>
+        <p class="myticket-description">
+          <strong>Show Your Ticket to the Train Staff</strong>
+          <span>
+            Please present your E-ticket by showing the E-ticket below to the train staff when requested. Simply scan the barcode at the
+            station or on the train for a smooth and hassle-free boarding experience.
+          </span>
+        </p>
+      </header>
 
-    <div id="ticket-results" class="ticket-container">
-      <p class="no-tickets">Fetching your tickets...</p>
-    </div>
-  </main>
+      <section class="ticket-filters" aria-label="Ticket filters">
+        <div class="ticket-filter-buttons" role="group" aria-label="Ticket status">
+          <button type="button" class="filter-button is-active" data-filter="myTicket" aria-pressed="true">
+            My Ticket
+          </button>
+          <button type="button" class="filter-button" data-filter="cancelled" aria-pressed="false">
+            Cancel
+          </button>
+          <button type="button" class="filter-button" data-filter="expired" aria-pressed="false">
+            Expired
+          </button>
+        </div>
+      </section>
+
+      <section id="ticket-results" class="ticket-results" aria-live="polite">
+        <p class="no-tickets">Fetching your tickets...</p>
+      </section>
+    </main>
+  </div>
 
   <div data-include="../shared/footer.html"></div>
 
   <script>
+    const FILTER_CONFIG = {
+      myTicket: {
+        statuses: ['PAID', 'ACTIVE', 'CONFIRMED'],
+        empty: 'You have no active tickets yet.'
+      },
+      cancelled: {
+        statuses: ['CANCELLED', 'CANCELED'],
+        empty: 'You have no cancelled tickets.'
+      },
+      expired: {
+        statuses: ['EXPIRED'],
+        empty: 'You have no expired tickets.'
+      }
+    };
+
+    let allTickets = [];
+    let activeFilter = 'myTicket';
+
+    function normaliseStatus(status) {
+      return (status || '').toString().trim().toUpperCase();
+    }
+
+    function formatStatusLabel(status) {
+      const normalised = normaliseStatus(status);
+      if (normalised === 'PAID') return 'Paid';
+      if (normalised === 'ACTIVE') return 'Active';
+      if (normalised === 'CONFIRMED') return 'Confirmed';
+      if (normalised === 'CANCELLED' || normalised === 'CANCELED') return 'Cancelled';
+      if (normalised === 'EXPIRED') return 'Expired';
+      return status || 'Unknown';
+    }
+
+    function formatDateForDisplay(dateString) {
+      const parsedDate = new Date(dateString);
+      if (!Number.isNaN(parsedDate.getTime())) {
+        return parsedDate.toLocaleDateString('en-GB', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric'
+        });
+      }
+      return dateString;
+    }
+
+    function formatPriceForDisplay(priceValue) {
+      const numericPrice = Number(priceValue);
+      if (!Number.isFinite(numericPrice)) {
+        return priceValue;
+      }
+      return new Intl.NumberFormat('en-GB', {
+        style: 'currency',
+        currency: 'THB',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      })
+        .format(numericPrice)
+        .replace('THB', 'THB');
+    }
+
+    function createTicketCard(ticket) {
+      const statusValue = normaliseStatus(ticket.status);
+      const card = document.createElement('article');
+      card.className = 'ticket-card';
+      if (statusValue) {
+        card.setAttribute('data-status', statusValue);
+      }
+
+      card.innerHTML = `
+        <div class="ticket-card__header">
+          <span class="ticket-card__identifier">Ticket #${ticket.ticket_id}</span>
+          <span class="ticket-card__status-chip">${formatStatusLabel(statusValue)}</span>
+        </div>
+        <div class="ticket-card__body">
+          <div class="ticket-card__journey" aria-label="Journey details">
+            <div class="ticket-card__stop ticket-card__stop--origin">
+              <span class="ticket-card__time">${ticket.departure}</span>
+              <span class="ticket-card__city">${ticket.origin}</span>
+            </div>
+            <span class="ticket-card__arrow" aria-hidden="true">→</span>
+            <div class="ticket-card__stop ticket-card__stop--destination">
+              <span class="ticket-card__time">${ticket.arrival}</span>
+              <span class="ticket-card__city">${ticket.destination}</span>
+            </div>
+          </div>
+          <div class="ticket-card__meta">
+            <p><span class="ticket-card__meta-label">Date:</span> ${formatDateForDisplay(ticket.datee)}</p>
+            <p><span class="ticket-card__meta-label">Route:</span> #${ticket.route_id}</p>
+            <p><span class="ticket-card__meta-label">Passengers:</span> ${ticket.quantity}</p>
+            <p><span class="ticket-card__meta-label">Price:</span> ${formatPriceForDisplay(ticket.price)}</p>
+          </div>
+          <div class="ticket-card__qr" role="img" aria-label="Ticket QR code placeholder">
+            <span>QR</span>
+          </div>
+        </div>
+      `;
+
+      return card;
+    }
+
+    function updateFilterButtons() {
+      document.querySelectorAll('.filter-button').forEach(button => {
+        const isActive = button.dataset.filter === activeFilter;
+        button.classList.toggle('is-active', isActive);
+        button.setAttribute('aria-pressed', String(isActive));
+      });
+    }
+
+    function renderTickets() {
+      const ticketContainer = document.getElementById('ticket-results');
+      if (!ticketContainer) {
+        return;
+      }
+
+      if (!Array.isArray(allTickets) || allTickets.length === 0) {
+        ticketContainer.innerHTML = '<p class="no-tickets">You have no tickets booked yet.</p>';
+        return;
+      }
+
+      const filterConfig = FILTER_CONFIG[activeFilter] || { statuses: [], empty: 'No tickets available.' };
+      const statuses = filterConfig.statuses.map(status => status.toUpperCase());
+      const filteredTickets = statuses.length
+        ? allTickets.filter(ticket => statuses.includes(normaliseStatus(ticket.status)))
+        : [...allTickets];
+
+      if (filteredTickets.length === 0) {
+        ticketContainer.innerHTML = `<p class="no-tickets">${filterConfig.empty}</p>`;
+        return;
+      }
+
+      const fragment = document.createDocumentFragment();
+      filteredTickets.forEach(ticket => fragment.appendChild(createTicketCard(ticket)));
+      ticketContainer.replaceChildren(fragment);
+    }
+
+    function initialiseFilters() {
+      document.querySelectorAll('.filter-button').forEach(button => {
+        button.addEventListener('click', () => {
+          const filter = button.dataset.filter;
+          if (!filter || filter === activeFilter) {
+            return;
+          }
+          activeFilter = filter;
+          updateFilterButtons();
+          renderTickets();
+        });
+      });
+    }
+
     function initialiseMyTicketPage() {
       const session = window.userSession;
       const context = session ? session.getUserContext() : { username: null, id: null };
 
       if (!context.username || !context.id) {
-        alert("Please log in to view your tickets.");
-        window.location.href = "../Login/Login.html";
+        alert('Please log in to view your tickets.');
+        window.location.href = '../Login/Login.html';
         return;
       }
 
@@ -49,53 +217,24 @@
         session.applyUserContextToLinks('.site-header .main-nav a, .site-header .brand, .site-header .user-profile-link');
       }
 
-      // Fetch ticket data
+      initialiseFilters();
+      updateFilterButtons();
+
       fetch(`../../../Backend/getUserTickets.php?username=${context.username}&id=${context.id}`)
         .then(response => response.json())
         .then(data => {
-          const ticketContainer = document.getElementById("ticket-results");
-
-          if (data.status === "error") {
-            ticketContainer.innerHTML = `<p class="no-tickets">${data.message}</p>`;
+          if (data.status === 'error') {
+            document.getElementById('ticket-results').innerHTML = `<p class="no-tickets">${data.message}</p>`;
             return;
           }
 
-          if (data.tickets.length === 0) {
-            ticketContainer.innerHTML = `<p class="no-tickets">You have no tickets booked yet.</p>`;
-            return;
-          }
-
-          ticketContainer.innerHTML = ""; // Clear loading text
-
-          data.tickets.forEach(ticket => {
-            const ticketCard = document.createElement("div");
-            ticketCard.classList.add("ticket");
-
-            ticketCard.innerHTML = `
-              <div class="ticket-details">
-                <div class="train-time">
-                  <span>${ticket.departure}</span> 
-                  <span>${ticket.origin}</span> 
-                  <span class="arrow">→</span> 
-                  <span>${ticket.arrival}</span> 
-                  <span>${ticket.destination}</span>
-                </div>
-                <div class="additional-info">
-                  <p><strong>Date:</strong> ${ticket.datee}</p>
-                  <p><strong>Train Route:</strong> #${ticket.route_id}</p>
-                  <p><strong>Price:</strong> ${ticket.price} THB / person</p>
-                </div>
-                <div class="barcode">
-                  <img src="https://barcode.tec-it.com/barcode.ashx?data=${ticket.route_id}" alt="Barcode">
-                </div>
-              </div>
-            `;
-            ticketContainer.appendChild(ticketCard);
-          });
+          allTickets = Array.isArray(data.tickets) ? data.tickets : [];
+          renderTickets();
         })
         .catch(error => {
-          console.error("Error fetching tickets:", error);
-          document.getElementById("ticket-results").innerHTML = `<p class="no-tickets">Error fetching tickets. Please try again later.</p>`;
+          console.error('Error fetching tickets:', error);
+          document.getElementById('ticket-results').innerHTML =
+            '<p class="no-tickets">Error fetching tickets. Please try again later.</p>';
         });
     }
 
