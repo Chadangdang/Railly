@@ -7,8 +7,8 @@ let cartData = {
     4: { quantity: 0, price: 20, date: '01 NOV 2024', departure: '01 November 2024, 17:00 - Krung Thep Aphiwat Central Terminal Station', arrival: '01 November 2024, 19:00 - Ayutthaya Station' },
     5: { quantity: 0, price: 20, date: '02 NOV 2024', departure: '02 November 2024, 19:00 - Krung Thep Aphiwat Central Terminal Station', arrival: '02 November 2024, 21:00 - Ayutthaya Station' },
     6: { quantity: 0, price: 20, date: '03 NOV 2024', departure: '03 November 2024, 19:00 - Krung Thep Aphiwat Central Terminal Station', arrival: '03 November 2024, 21:00 - Ayutthaya Station' },
-    7: { quantity: 0, price: 20, date: '02 NOV 2024', departure: '02 November 2024, 19:00 - Krung Thep Aphiwat Central Terminal Station', arrival: '02 November 2024, 21:00 - Ayutthaya Station' },
-    8: { quantity: 0, price: 20, date: '02 NOV 2024', departure: '02 November 2024, 19:00 - Krung Thep Aphiwat Central Terminal Station', arrival: '02 November 2024, 21:00 - Ayutthaya Station' }
+    7: { quantity: 0, price: 20, date: '04 NOV 2024', departure: '04 November 2024, 19:00 - Krung Thep Aphiwat Central Terminal Station', arrival: '04 November 2024, 21:00 - Ayutthaya Station' },
+    8: { quantity: 0, price: 20, date: '05 NOV 2024', departure: '05 November 2024, 19:00 - Krung Thep Aphiwat Central Terminal Station', arrival: '05 November 2024, 21:00 - Ayutthaya Station' }
 };
 
 // Initialize
