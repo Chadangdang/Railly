@@ -42,10 +42,10 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 32px;
-  padding: calc(var(--header-offset) + 24px)
+  gap: 24px;
+  padding: calc(var(--header-offset) + 12px)
     var(--layout-padding-inline)
-    calc(var(--footer-height, 44px) + 96px);
+    calc(var(--footer-height, 44px) + 88px);
   text-align: center;
 }
 
@@ -299,87 +299,66 @@
 
 .ticket-card {
   position: relative;
-  display: flex;
+  display: grid;
+  grid-template-columns:
+    auto auto minmax(150px, 1fr) minmax(140px, 0.75fr) minmax(150px, 1fr) auto minmax(150px, auto);
   align-items: center;
-  gap: 32px;
-  padding: 20px 32px;
+  column-gap: 20px;
+  row-gap: 12px;
+  padding: 18px 28px;
   border-radius: var(--booking-radius-lg);
   background: #ffffff;
-  box-shadow: 0px 20px 40px rgba(18, 53, 102, 0.08);
+  box-shadow: 0px 18px 36px rgba(18, 53, 102, 0.1);
   border: 1px solid rgba(22, 71, 162, 0.08);
   color: #2f2f2f;
 }
 
-.ticket-summary {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-  min-width: 200px;
-}
-
 .ticket-icon {
-  flex: 0 0 auto;
-  width: 68px;
-  height: 68px;
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 60px;
+  height: 60px;
   border-radius: 16px;
   background: linear-gradient(135deg, rgba(22, 71, 162, 0.12), rgba(243, 68, 122, 0.12));
   box-shadow: inset 0 0 0 1px rgba(22, 71, 162, 0.18);
 }
 
 .ticket-icon img {
-  width: 40px;
+  width: 36px;
   height: auto;
 }
 
-.ticket-summary__text {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  text-align: left;
-}
-
 .ticket-date {
-  font-size: 18px;
+  font-size: 17px;
   font-weight: 600;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: #1f1f1f;
-}
-
-.ticket-schedule {
-  flex: 1 1 auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 36px;
-  flex-wrap: wrap;
-  row-gap: 16px;
-  min-width: 0;
+  white-space: nowrap;
+  justify-self: flex-start;
 }
 
 .time-block {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  min-width: 120px;
-  text-align: center;
+  align-items: flex-start;
+  gap: 4px;
+  min-width: 150px;
+  text-align: left;
 }
 
 .time-block .time {
-  font-size: 36px;
-  font-weight: 500;
+  font-size: 32px;
+  font-weight: 600;
   color: #000000;
 }
 
 .time-block .station {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 500;
-  letter-spacing: 0.1em;
-  color: #a6a3a3;
+  letter-spacing: 0.08em;
+  color: #767676;
   text-transform: uppercase;
 }
 
@@ -387,56 +366,90 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
-  min-width: 180px;
+  gap: 8px;
+  min-width: 140px;
 }
 
 .schedule-connector__line {
-  width: 160px;
-  height: 4px;
+  position: relative;
+  display: block;
+  width: 140px;
+  height: 6px;
   border-radius: 999px;
   background: linear-gradient(90deg, #91021e 0%, #1647a2 100%);
 }
 
+.schedule-connector__line::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: -10px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #91021e;
+  box-shadow: 0 0 0 2px #ffffff;
+  transform: translateY(-50%);
+}
+
+.schedule-connector__line::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: -14px;
+  width: 0;
+  height: 0;
+  border-top: 7px solid transparent;
+  border-bottom: 7px solid transparent;
+  border-left: 12px solid #1647a2;
+  transform: translateY(-50%);
+}
+
 .schedule-connector__label {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
   color: #1647a2;
   white-space: nowrap;
+  text-align: center;
+}
+
+.ticket-price {
+  font-size: 22px;
+  font-weight: 700;
+  color: #91021e;
+  white-space: nowrap;
+  text-align: center;
+  justify-self: end;
 }
 
 .ticket-actions {
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
-  gap: 10px;
-  min-width: 220px;
-}
-
-.ticket-availability {
-  font-size: 15px;
-  font-weight: 600;
-  color: #1647a2;
-}
-
-.ticket-price {
-  font-size: 24px;
-  font-weight: 700;
-  color: #91021e;
+  align-items: flex-start;
+  gap: 6px;
+  min-width: 150px;
+  text-align: left;
+  justify-self: end;
 }
 
 .ticket-actions button {
-  width: 207px;
-  height: 52px;
+  min-width: 0;
+  padding: 10px 16px;
   border: none;
   border-radius: 10px;
   background: var(--booking-accent-gradient);
   color: #ffffff;
-  font-size: 18px;
+  font-size: 15px;
   font-weight: 600;
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
-  box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.18);
+  box-shadow: 0px 3px 12px rgba(0, 0, 0, 0.18);
+}
+
+.ticket-availability {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1647a2;
 }
 
 .ticket-actions button:hover,
@@ -464,17 +477,19 @@
 
 @media (max-width: 1024px) {
   .ticket-card {
-    flex-direction: column;
-    align-items: stretch;
+    grid-template-columns: repeat(2, minmax(140px, 1fr));
+    padding: 22px;
     text-align: center;
-    padding: 24px;
   }
 
-  .ticket-summary {
-    justify-content: center;
+  .ticket-icon,
+  .ticket-date,
+  .ticket-price,
+  .ticket-actions {
+    justify-self: center;
   }
 
-  .ticket-summary__text {
+  .time-block {
     align-items: center;
     text-align: center;
   }
@@ -482,11 +497,12 @@
   .ticket-actions {
     align-items: center;
     min-width: 0;
+    text-align: center;
   }
 
   .ticket-actions button {
     width: 100%;
-    max-width: 260px;
+    max-width: 220px;
   }
 }
 
@@ -507,7 +523,26 @@
     font-size: 26px;
   }
 
-  .ticket-schedule {
-    justify-content: center;
+  .ticket-card {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    row-gap: 16px;
+    text-align: center;
+  }
+
+  .time-block {
+    min-width: 0;
+  }
+
+  .ticket-actions {
+    width: 100%;
+  }
+
+  .ticket-actions button {
+    max-width: 260px;
+  }
+
+  .schedule-connector__label {
+    white-space: normal;
   }
 }

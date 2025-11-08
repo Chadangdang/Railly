@@ -304,30 +304,19 @@
     card.className = 'ticket-card';
     card.setAttribute('role', 'listitem');
 
-    var summary = document.createElement('div');
-    summary.className = 'ticket-summary';
-
     var iconWrapper = document.createElement('div');
     iconWrapper.className = 'ticket-icon';
+    iconWrapper.setAttribute('aria-hidden', 'true');
     var icon = document.createElement('img');
     icon.src = '../../../assets/img/ticket.png';
     icon.alt = 'Ticket stub';
     iconWrapper.appendChild(icon);
-    summary.appendChild(iconWrapper);
-
-    var summaryText = document.createElement('div');
-    summaryText.className = 'ticket-summary__text';
+    card.appendChild(iconWrapper);
 
     var dateElement = document.createElement('div');
     dateElement.className = 'ticket-date';
     dateElement.textContent = formatDateForDisplay(ticket.datee);
-    summaryText.appendChild(dateElement);
-
-    summary.appendChild(summaryText);
-    card.appendChild(summary);
-
-    var schedule = document.createElement('div');
-    schedule.className = 'ticket-schedule';
+    card.appendChild(dateElement);
 
     var originBlock = buildTimeBlock(
       ticket.departure,
@@ -336,9 +325,9 @@
       'Origin station'
     );
     originBlock.classList.add('time-block--origin');
-    schedule.appendChild(originBlock);
+    card.appendChild(originBlock);
 
-    schedule.appendChild(buildTravelDurationBlock(ticket.travelMinutes));
+    card.appendChild(buildTravelDurationBlock(ticket.travelMinutes));
 
     var destinationBlock = buildTimeBlock(
       ticket.arrival,
@@ -347,25 +336,15 @@
       'Destination station'
     );
     destinationBlock.classList.add('time-block--destination');
-    schedule.appendChild(destinationBlock);
-
-    card.appendChild(schedule);
-
-    var actions = document.createElement('div');
-    actions.className = 'ticket-actions';
-
-    var availabilityText = formatAvailability(ticket);
-    if (availabilityText) {
-      var availabilityElement = document.createElement('div');
-      availabilityElement.className = 'ticket-availability';
-      availabilityElement.textContent = availabilityText;
-      actions.appendChild(availabilityElement);
-    }
+    card.appendChild(destinationBlock);
 
     var priceElement = document.createElement('div');
     priceElement.className = 'ticket-price';
     priceElement.textContent = formatPrice(ticket.price);
-    actions.appendChild(priceElement);
+    card.appendChild(priceElement);
+
+    var actions = document.createElement('div');
+    actions.className = 'ticket-actions';
 
     var availableCount = normaliseNumber(ticket.available_ticket);
     var button = document.createElement('button');
@@ -376,6 +355,14 @@
       redirectToConfirmation(ticket);
     });
     actions.appendChild(button);
+
+    var availabilityText = formatAvailability(ticket);
+    if (availabilityText) {
+      var availabilityElement = document.createElement('div');
+      availabilityElement.className = 'ticket-availability';
+      availabilityElement.textContent = availabilityText;
+      actions.appendChild(availabilityElement);
+    }
 
     card.appendChild(actions);
 
