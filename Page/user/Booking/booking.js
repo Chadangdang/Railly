@@ -304,30 +304,52 @@
     card.className = 'ticket-card';
     card.setAttribute('role', 'listitem');
 
+    var summary = document.createElement('div');
+    summary.className = 'ticket-summary';
+
     var iconWrapper = document.createElement('div');
     iconWrapper.className = 'ticket-icon';
     var icon = document.createElement('img');
     icon.src = '../../../assets/img/ticket.png';
     icon.alt = 'Ticket stub';
     iconWrapper.appendChild(icon);
-    card.appendChild(iconWrapper);
+    summary.appendChild(iconWrapper);
 
-    var info = document.createElement('div');
-    info.className = 'ticket-info';
+    var summaryText = document.createElement('div');
+    summaryText.className = 'ticket-summary__text';
 
     var dateElement = document.createElement('div');
     dateElement.className = 'ticket-date';
     dateElement.textContent = formatDateForDisplay(ticket.datee);
-    info.appendChild(dateElement);
+    summaryText.appendChild(dateElement);
 
-    var timesWrapper = document.createElement('div');
-    timesWrapper.className = 'ticket-times';
-    timesWrapper.appendChild(buildTimeBlock(ticket.departure, ticket.origin));
-    timesWrapper.appendChild(buildTravelDurationBlock(ticket.travelMinutes));
-    timesWrapper.appendChild(buildTimeBlock(ticket.arrival, ticket.dest));
-    info.appendChild(timesWrapper);
+    summary.appendChild(summaryText);
+    card.appendChild(summary);
 
-    card.appendChild(info);
+    var schedule = document.createElement('div');
+    schedule.className = 'ticket-schedule';
+
+    var originBlock = buildTimeBlock(
+      ticket.departure,
+      ticket.origin,
+      ticket.origin_code,
+      'Origin station'
+    );
+    originBlock.classList.add('time-block--origin');
+    schedule.appendChild(originBlock);
+
+    schedule.appendChild(buildTravelDurationBlock(ticket.travelMinutes));
+
+    var destinationBlock = buildTimeBlock(
+      ticket.arrival,
+      ticket.dest,
+      ticket.dest_code,
+      'Destination station'
+    );
+    destinationBlock.classList.add('time-block--destination');
+    schedule.appendChild(destinationBlock);
+
+    card.appendChild(schedule);
 
     var actions = document.createElement('div');
     actions.className = 'ticket-actions';
@@ -360,7 +382,7 @@
     return card;
   }
 
-  function buildTimeBlock(time, stationName) {
+  function buildTimeBlock(time, stationName, stationCode, ariaLabel) {
     var wrapper = document.createElement('div');
     wrapper.className = 'time-block';
 
@@ -371,7 +393,17 @@
 
     var stationElement = document.createElement('div');
     stationElement.className = 'station';
-    stationElement.textContent = stationName || '';
+    var displayCode = formatStationCode(stationCode, stationName);
+    stationElement.textContent = displayCode;
+
+    if (stationName && stationName !== displayCode) {
+      stationElement.title = stationName + (stationCode ? ' (' + stationCode + ')' : '');
+    }
+
+    if (ariaLabel) {
+      stationElement.setAttribute('aria-label', ariaLabel + ': ' + (stationName || displayCode || '')); 
+    }
+
     wrapper.appendChild(stationElement);
 
     return wrapper;
@@ -379,13 +411,47 @@
 
   function buildTravelDurationBlock(travelMinutes) {
     var wrapper = document.createElement('div');
-    wrapper.className = 'travel-duration';
+    wrapper.className = 'schedule-connector';
+
+    var line = document.createElement('span');
+    line.className = 'schedule-connector__line';
+    line.setAttribute('aria-hidden', 'true');
+    wrapper.appendChild(line);
 
     var label = document.createElement('span');
+    label.className = 'schedule-connector__label';
     label.textContent = 'Travel time: ' + formatTravelDuration(travelMinutes);
     wrapper.appendChild(label);
 
     return wrapper;
+  }
+
+  function formatStationCode(code, fallback) {
+    var trimmedCode = String(code || '').trim();
+
+    if (trimmedCode) {
+      return trimmedCode.toUpperCase();
+    }
+
+    var fallbackText = String(fallback || '').trim();
+
+    if (!fallbackText) {
+      return '';
+    }
+
+    var codeFromName = fallbackText.match(/\(([A-Za-z0-9]{2,})\)\s*$/);
+
+    if (codeFromName && codeFromName[1]) {
+      return codeFromName[1].toUpperCase();
+    }
+
+    var condensed = fallbackText.replace(/[^A-Za-z0-9]/g, '');
+
+    if (!condensed) {
+      return fallbackText;
+    }
+
+    return condensed.substring(0, Math.min(4, condensed.length)).toUpperCase();
   }
 
   function formatAvailability(ticket) {

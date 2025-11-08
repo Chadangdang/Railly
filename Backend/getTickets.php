@@ -87,7 +87,8 @@ function determineTicketSchema(mysqli $conn): array
             'capacity_column' => detectColumn($conn, $serviceTable, ['capacity']),
             'price_column' => detectColumn($conn, $routeTable, ['base_price', 'price_thb', 'price']),
             'station_id_column' => detectColumn($conn, $stationTable, ['station_id', 'id']),
-            'station_name_column' => detectColumn($conn, $stationTable, ['name', 'station_name'])
+            'station_name_column' => detectColumn($conn, $stationTable, ['name', 'station_name']),
+            'station_code_column' => detectColumn($conn, $stationTable, ['code', 'station_code'])
         ];
 
         foreach ([
@@ -205,6 +206,14 @@ function fetchRelationalTickets(mysqli $conn, array $schema, string $mode, strin
         'DATE(' . qualifyColumn('s', $schema['depart_column']) . ') AS service_date'
     ];
 
+    if ($schema['station_code_column'] !== null) {
+        $selectParts[] = qualifyColumn('origin', $schema['station_code_column']) . ' AS origin_code';
+        $selectParts[] = qualifyColumn('dest', $schema['station_code_column']) . ' AS dest_code';
+    } else {
+        $selectParts[] = 'NULL AS origin_code';
+        $selectParts[] = 'NULL AS dest_code';
+    }
+
     $availableExpression = qualifyColumn('s', $schema['capacity_column']);
     $soldJoin = '';
 
@@ -270,6 +279,8 @@ function buildTicketResponseRow(array $row): array
         'route_id' => isset($row['service_id']) ? (int) $row['service_id'] : (isset($row['route_id']) ? (int) $row['route_id'] : 0),
         'origin' => $row['origin'] ?? '',
         'dest' => $row['dest'] ?? '',
+        'origin_code' => deriveStationCode($row['origin'] ?? '', $row['origin_code'] ?? null),
+        'dest_code' => deriveStationCode($row['dest'] ?? '', $row['dest_code'] ?? null),
         'departure' => isset($row['depart_time']) ? formatTimeForOutput((string) $row['depart_time']) : '',
         'arrival' => isset($row['arrival_time']) ? formatTimeForOutput((string) $row['arrival_time']) : '',
         'price' => formatPriceForOutput($priceValue),
@@ -277,6 +288,33 @@ function buildTicketResponseRow(array $row): array
         'available_ticket' => $availableRaw !== null ? max((int) $availableRaw, 0) : -1,
         'total_ticket' => $totalRaw !== null ? max((int) $totalRaw, 0) : null
     ];
+}
+
+function deriveStationCode(string $stationName, ?string $explicitCode = null): string
+{
+    $code = strtoupper(trim((string) $explicitCode));
+
+    if ($code !== '') {
+        return $code;
+    }
+
+    $name = trim($stationName);
+
+    if ($name === '') {
+        return '';
+    }
+
+    if (preg_match('/\(([A-Za-z0-9]{2,})\)\s*$/', $name, $matches) === 1) {
+        return strtoupper($matches[1]);
+    }
+
+    $alphanumeric = preg_replace('/[^A-Za-z0-9]/', '', $name);
+
+    if ($alphanumeric === '') {
+        return '';
+    }
+
+    return strtoupper(substr($alphanumeric, 0, min(4, strlen($alphanumeric))));
 }
 
 function formatTimeForOutput(string $timeValue): string
