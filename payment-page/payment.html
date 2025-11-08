@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RAILLY</title>
+  <link rel="stylesheet" href="./index.css" />
+  <link rel="stylesheet" href="./payment.css" />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap');
+  </style>
+</head>
+<body>
+  <!-- Header -->
+<body class="home-page">
+  <div class="home-background">
+    <div
+      data-include="header.html"
+      data-include-class="site-header"
+      data-nav-active="CART">
+    </div>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="payment-container">
+      <h1 class="page-title">PAYMENT</h1>
+
+      <!-- Payment Summary Box -->
+      <div class="payment-summary-box">
+        <h2 class="section-title">Payment</h2>
+        
+        <div class="info-row">
+          <span class="info-label">Ticket</span>
+          <span class="info-value" id="total-amount">20 BTH</span>
+        </div>
+
+        <div class="info-section">
+          <div class="info-label-main">Travel date</div>
+          <div class="info-detail">
+            <div class="detail-text">Departure: <span id="departure-info">-</span></div>
+            <div class="detail-text">Arrived: <span id="arrival-info">-</span></div>
+          </div>
+        </div>
+
+        <div class="total-section">
+          <span class="total-label">TOTAL</span>
+          <span class="total-value" id="grand-total">20 BTH</span>
+        </div>
+      </div>
+
+     <!-- Payment Methods -->
+      <div class="payment-methods">
+        <div class="payment-option" data-method="qr">
+          <input type="radio" name="payment" id="qr-payment" value="qr">
+          <label for="qr-payment">
+            <span>Pay via QR PromptPay</span>
+            <span class="payment-icon-wrapper">
+              <img src="prom.png" alt="PromptPay" class="payment-logo">
+            </span>
+          </label>
+        </div>
+
+        <div class="payment-option" data-method="card">
+          <input type="radio" name="payment" id="card-payment" value="card">
+          <label for="card-payment">
+            <span>Credit / Debit card</span>
+            <span class="payment-icon-wrapper">
+              <img src="master.png" alt="MasterCard" class="payment-logo">
+            </span>
+          </label>
+        </div>
+
+        <div class="payment-option" data-method="truemoney">
+          <input type="radio" name="payment" id="truemoney-payment" value="truemoney">
+          <label for="truemoney-payment">
+            <span>TrueMoney</span>
+            <span class="payment-icon-wrapper">
+              <img src="true.png" alt="TrueMoney Wallet" class="payment-logo">
+            </span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Payment Info Box -->
+      <div class="payment-info-box">
+        <h3>Payment via PromptPay</h3>
+        <p>You will be redirected to PromptPay to complete the payment</p>
+        <p class="disclaimer">You acknowledge that the train ticket price charged to you may vary from time to time due to your selection of seating class, travel period, or increased applicable fees, and you agree to pay these amounts.</p>
+        <button class="continue-btn" id="continue-btn">CONTINUE</button>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <p>RAILLY</p>
+  </footer>
+
+  <!-- Success Modal -->
+  <div class="modal" id="success-modal">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeModal('success-modal')"></button>
+      <h2>Payment successful</h2>
+      <p class="amount-paid">Amount Paid : <span id="paid-amount">00.00 BTH</span></p>
+      <button class="modal-btn ok-btn" onclick="handleSuccess()">OK</button>
+    </div>
+  </div>
+
+
+  <script src="payment.js"></script>
+</body>
+</html>
