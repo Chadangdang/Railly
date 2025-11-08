@@ -14,7 +14,7 @@
     <script src="./aboutus.js" defer></script>
   </head>
   <body class="about-page">
-    <div class="about-page-wrapper">
+    <div class="about-background">
       <div
         data-include="../shared/header.html"
         data-include-class="site-header"
@@ -22,30 +22,20 @@
       ></div>
 
       <main class="page-content about-main">
-        <section class="about-hero">
-          <div class="about-hero-content">
-            <h1 class="about-hero-title">ABOUT RAILLY</h1>
-            <p class="about-description">
-              Railly is a simple train-ticket web app that makes traveling easier. You can search routes,
-              check real-time seat availability, confirm your booking in one click, and keep your e-tickets safely in one place.
-              <br /><br />The backend uses PHP + MySQL for secure bookings, while the frontend is built with HTML, CSS, and
-              JavaScript, designed in Figma for a clean and responsive UI.
-            </p>
-          </div>
-        </section>
-
-        <section class="about-maker">
-          <h2 class="about-maker-title">The Maker</h2>
-          <p class="maker-description">
-            Hi, I’m Chadang Phummarin (Kanomtian), a student from the Digital Engineering Department at SIIT, Thammasat University.
-            I created Railly as part of my coursework to combine what I learned in database programming with my interest in web
-            design.
-            <br /><br />Contact me: <a href="mailto:chadang.phu@gmail.com">chadang.phu@gmail.com</a>
-          </p>
-        </section>
+        <h1 class="about-title">ABOUT RAILLY</h1>
+        <p class="about-description">
+          <span class="about-description__lead"
+            >Railly is a simple train-ticket web app that makes traveling easier. You can search routes, check real-time seat
+            availability, confirm your booking in one click, and keep your e-tickets safely in one place.</span
+          >
+          <span class="about-description__tech"
+            >The backend uses PHP + MySQL for secure bookings, while the frontend is built with HTML, CSS, and JavaScript,
+            designed in Figma for a clean and responsive UI.</span
+          >
+        </p>
       </main>
 
-      <div data-include="../shared/footer.html"></div>
+      <div data-include="../shared/footer.html" data-include-class="about-footer"></div>
     </div>
   </body>
 </html>
