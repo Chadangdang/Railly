@@ -14,16 +14,30 @@
 }
 
 body.myticket-page {
-  background: var(--myticket-background-gradient);
   min-height: 100vh;
   font-family: 'Jost', sans-serif;
 }
 
 .myticket-page-wrapper {
   position: relative;
-  min-height: calc(100vh - var(--footer-height, 44px));
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
+  background: var(--myticket-background-gradient),
+    url('../../../assets/img/train_bg.png') center/cover no-repeat;
+}
+
+.myticket-page-wrapper::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.15);
+  pointer-events: none;
+}
+
+.myticket-page-wrapper > * {
+  position: relative;
+  z-index: 1;
 }
 
 .myticket-main {
@@ -31,28 +45,29 @@ body.myticket-page {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 32px;
-  padding: calc(var(--header-offset) + 200 px) 
-  var(--layout-padding-inline)
-    calc(var(--footer-height, 44px) + 88px);
+  gap: 24px;
+  padding: calc(var(--header-offset) - 100px)
+           var(--layout-padding-inline)
+           calc(var(--footer-height, 44px) + 88px);
   text-align: center;
 }
 
 .myticket-hero {
-  display: flex;
+  display: contents;
   flex-direction: column;
   align-items: center;
   gap: 20px;
-  max-width: 1100px;
+  width: 100%;
+  max-width: 800px;
 }
 
 .myticket-title {
   width: 100%;
-  margin: 0;
-  font-size: 36px;
+  max-width: 800px;
+  margin: 0 auto;
+  font-size: 30px;
   font-weight: 700;
   line-height: 52px;
-  letter-spacing: 0.04em;
   text-transform: uppercase;
   background: var(--myticket-heading-gradient);
   -webkit-background-clip: text;
@@ -72,6 +87,8 @@ body.myticket-page {
   flex-direction: column;
   gap: 8px;
   max-width: 860px;
+  text-align: left;
+  align-self: stretch;
 }
 
 .myticket-description strong {
@@ -88,20 +105,20 @@ body.myticket-page {
 .ticket-filter-buttons {
   display: flex;
   flex-wrap: wrap;
-  gap: 24px;
+  gap: 16px;
   justify-content: center;
 }
 
 .filter-button {
-  min-width: 180px;
-  padding: 12px 32px;
-  border-radius: 15px;
+  min-width: 140px;
+  padding: 10px 20px;
+  border-radius: 12px;
   border: 2px solid #000000;
   background: #ffffff;
   color: #000000;
-  font-size: 20px;
+  font-size: 16px;
   font-weight: 500;
-  line-height: 29px;
+  line-height: 24px;
   cursor: pointer;
   box-shadow: var(--myticket-shadow);
   transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, color 0.2s ease;

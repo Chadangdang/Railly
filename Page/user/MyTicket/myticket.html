@@ -13,20 +13,20 @@
   <script src="../../../assets/js/layout-loader.js" defer></script>
 </head>
 <body class="myticket-page">
-  <div
-    data-include="../shared/header.html"
-    data-include-class="site-header"
-    data-nav-active="myticket"
-  ></div>
-
   <div class="myticket-page-wrapper">
+    <div
+      data-include="../shared/header.html"
+      data-include-class="site-header"
+      data-nav-active="myticket"
+    ></div>
+
     <main class="page-content myticket-main">
       <header class="myticket-hero" aria-labelledby="myticket-heading">
         <h1 id="myticket-heading" class="myticket-title">MY TICKET</h1>
         <p class="myticket-description">
           <strong>Show Your Ticket to the Train Staff</strong>
           <span>
-            Please present your E-ticket by showing the E-ticket below to the train staff when requested. Simply scan the barcode at the
+            Please present your E-ticket by showing the E-ticket below to the train staff when requested. Simply scan the QR code at the
             station or on the train for a smooth and hassle-free boarding experience.
           </span>
         </p>
@@ -50,9 +50,9 @@
         <p class="no-tickets">Fetching your tickets...</p>
       </section>
     </main>
-  </div>
 
-  <div data-include="../shared/footer.html"></div>
+    <div data-include="../shared/footer.html"></div>
+  </div>
 
   <script>
     const FILTER_CONFIG = {
