@@ -63,6 +63,7 @@
     const departure = urlParams.get("departure");
     const arrival = urlParams.get("arrival");
     const price = urlParams.get("price");
+    const quantity = Number(urlParams.get("quantity")) || 1;
     const datee = urlParams.get("datee");
 
     let username = sessionStorage.getItem("username");
@@ -80,9 +81,12 @@
     document.getElementById("destination").textContent = destination;
     document.getElementById("departure-time").textContent = departure;
     document.getElementById("arrival-time").textContent = arrival;
-    document.getElementById("price").textContent = price;
-    document.getElementById("ticket-price").textContent = price;
-    document.getElementById("total-price").textContent = price;
+    const formattedUnitPrice = formatCurrency(price);
+    const totalPrice = formatCurrency((Number(price) || 0) * quantity);
+
+    document.getElementById("price").textContent = formattedUnitPrice;
+    document.getElementById("ticket-price").textContent = `${formattedUnitPrice} x${quantity}`;
+    document.getElementById("total-price").textContent = totalPrice;
 
     const dateElement = document.createElement("p");
     dateElement.textContent = `Date: ${datee}`;
@@ -106,7 +110,7 @@
       formData.append("destination", destination);
       formData.append("departure", departure);
       formData.append("arrival", arrival);
-      formData.append("price", price);
+      formData.append("price", (Number(price) || 0) * quantity);
 
       try {
         const response = await fetch("../../../Backend/confirm.php", {
@@ -128,6 +132,19 @@
         alert("An error occurred while confirming the ticket.");
       }
     });
+
+    function formatCurrency(value) {
+      const numeric = Number(value);
+
+      if (!Number.isFinite(numeric)) {
+        return String(value || "0");
+      }
+
+      return `${numeric.toLocaleString(undefined, {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })} THB`;
+    }
   </script>
 </body>
 </html>

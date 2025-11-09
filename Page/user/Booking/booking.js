@@ -360,7 +360,7 @@
     button.textContent = availableCount > 0 ? 'ADD TO CART' : 'SOLD OUT';
     button.disabled = availableCount <= 0;
     button.addEventListener('click', function () {
-      redirectToConfirmation(ticket);
+      addTicketToCart(ticket);
     });
     actions.appendChild(button);
 
@@ -563,6 +563,93 @@
     }
 
     return value.toLocaleString(undefined, { minimumFractionDigits: 2 }) + ' THB';
+  }
+
+  function addTicketToCart(ticket) {
+    var latestContext = session ? session.getUserContext() : context;
+
+    if (!latestContext || !latestContext.username || !latestContext.id) {
+      alert('Please log in to add tickets to your cart.');
+      window.location.href = '../Login/Login.html';
+      return;
+    }
+
+    var cartMap = loadCartStorage();
+    var userIdKey = String(latestContext.id);
+    var userCart = Array.isArray(cartMap[userIdKey]) ? cartMap[userIdKey] : [];
+
+    var itemId = buildCartItemId(ticket);
+    var existingItem = userCart.find(function (entry) {
+      return entry && entry.id === itemId;
+    });
+
+    if (existingItem) {
+      var quantity = Number(existingItem.quantity) || 0;
+      existingItem.quantity = quantity + 1;
+    } else {
+      userCart.push({
+        id: itemId,
+        routeId: ticket.route_id || ticket.routeId || '',
+        origin: ticket.origin || '',
+        originName: ticket.origin || '',
+        originCode: ticket.origin_code || ticket.originCode || '',
+        destination: ticket.dest || ticket.destination || '',
+        destinationName: ticket.dest || ticket.destination || '',
+        destinationCode: ticket.dest_code || ticket.destinationCode || '',
+        departure: ticket.departure || '',
+        arrival: ticket.arrival || '',
+        datee: ticket.datee || '',
+        price: Number(ticket.price) || 0,
+        travelMinutes: ticket.travelMinutes,
+        quantity: 1,
+        addedAt: Date.now()
+      });
+    }
+
+    cartMap[userIdKey] = userCart;
+    saveCartStorage(cartMap);
+    localStorage.setItem('railly-cart-selected', userIdKey + '::' + itemId);
+
+    alert('Ticket added to your cart.');
+    window.location.href = '../Cart/cart.html';
+  }
+
+  function buildCartItemId(ticket) {
+    var routeId = ticket.route_id || ticket.routeId || '';
+    var dateValue = ticket.datee || '';
+    var departure = ticket.departure || '';
+
+    if (routeId) {
+      return routeId + '::' + dateValue + '::' + departure;
+    }
+
+    return [
+      ticket.origin || '',
+      ticket.dest || ticket.destination || '',
+      dateValue,
+      departure,
+      ticket.arrival || ''
+    ].join('::');
+  }
+
+  function loadCartStorage() {
+    var raw = localStorage.getItem('railly-cart');
+
+    if (!raw) {
+      return {};
+    }
+
+    try {
+      var parsed = JSON.parse(raw);
+      return parsed && typeof parsed === 'object' ? parsed : {};
+    } catch (error) {
+      console.warn('Unable to parse stored cart data:', error);
+      return {};
+    }
+  }
+
+  function saveCartStorage(map) {
+    localStorage.setItem('railly-cart', JSON.stringify(map || {}));
   }
 
   function redirectToConfirmation(ticket) {

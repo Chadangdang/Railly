@@ -1,19 +1,13 @@
 @import url('https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap');
 
 :root {
-  --myticket-max-width: 1123px;
-  --myticket-radius-lg: 20px;
-  --myticket-radius-md: 15px;
-  --myticket-heading-gradient: linear-gradient(180deg, #91021e 0%, #29083d 100%);
-  --myticket-primary-gradient: linear-gradient(90deg, #1647a2 0%, #91021e 100%);
-}
-
-.myticket-page-wrapper {
-  position: relative;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  background: linear-gradient(
+  --cart-card-width: 1123px;
+  --cart-radius-lg: 20px;
+  --cart-radius-md: 15px;
+  --cart-heading-gradient: linear-gradient(180deg, #91021e 0%, #29083d 100%);
+  --cart-accent-gradient: linear-gradient(90deg, #0ab1f8 0%, #f3447a 100%);
+  --cart-text-muted: #a6a3a3;
+  --cart-body-bg: linear-gradient(
       180deg,
       rgba(255, 255, 255, 0.8) 3%,
       rgba(145, 2, 30, 0.8) 46.5%,
@@ -22,7 +16,22 @@
     url('../../../assets/img/train_bg.png') center/cover no-repeat;
 }
 
-.myticket-page-wrapper::before {
+.cart-page {
+  margin: 0;
+  font-family: 'Jost', sans-serif;
+  color: #000000;
+  background: #f8f8f8;
+}
+
+.cart-page-wrapper {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--cart-body-bg);
+}
+
+.cart-page-wrapper::before {
   content: '';
   position: absolute;
   inset: 0;
@@ -30,39 +39,39 @@
   pointer-events: none;
 }
 
-.myticket-page-wrapper > * {
+.cart-page-wrapper > * {
   position: relative;
   z-index: 1;
 }
 
-.myticket-main {
+.cart-main {
   flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 32px;
-  padding: calc(var(--header-offset) - 100px) 
-           var(--layout-padding-inline)
-           calc(var(--footer-height, 44px) + 88px);
-  text-align: center;
+  padding: calc(var(--header-offset) - 100px)
+      var(--layout-padding-inline)
+      calc(var(--footer-height, 44px) + 200px);
+  box-sizing: border-box;
 }
 
-.myticket-header {
-  max-width: 1241px;
+.cart-header {
+  width: 100%;
+  max-width: var(--cart-card-width);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
 }
 
-.myticket-title {
+.cart-title {
   margin: 0;
   font-size: 30px;
   font-weight: 700;
   line-height: 52px;
-  letter-spacing: 0.03em;
   text-transform: uppercase;
-  background: var(--myticket-heading-gradient);
+  background: var(--cart-heading-gradient);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -70,84 +79,319 @@
   text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
 }
 
-.myticket-description {
+.cart-subtitle {
   margin: 0;
-  font-size: 18px;
-  font-weight: 400;
-  line-height: 1.7;
-  color: #000000;
-  text-align: left;
-}
-
-.myticket-description strong {
-  display: block;
   font-size: 20px;
-  font-weight: 600;
-  margin-bottom: 15px
-}
-
-.ticket-filters {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 24px;
-  width: 100%;
-  max-width: calc(var(--myticket-max-width) - 200px);
-}
-
-.filter-button {
-  min-width: 200px;
-  padding: 10px 32px;
-  border-radius: 15px;
-  border: 2px solid #000000;
-  background: #ffffff;
-  color: #000000;
-  font-size: 18px;
   font-weight: 500;
-  line-height: 15px;
-  font-family: 'Jost', sans-serif;
+  line-height: 29px;
+  text-align: center;
+  color: #000000;
+}
+
+.cart-orders {
+  width: 100%;
+  max-width: var(--cart-card-width);
+}
+
+.cart-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.cart-empty {
+  margin: 0;
+  margin-top: 16px;
+  text-align: center;
+  font-size: 18px;
+}
+
+.cart-empty a {
+  color: #1647a2;
+  font-weight: 600;
+}
+
+.cart-item {
+  position: relative;
+  display: flex;
+  gap: 20px;
+  padding: 24px;
+  border-radius: var(--cart-radius-lg);
+  background: #ffffff;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15);
+  border: 4px solid transparent;
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.cart-item.is-selected {
+  border-color: #f3447a;
+  box-shadow: 0px 12px 24px rgba(243, 68, 122, 0.25);
+}
+
+.cart-item__selector {
+  position: absolute;
+  inset-block-start: 24px;
+  inset-inline-start: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+}
+
+.cart-item__selector input {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid rgba(0, 0, 0, 0.3);
+  background: #ffffff;
+  position: relative;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.cart-item__selector input:checked {
+  border-color: transparent;
+  background: var(--cart-accent-gradient);
+}
+
+.cart-item__selector input:checked::after {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  border-radius: 50%;
+  background: #ffffff;
+}
+
+.cart-ticket {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.cart-ticket__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding-inline-start: 44px;
+  gap: 16px;
+}
+
+.cart-ticket__date {
+  font-size: 24px;
+  font-weight: 500;
+  color: #000000;
+}
+
+.cart-ticket__price {
+  font-size: 24px;
+  font-weight: 500;
+  color: #000000;
+}
+
+.cart-ticket__body {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 24px;
+  padding-inline-start: 44px;
+}
+
+.cart-ticket__icon {
+  width: 116px;
+  height: 116px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.6);
+  display: grid;
+  place-items: center;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.12);
+}
+
+.cart-ticket__icon img {
+  width: 76px;
+  height: auto;
+}
+
+.cart-ticket__schedule {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  align-items: center;
+}
+
+.cart-ticket__time {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: flex-start;
+}
+
+.cart-ticket__clock {
+  font-size: 40px;
+  font-weight: 400;
+  line-height: 1.2;
+  color: #000000;
+}
+
+.cart-ticket__station {
+  font-size: 24px;
+  color: var(--cart-text-muted);
+}
+
+.cart-ticket__duration {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  height: 100%;
+  border-radius: var(--cart-radius-md);
+  background: rgba(10, 177, 248, 0.08);
+  padding: 12px 16px;
+  font-size: 16px;
+  font-weight: 500;
+  color: #1647a2;
+  text-align: center;
 }
 
-.filter-button.is-active {
-  border-color: #ffffff;
-  background: var(--myticket-primary-gradient);
-  color: #fffefe;
-  font-weight: 600;
+.cart-ticket__quantity {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(0, 0, 0, 0.04);
+  border-radius: var(--cart-radius-md);
+  padding: 10px 16px;
 }
 
-.filter-button:focus-visible {
-  outline: 3px solid rgba(145, 2, 30, 0.3);
-  outline-offset: 2px;
-}
-
-.user-tickets {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-}
-
-.ticket-list {
-  width: 100%;
-  max-width: var(--myticket-max-width);
-  min-height: 320px;
-  padding: 40px 32px;
-  border-radius: var(--myticket-radius-lg);
-  background: rgba(255, 255, 255, 0.92);
-  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.2);
+.quantity-btn {
+  width: 46px;
+  height: 43px;
+  border: none;
+  border-radius: 10px;
+  background: var(--cart-accent-gradient);
+  color: #ffffff;
+  font-size: 32px;
+  line-height: 1;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 24px;
+  place-items: center;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.ticket-list:empty::after {
-  content: '';
+.quantity-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+  box-shadow: none;
+}
+
+.quantity-btn:not(:disabled):hover {
+  transform: translateY(-1px);
+  box-shadow: 0px 4px 12px rgba(243, 68, 122, 0.35);
+}
+
+.quantity-value {
+  min-width: 32px;
+  text-align: center;
+  font-size: 32px;
+  font-weight: 500;
+  color: #0a0a0a;
+}
+
+.cart-summary-bar {
+  margin-top: auto;
+  width: 100%;
+  position: sticky;
+  bottom: var(--footer-height, 44px);
+  z-index: 2;
+  padding: 0 var(--layout-padding-inline) 24px;
+  box-sizing: border-box;
+}
+
+.cart-summary {
+  position: relative;
+  width: 100%;
+  max-width: calc(var(--cart-card-width) + 2 * var(--layout-padding-inline));
+  margin: 0 auto;
+  padding: 32px 32px 24px;
+  border-radius: 20px 20px 0 0;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0px -6px 18px rgba(0, 0, 0, 0.2);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(200px, auto) minmax(200px, auto);
+  gap: 32px;
+}
+
+.cart-summary__travel h2,
+.cart-summary__payment h3 {
+  margin: 0 0 12px;
+  font-size: 32px;
+  font-weight: 400;
+}
+
+.summary-travel-details {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: rgba(0, 0, 0, 0.65);
+}
+
+.cart-summary__payment .cart-summary__row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 20px;
+  font-weight: 500;
+  color: #000000;
+}
+
+.cart-summary__total {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.cart-summary__total-label {
+  font-size: 32px;
+  font-weight: 400;
+}
+
+.cart-summary__total-amount {
+  font-size: 40px;
+  font-weight: 500;
+  color: #000000;
+}
+
+.purchase-btn {
+  width: 100%;
+  max-width: 360px;
+  padding: 16px 24px;
+  border: none;
+  border-radius: 10px;
+  background: var(--cart-accent-gradient);
+  color: #ffffff;
+  font-size: 20px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.25);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+}
+
+.purchase-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.purchase-btn:not(:disabled):hover {
+  transform: translateY(-1px);
+  box-shadow: 0px 8px 16px rgba(10, 177, 248, 0.35);
 }
 
 .visually-hidden {
@@ -162,36 +406,123 @@
   border: 0;
 }
 
+@media (max-width: 1100px) {
+  .cart-ticket__body {
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto auto;
+  }
+
+  .cart-ticket__schedule {
+    grid-column: 2 / -1;
+    grid-row: 1 / 2;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .cart-ticket__duration {
+    grid-column: 1 / -1;
+  }
+
+  .cart-ticket__quantity {
+    grid-column: 2 / -1;
+    justify-self: end;
+  }
+
+  .cart-summary {
+    grid-template-columns: 1fr;
+    text-align: left;
+    align-items: stretch;
+  }
+
+  .cart-summary__total {
+    align-items: stretch;
+  }
+
+  .cart-summary__total-label,
+  .cart-summary__total-amount {
+    text-align: left;
+  }
+
+  .purchase-btn {
+    max-width: none;
+  }
+}
+
 @media (max-width: 768px) {
-  .myticket-main {
+  .cart-main {
     padding-inline: 24px;
+    padding-bottom: calc(var(--footer-height, 44px) + 220px);
   }
 
-  .filter-button {
-    min-width: 160px;
+  .cart-ticket__header,
+  .cart-ticket__body {
+    padding-inline-start: 0;
   }
 
-  .ticket-list {
-    padding: 32px 20px;
-    min-height: 240px;
+  .cart-item__selector {
+    inset-inline-start: 16px;
+    inset-block-start: 16px;
+  }
+
+  .cart-ticket__header {
+    padding-inline-start: 40px;
+  }
+
+  .cart-ticket__body {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+    padding-inline-start: 40px;
+  }
+
+  .cart-ticket__icon {
+    justify-self: flex-start;
+  }
+
+  .cart-ticket__schedule {
+    width: 100%;
+    grid-template-columns: 1fr;
+  }
+
+  .cart-summary-bar {
+    padding-inline: 24px;
   }
 }
 
 @media (max-width: 480px) {
-  .myticket-main {
+  .cart-main {
     gap: 24px;
   }
 
-  .ticket-filters {
-    gap: 16px;
+  .cart-subtitle {
+    font-size: 18px;
   }
 
-  .filter-button {
-    width: 100%;
-    min-width: 0;
+  .cart-ticket__clock {
+    font-size: 32px;
   }
 
-  .ticket-list {
-    padding: 24px 16px;
+  .cart-ticket__station {
+    font-size: 20px;
+  }
+
+  .cart-summary {
+    padding: 24px 20px 20px;
+  }
+
+  .cart-summary__travel h2,
+  .cart-summary__payment h3 {
+    font-size: 24px;
+  }
+
+  .summary-travel-details,
+  .cart-summary__payment .cart-summary__row {
+    font-size: 18px;
+  }
+
+  .cart-summary__total-label {
+    font-size: 24px;
+  }
+
+  .cart-summary__total-amount {
+    font-size: 32px;
   }
 }

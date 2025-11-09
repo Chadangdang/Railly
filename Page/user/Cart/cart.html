@@ -1,54 +1,67 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>RAILLY - My Tickets</title>
-  <link rel="stylesheet" href="../../../index.css" />
-  <link rel="stylesheet" href="./myticket.css" />
-  <script src="../../../assets/js/user-session.js" defer></script>
-  <script src="../../../assets/js/layout-loader.js" defer></script>
-  <script src="./myticket.js" defer></script>
-</head>
-<body class="myticket-page">
-  <div class="myticket-page-wrapper">
-    <div
-      data-include="../shared/header.html"
-      data-include-class="site-header"
-      data-nav-active="myticket"
-    ></div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RAILLY - Cart</title>
+    <link rel="stylesheet" href="../../../index.css" />
+    <link rel="stylesheet" href="./cart.css" />
+    <script src="../../../assets/js/user-session.js" defer></script>
+    <script src="../../../assets/js/layout-loader.js" defer></script>
+    <script src="./cart.js" defer></script>
+  </head>
+  <body class="cart-page">
+    <div class="cart-page-wrapper">
+      <div
+        data-include="../shared/header.html"
+        data-include-class="site-header"
+        data-nav-active="cart"
+      ></div>
 
-    <main class="page-content myticket-main">
-      <header class="myticket-header">
-        <h1 class="myticket-title">MY TICKET</h1>
-        <p class="myticket-description">
-          <strong>Show Your Ticket to the Train Staff</strong>
-          Please present your E-ticket by showing the E-ticket below to the train
-          staff when requested. Simply scan the QR code at the station or on the train
-          for a smooth and hassle-free boarding experience.
-        </p>
-      </header>
+      <main class="page-content cart-main">
+        <header class="cart-header">
+          <h1 class="cart-title">CART</h1>
+          <p class="cart-subtitle">Select only one order to continue payment process</p>
+        </header>
 
+        <section class="cart-orders" aria-labelledby="cart-orders-heading">
+          <h2 id="cart-orders-heading" class="visually-hidden">Tickets in cart</h2>
+          <ul id="cart-list" class="cart-list" role="list"></ul>
+          <p id="cart-empty" class="cart-empty" hidden>
+            Your cart is empty. Start by
+            <a href="../Booking/Booking.html">searching for tickets</a>.
+          </p>
+        </section>
+      </main>
 
-      <section class="ticket-filters" aria-label="Filter tickets by status">
-        <button class="filter-button is-active" type="button" data-filter="active">
-          My Ticket
-        </button>
-        <button class="filter-button" type="button" data-filter="cancelled">
-          Cancel
-        </button>
-        <button class="filter-button" type="button" data-filter="expired">
-          Expired
-        </button>
+      <section class="cart-summary-bar" aria-labelledby="cart-summary-heading">
+        <div class="cart-summary">
+          <div class="cart-summary__travel">
+            <h2 id="cart-summary-heading">Travel date</h2>
+            <p id="summary-travel" class="summary-travel-details">
+              Select a ticket to view the travel details.
+            </p>
+          </div>
+
+          <div class="cart-summary__payment" aria-label="Payment details">
+            <h3>Payment</h3>
+            <div class="cart-summary__row">
+              <span>Ticket</span>
+              <span id="summary-quantity" aria-live="polite">x0</span>
+            </div>
+          </div>
+
+          <div class="cart-summary__total" aria-label="Total price">
+            <span class="cart-summary__total-label">TOTAL</span>
+            <span id="summary-total" class="cart-summary__total-amount">0 THB</span>
+            <button id="purchase-btn" type="button" class="purchase-btn" disabled>
+              PURCHASE
+            </button>
+          </div>
+        </div>
       </section>
 
-      <section class="user-tickets" aria-labelledby="user-tickets-heading">
-        <h2 id="user-tickets-heading" class="visually-hidden">Your tickets</h2>
-        <div id="ticket-list" class="ticket-list" role="list" data-filter="active"></div>
-      </section>
-    </main>
-
-    <div data-include="../shared/footer.html"></div>
-  </div>
-</body>
+      <div data-include="../shared/footer.html"></div>
+    </div>
+  </body>
 </html>
