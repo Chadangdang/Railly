@@ -184,23 +184,8 @@
     var card = document.createElement('article');
     card.className = 'cart-ticket';
 
-    var header = document.createElement('div');
-    header.className = 'cart-ticket__header';
-
-    var dateElement = document.createElement('span');
-    dateElement.className = 'cart-ticket__date';
-    dateElement.textContent = formatDateForCard(item.datee);
-    header.appendChild(dateElement);
-
-    var priceElement = document.createElement('span');
-    priceElement.className = 'cart-ticket__price';
-    priceElement.textContent = formatPrice(item.price) + ' Baht';
-    header.appendChild(priceElement);
-
-    card.appendChild(header);
-
-    var body = document.createElement('div');
-    body.className = 'cart-ticket__body';
+    var identity = document.createElement('div');
+    identity.className = 'cart-ticket__identity';
 
     var iconWrapper = document.createElement('div');
     iconWrapper.className = 'cart-ticket__icon';
@@ -209,39 +194,59 @@
     icon.alt = '';
     icon.setAttribute('aria-hidden', 'true');
     iconWrapper.appendChild(icon);
-    body.appendChild(iconWrapper);
+    identity.appendChild(iconWrapper);
 
-    var schedule = document.createElement('div');
-    schedule.className = 'cart-ticket__schedule';
+    var dateElement = document.createElement('span');
+    dateElement.className = 'cart-ticket__date';
+    dateElement.textContent = formatDateForCard(item.datee);
+    identity.appendChild(dateElement);
 
-    schedule.appendChild(buildTimeColumn(item.departure, item.origin, item.originCode));
+    card.appendChild(identity);
 
-    var duration = document.createElement('div');
-    duration.className = 'cart-ticket__duration';
-    duration.textContent = 'Travel time: ' + formatTravelDuration(item.travelMinutes);
-    schedule.appendChild(duration);
-
-    schedule.appendChild(
-      buildTimeColumn(item.arrival, item.destination, item.destinationCode)
+    card.appendChild(
+      buildTimeColumn(item.departure, item.origin, item.originCode, 'origin')
+    );
+    card.appendChild(buildConnector(item.travelMinutes));
+    card.appendChild(
+      buildTimeColumn(
+        item.arrival,
+        item.destination,
+        item.destinationCode,
+        'destination'
+      )
     );
 
-    body.appendChild(schedule);
+    var actions = document.createElement('div');
+    actions.className = 'cart-ticket__actions';
 
     var quantityControls = buildQuantityControls(item);
-    body.appendChild(quantityControls);
+    actions.appendChild(quantityControls);
 
-    card.appendChild(body);
+    var totalElement = document.createElement('span');
+    totalElement.className = 'cart-ticket__total';
+    var totalAmount = Number(item.price) * Number(item.quantity);
+    if (!Number.isFinite(totalAmount)) {
+      totalAmount = 0;
+    }
+    totalElement.textContent = formatPrice(totalAmount) + ' Baht';
+    actions.appendChild(totalElement);
+
+    card.appendChild(actions);
     listItem.appendChild(card);
 
     return listItem;
   }
 
-  function buildTimeColumn(timeValue, stationName, stationCode) {
+  function buildTimeColumn(timeValue, stationName, stationCode, modifier) {
     var wrapper = document.createElement('div');
-    wrapper.className = 'cart-ticket__time';
+    var classes = ['cart-ticket__time-block'];
+    if (modifier) {
+      classes.push('cart-ticket__time-block--' + modifier);
+    }
+    wrapper.className = classes.join(' ');
 
     var timeElement = document.createElement('span');
-    timeElement.className = 'cart-ticket__clock';
+    timeElement.className = 'cart-ticket__time';
     timeElement.textContent = formatTimeForDisplay(timeValue);
     wrapper.appendChild(timeElement);
 
@@ -249,6 +254,23 @@
     stationElement.className = 'cart-ticket__station';
     stationElement.textContent = formatStationLabel(stationName, stationCode);
     wrapper.appendChild(stationElement);
+
+    return wrapper;
+  }
+
+  function buildConnector(travelMinutes) {
+    var wrapper = document.createElement('div');
+    wrapper.className = 'cart-ticket__connector';
+
+    var line = document.createElement('span');
+    line.className = 'cart-ticket__connector-line';
+    line.setAttribute('aria-hidden', 'true');
+    wrapper.appendChild(line);
+
+    var label = document.createElement('span');
+    label.className = 'cart-ticket__connector-label';
+    label.textContent = 'Travel time: ' + formatTravelDuration(travelMinutes);
+    wrapper.appendChild(label);
 
     return wrapper;
   }
@@ -269,6 +291,7 @@
     var valueElement = document.createElement('span');
     valueElement.className = 'quantity-value';
     valueElement.textContent = String(item.quantity);
+    valueElement.setAttribute('aria-live', 'polite');
 
     var increaseBtn = document.createElement('button');
     increaseBtn.type = 'button';
@@ -350,16 +373,44 @@
     }
 
     if (!selectedItem) {
+      elements.summaryTravel.dataset.state = 'empty';
       elements.summaryTravel.textContent = 'Select a ticket to view the travel details.';
       elements.summaryQuantity.textContent = 'x0';
       elements.summaryTotal.textContent = '0 THB';
       return;
     }
 
-    elements.summaryTravel.textContent = buildTravelSummary(selectedItem);
+    var summaryParts = buildTravelSummary(selectedItem);
+    elements.summaryTravel.dataset.state = 'filled';
+    elements.summaryTravel.innerHTML = '';
+
+    if (summaryParts.date) {
+      var dateLine = document.createElement('span');
+      dateLine.className = 'summary-travel-details__date';
+      dateLine.textContent = summaryParts.date;
+      elements.summaryTravel.appendChild(dateLine);
+    }
+
+    if (summaryParts.route) {
+      var routeLine = document.createElement('span');
+      routeLine.className = 'summary-travel-details__route';
+      routeLine.textContent = summaryParts.route;
+      elements.summaryTravel.appendChild(routeLine);
+    }
+
+    if (summaryParts.timeRange) {
+      var timeLine = document.createElement('span');
+      timeLine.className = 'summary-travel-details__time';
+      timeLine.textContent = summaryParts.timeRange;
+      elements.summaryTravel.appendChild(timeLine);
+    }
+
     elements.summaryQuantity.textContent = 'x' + selectedItem.quantity;
 
     var total = Number(selectedItem.price) * Number(selectedItem.quantity);
+    if (!Number.isFinite(total)) {
+      total = 0;
+    }
     elements.summaryTotal.textContent = formatPrice(total) + ' THB';
   }
 
@@ -409,22 +460,14 @@
     var departureTime = formatTimeForDisplay(item.departure);
     var arrivalTime = formatTimeForDisplay(item.arrival);
     var originLabel = item.originName || item.origin || 'Origin Station';
-    var destinationLabel = item.destinationName || item.destination || 'Destination Station';
+    var destinationLabel =
+      item.destinationName || item.destination || 'Destination Station';
 
-    return (
-      'Departure: ' +
-      departureDate +
-      ', ' +
-      departureTime +
-      ' ' +
-      originLabel +
-      '  Arrived: ' +
-      departureDate +
-      ', ' +
-      arrivalTime +
-      ' ' +
-      destinationLabel
-    );
+    return {
+      date: departureDate,
+      route: originLabel + ' → ' + destinationLabel,
+      timeRange: departureTime + ' - ' + arrivalTime
+    };
   }
 
   function proceedToConfirmation(item) {
