@@ -238,7 +238,7 @@
     if (!Number.isFinite(totalAmount)) {
       totalAmount = 0;
     }
-    totalElement.textContent = formatPrice(totalAmount) + ' Baht';
+    totalElement.textContent = formatPrice(totalAmount) + ' BTH';
     actions.appendChild(totalElement);
 
     card.appendChild(actions);
