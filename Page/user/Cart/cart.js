@@ -156,30 +156,40 @@
     var listItem = document.createElement('li');
     listItem.className = 'cart-item';
     listItem.dataset.itemId = item.id;
-
-    var selector = document.createElement('label');
-    selector.className = 'cart-item__selector';
-
-    var radio = document.createElement('input');
-    radio.type = 'radio';
-    radio.name = 'selectedOrder';
-    radio.value = item.id;
-    radio.checked = item.id === selectedItemId;
-    radio.addEventListener('change', function () {
-      setSelectedItem(item.id);
-    });
-
-    var srText = document.createElement('span');
-    srText.className = 'visually-hidden';
-    srText.textContent =
+    var accessibleLabel =
       'Select ticket departing ' +
       formatTimeForDisplay(item.departure) +
       ' from ' +
       (item.originName || item.origin || 'Origin');
+    listItem.setAttribute('aria-label', accessibleLabel);
+    listItem.tabIndex = 0;
+    listItem.setAttribute('role', 'button');
+    listItem.setAttribute(
+      'aria-pressed',
+      item.id === selectedItemId ? 'true' : 'false'
+    );
 
-    selector.appendChild(radio);
-    selector.appendChild(srText);
-    listItem.appendChild(selector);
+    if (item.id === selectedItemId) {
+      listItem.classList.add('is-selected');
+    }
+
+    listItem.addEventListener('click', function (event) {
+      var target = event.target;
+      if (target && target.closest && target.closest('.quantity-btn')) {
+        return;
+      }
+      setSelectedItem(item.id);
+    });
+
+    listItem.addEventListener('keydown', function (event) {
+      if (event.target && event.target.closest && event.target.closest('.quantity-btn')) {
+        return;
+      }
+      if (event.key === 'Enter' || event.key === ' ' || event.key === 'Spacebar') {
+        event.preventDefault();
+        setSelectedItem(item.id);
+      }
+    });
 
     var card = document.createElement('article');
     card.className = 'cart-ticket';
@@ -355,15 +365,9 @@
         return;
       }
 
-      if (node.dataset.itemId === selectedItemId) {
-        node.classList.add('is-selected');
-        var radio = node.querySelector('input[type="radio"]');
-        if (radio && !radio.checked) {
-          radio.checked = true;
-        }
-      } else {
-        node.classList.remove('is-selected');
-      }
+      var isSelected = node.dataset.itemId === selectedItemId;
+      node.classList.toggle('is-selected', isSelected);
+      node.setAttribute('aria-pressed', isSelected ? 'true' : 'false');
     });
   }
 
