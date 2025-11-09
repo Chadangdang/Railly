@@ -85,8 +85,8 @@
 
 .cart-subtitle {
   margin: 0;
-  font-size: 20px;
-  font-weight: 500;
+  font-size: 18px;
+  font-weight: 400;
   line-height: 29px;
   text-align: left;
   color: #000000;
@@ -146,13 +146,13 @@
   width: 100%;
   display: grid;
   grid-template-columns:
-    auto
-    minmax(160px, max-content)
-    minmax(120px, max-content)
-    minmax(160px, max-content)
-    minmax(200px, max-content);
-  align-items: center;
-  justify-items: center;
+    minmax(0, 1.2fr)
+    minmax(160px, 1fr)
+    max-content
+    minmax(160px, 1fr)
+    minmax(0, 1fr);
+  align-items: stretch;
+  justify-items: stretch;
   column-gap: 16px;
   row-gap: 10px;
   padding: 16px 28px;
@@ -170,7 +170,7 @@
   display: flex;
   align-items: center;
   gap: 16px;
-  justify-self: flex-start;
+  justify-self: start;
 }
 
 .cart-ticket__icon {
@@ -202,12 +202,20 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
-  align-items: center;
-  justify-self: center;
-  align-self: center;
+  align-items: flex-start;
   justify-content: center;
-  text-align: center;
+  text-align: left;
   min-width: 160px;
+}
+
+.cart-ticket__time-block--origin {
+  justify-self: start;
+}
+
+.cart-ticket__time-block--destination {
+  align-items: flex-end;
+  justify-self: end;
+  text-align: right;
 }
 
 .cart-ticket__time {
@@ -276,7 +284,7 @@
 .cart-ticket__actions {
   display: flex;
   flex-direction: column;
-  align-items: stretch;
+  align-items: flex-end;
   gap: 10px;
   justify-self: end;
   min-width: 170px;
@@ -286,6 +294,7 @@
 .cart-ticket__quantity {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 10px;
   padding: 10px 16px;
   border-radius: var(--cart-radius-md);
@@ -331,12 +340,23 @@
   font-size: 22px;
   font-weight: 700;
   color: #91021e;
-  text-align: center;
+  text-align: right;
   white-space: nowrap;
+  width: 100%;
+}
+
+.cart-item.is-selected .cart-ticket__icon {
+  background: var(--cart-accent-gradient);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.35);
+}
+
+.cart-page-wrapper {
+  padding-bottom: var(--footer-height, 44px);
 }
 
 .cart-summary-bar {
   margin-top: auto;
+  margin-bottom: var(--footer-height, 44px);
   width: 100%;
   position: sticky;
   bottom: var(--footer-height, 44px);
