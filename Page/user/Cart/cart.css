@@ -52,7 +52,7 @@
   gap: 32px;
   padding: calc(var(--header-offset) - 80px)
       var(--layout-padding-inline)
-      calc(var(--footer-height, 44px) + 140px);
+      calc(var(--footer-height, 44px) + 260px);
   box-sizing: border-box;
 }
 
@@ -99,9 +99,20 @@
 }
 
 .cart-summary-panel {
+  position: fixed;
+  left: 50%;
+  bottom: calc(var(--footer-height, 44px) + 24px);
+  transform: translateX(-50%);
+  width: min(100% - 48px, var(--cart-card-width));
   display: flex;
   flex-direction: column;
   gap: 20px;
+  z-index: 50;
+  pointer-events: none;
+}
+
+.cart-summary-panel > * {
+  pointer-events: auto;
 }
 
 .cart-list {
@@ -362,10 +373,15 @@
   width: 100%;
   margin: 0;
   padding: 24px 28px;
-  border-radius: 24px;
-  background: rgba(255, 255, 255, 0.96);
-  border: 1px solid rgba(22, 71, 162, 0.12);
-  box-shadow: 0px 18px 32px rgba(18, 53, 102, 0.18);
+  border-radius: 28px;
+  background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.95),
+      rgba(255, 255, 255, 0.85)
+    );
+  border: 1px solid rgba(22, 71, 162, 0.18);
+  box-shadow: 0 22px 45px rgba(18, 53, 102, 0.24);
+  backdrop-filter: blur(12px);
   display: grid;
   grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) minmax(220px, max-content);
   gap: 24px;
@@ -525,6 +541,11 @@
 }
 
 @media (max-width: 1100px) {
+  .cart-summary-panel {
+    width: min(100% - 40px, var(--cart-card-width));
+    bottom: calc(var(--footer-height, 44px) + 20px);
+  }
+
   .cart-ticket {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     justify-items: center;
@@ -565,7 +586,12 @@
 @media (max-width: 768px) {
   .cart-main {
     padding-inline: 24px;
-    padding-bottom: calc(var(--footer-height, 44px) + 160px);
+    padding-bottom: calc(var(--footer-height, 44px) + 220px);
+  }
+
+  .cart-summary-panel {
+    width: calc(100% - 32px);
+    bottom: calc(var(--footer-height, 44px) + 18px);
   }
 
   .cart-ticket {
@@ -608,6 +634,11 @@
 @media (max-width: 480px) {
   .cart-main {
     gap: 24px;
+  }
+
+  .cart-summary-panel {
+    width: calc(100% - 20px);
+    bottom: calc(var(--footer-height, 44px) + 12px);
   }
 
   .cart-subtitle {
