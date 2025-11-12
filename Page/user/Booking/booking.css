@@ -435,6 +435,7 @@
 }
 
 .ticket-actions {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -478,6 +479,63 @@
   opacity: 0.6;
   cursor: not-allowed;
   box-shadow: none;
+}
+
+.ticket-added-message {
+  position: absolute;
+  right: 0;
+  bottom: 100%;
+  margin-bottom: 10px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: rgba(22, 71, 162, 0.95);
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  box-shadow: 0px 6px 16px rgba(22, 71, 162, 0.28);
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.ticket-added-message.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.ticket-flyer {
+  position: fixed;
+  z-index: 9999;
+  width: 42px;
+  height: auto;
+  margin-left: -21px;
+  margin-top: -21px;
+  pointer-events: none;
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.2));
+  transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.8s ease-out;
+  will-change: transform, opacity;
+}
+
+.cart-link-pulse {
+  animation: cartLinkPulse 1.2s ease-out;
+}
+
+@keyframes cartLinkPulse {
+  0% {
+    color: #91021e;
+    transform: scale(1);
+  }
+  40% {
+    color: #f3447a;
+    transform: scale(1.08);
+  }
+  100% {
+    color: inherit;
+    transform: scale(1);
+  }
 }
 
 .ticket-results p {

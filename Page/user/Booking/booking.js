@@ -360,7 +360,7 @@
     button.textContent = availableCount > 0 ? 'ADD TO CART' : 'SOLD OUT';
     button.disabled = availableCount <= 0;
     button.addEventListener('click', function () {
-      addTicketToCart(ticket);
+      addTicketToCart(ticket, card);
     });
     actions.appendChild(button);
 
@@ -565,7 +565,7 @@
     return value.toLocaleString(undefined, { minimumFractionDigits: 2 }) + ' THB';
   }
 
-  function addTicketToCart(ticket) {
+  function addTicketToCart(ticket, cardElement) {
     var latestContext = session ? session.getUserContext() : context;
 
     if (!latestContext || !latestContext.username || !latestContext.id) {
@@ -610,8 +610,158 @@
     saveCartStorage(cartMap);
     localStorage.setItem('railly-cart-selected', userIdKey + '::' + itemId);
 
-    alert('Ticket added to your cart.');
-    window.location.href = '../Cart/cart.html';
+    triggerCartFeedback(cardElement);
+  }
+
+  function triggerCartFeedback(cardElement) {
+    animateTicketToCart(cardElement);
+    highlightCartLink();
+    showInlineConfirmation(cardElement);
+    announceCartUpdate('Ticket added to your cart.');
+  }
+
+  function animateTicketToCart(cardElement) {
+    var navCartLink = document.querySelector('.site-header .main-nav a[data-page="cart"]');
+
+    if (!navCartLink) {
+      return;
+    }
+
+    var sourceElement = null;
+
+    if (cardElement && cardElement.querySelector) {
+      sourceElement = cardElement.querySelector('.ticket-icon img') || cardElement;
+    }
+
+    var sourceRect = sourceElement
+      ? sourceElement.getBoundingClientRect()
+      : navCartLink.getBoundingClientRect();
+    var targetRect = navCartLink.getBoundingClientRect();
+
+    var flyer = document.createElement('img');
+    flyer.src = '../../../assets/img/ticket.png';
+    flyer.alt = '';
+    flyer.className = 'ticket-flyer';
+    flyer.style.left = sourceRect.left + sourceRect.width / 2 + 'px';
+    flyer.style.top = sourceRect.top + sourceRect.height / 2 + 'px';
+    flyer.style.transform = 'translate(0, 0) scale(1)';
+    flyer.style.opacity = '1';
+
+    document.body.appendChild(flyer);
+
+    requestAnimationFrame(function () {
+      var deltaX =
+        targetRect.left + targetRect.width / 2 - (sourceRect.left + sourceRect.width / 2);
+      var deltaY =
+        targetRect.top + targetRect.height / 2 - (sourceRect.top + sourceRect.height / 2);
+
+      flyer.style.transform = 'translate(' + deltaX + 'px, ' + deltaY + 'px) scale(0.2)';
+      flyer.style.opacity = '0.2';
+    });
+
+    var cleanupTimeout = window.setTimeout(function () {
+      flyer.remove();
+    }, 1000);
+
+    flyer.addEventListener(
+      'transitionend',
+      function () {
+        window.clearTimeout(cleanupTimeout);
+        flyer.remove();
+      },
+      { once: true }
+    );
+  }
+
+  function highlightCartLink() {
+    var navCartLink = document.querySelector('.site-header .main-nav a[data-page="cart"]');
+
+    if (!navCartLink) {
+      return;
+    }
+
+    var existingTimeoutId = Number(navCartLink.dataset.pulseTimeoutId || 0);
+
+    if (existingTimeoutId) {
+      window.clearTimeout(existingTimeoutId);
+    }
+
+    if (navCartLink.classList.contains('cart-link-pulse')) {
+      // Force reflow so the animation can be retriggered reliably on rapid clicks.
+      navCartLink.classList.remove('cart-link-pulse');
+      void navCartLink.offsetWidth;
+    }
+
+    navCartLink.classList.add('cart-link-pulse');
+
+    var timeoutId = window.setTimeout(function () {
+      navCartLink.classList.remove('cart-link-pulse');
+      delete navCartLink.dataset.pulseTimeoutId;
+    }, 1200);
+
+    navCartLink.dataset.pulseTimeoutId = String(timeoutId);
+  }
+
+  function showInlineConfirmation(cardElement) {
+    if (!cardElement) {
+      return;
+    }
+
+    var actions = cardElement.querySelector('.ticket-actions');
+
+    if (!actions) {
+      return;
+    }
+
+    var existingMessage = actions.querySelector('.ticket-added-message');
+
+    if (existingMessage) {
+      existingMessage.remove();
+    }
+
+    var message = document.createElement('div');
+    message.className = 'ticket-added-message';
+    message.textContent = 'Added to cart!';
+    actions.appendChild(message);
+
+    requestAnimationFrame(function () {
+      message.classList.add('is-visible');
+    });
+
+    window.setTimeout(function () {
+      message.classList.remove('is-visible');
+    }, 2000);
+
+    message.addEventListener(
+      'transitionend',
+      function (event) {
+        if (event.propertyName === 'opacity' && !message.classList.contains('is-visible')) {
+          message.remove();
+        }
+      }
+    );
+  }
+
+  var cartLiveRegion = null;
+
+  function announceCartUpdate(message) {
+    if (!message) {
+      return;
+    }
+
+    if (!cartLiveRegion) {
+      cartLiveRegion = document.createElement('div');
+      cartLiveRegion.id = 'cart-feedback-live-region';
+      cartLiveRegion.className = 'visually-hidden';
+      cartLiveRegion.setAttribute('aria-live', 'polite');
+      document.body.appendChild(cartLiveRegion);
+    }
+
+    cartLiveRegion.textContent = '';
+
+    window.setTimeout(function () {
+      cartLiveRegion.textContent = message;
+    }, 50);
   }
 
   function buildCartItemId(ticket) {
