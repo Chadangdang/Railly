@@ -7,13 +7,6 @@
   --cart-heading-gradient: linear-gradient(180deg, #91021e 0%, #29083d 100%);
   --cart-accent-gradient: linear-gradient(90deg, #0ab1f8 0%, #f3447a 100%);
   --cart-text-muted: #a6a3a3;
-  --cart-body-bg: linear-gradient(
-      180deg,
-      rgba(255, 255, 255, 0.8) 3%,
-      rgba(145, 2, 30, 0.8) 46.5%,
-      rgba(22, 71, 162, 0.8) 100%
-    ),
-    url('../../../assets/img/train_bg.png') center/cover no-repeat;
 }
 
 .cart-page {
@@ -28,7 +21,13 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: var(--cart-body-bg);
+  background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.8) 3%,
+      rgba(145, 2, 30, 0.8) 46.5%,
+      rgba(22, 71, 162, 0.8) 100%
+    ),
+    url('../../../assets/img/train_bg.png') center/cover no-repeat;
 }
 
 .cart-page-wrapper::before {
@@ -39,7 +38,7 @@
   pointer-events: none;
 }
 
-.cart-page-wrapper > *:not(.site-footer) {
+.cart-page-wrapper > * {
   position: relative;
   z-index: 1;
 }
@@ -374,11 +373,7 @@
   margin: 0;
   padding: 24px 28px;
   border-radius: 28px;
-  background: linear-gradient(
-      135deg,
-      rgba(255, 255, 255, 0.95),
-      rgba(255, 255, 255, 0.85)
-    );
+  background:rgba(255, 255, 255);
   border: 1px solid rgba(22, 71, 162, 0.18);
   box-shadow: 0 22px 45px rgba(18, 53, 102, 0.24);
   backdrop-filter: blur(12px);
