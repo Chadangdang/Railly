@@ -24,6 +24,48 @@
           <p class="cart-subtitle">Select order to continue payment process</p>
         </header>
 
+        <section class="cart-summary-panel" aria-labelledby="cart-summary-heading">
+          <div class="cart-summary">
+            <div class="cart-summary__travel">
+              <h2 id="cart-summary-heading">Travel summary</h2>
+              <p
+                id="summary-travel"
+                class="summary-travel-details"
+                data-state="empty"
+              >
+                Select a ticket to view the travel details.
+              </p>
+            </div>
+
+            <div class="cart-summary__payment" aria-label="Payment details">
+              <h3>Payment details</h3>
+              <div class="cart-summary__row">
+                <span>Tickets</span>
+                <span id="summary-quantity" aria-live="polite">x0</span>
+              </div>
+            </div>
+
+            <div class="cart-summary__total" aria-label="Total price">
+              <span class="cart-summary__total-label">TOTAL</span>
+              <span
+                id="summary-total"
+                class="cart-summary__total-amount"
+                aria-live="polite"
+              >
+                0 THB
+              </span>
+              <button
+                id="purchase-btn"
+                type="button"
+                class="purchase-btn"
+                disabled
+              >
+                PURCHASE
+              </button>
+            </div>
+          </div>
+        </section>
+
         <section class="cart-orders" aria-labelledby="cart-orders-heading">
           <h2 id="cart-orders-heading" class="visually-hidden">Tickets in cart</h2>
           <ul id="cart-list" class="cart-list" role="list"></ul>
@@ -33,43 +75,6 @@
           </p>
         </section>
       </main>
-
-      <section class="cart-summary-bar" aria-labelledby="cart-summary-heading">
-        <div class="cart-summary">
-          <div class="cart-summary__travel">
-            <h2 id="cart-summary-heading">Travel summary</h2>
-            <p
-              id="summary-travel"
-              class="summary-travel-details"
-              data-state="empty"
-            >
-              Select a ticket to view the travel details.
-            </p>
-          </div>
-
-          <div class="cart-summary__payment" aria-label="Payment details">
-            <h3>Payment details</h3>
-            <div class="cart-summary__row">
-              <span>Tickets</span>
-              <span id="summary-quantity" aria-live="polite">x0</span>
-            </div>
-          </div>
-
-          <div class="cart-summary__total" aria-label="Total price">
-            <span class="cart-summary__total-label">TOTAL</span>
-            <span
-              id="summary-total"
-              class="cart-summary__total-amount"
-              aria-live="polite"
-            >
-              0 THB
-            </span>
-            <button id="purchase-btn" type="button" class="purchase-btn" disabled>
-              PURCHASE
-            </button>
-          </div>
-        </div>
-      </section>
 
       <div
         data-include="../shared/footer.html"
