@@ -1,1 +1,163 @@
-#
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RAILLY - Payment</title>
+    <link rel="stylesheet" href="../../../index.css" />
+    <link rel="stylesheet" href="./payment.css" />
+    <script src="../../../assets/js/user-session.js" defer></script>
+    <script src="../../../assets/js/layout-loader.js" defer></script>
+    <script src="./payment.js" defer></script>
+  </head>
+  <body class="payment-page">
+    <div class="payment-page-wrapper">
+      <div
+        data-include="../shared/header.html"
+        data-include-class="site-header"
+        data-nav-active="cart"
+      ></div>
+
+      <main class="page-content payment-main">
+        <header class="payment-header">
+          <h1 class="payment-title">PAYMENT</h1>
+          <p class="payment-subtitle">
+            Review your ticket details before choosing a payment method.
+          </p>
+        </header>
+
+        <div class="payment-layout">
+          <section
+            class="payment-summary"
+            aria-labelledby="payment-summary-title"
+          >
+            <header class="payment-summary__header">
+              <h2 id="payment-summary-title">Ticket summary</h2>
+              <p class="payment-summary__subtitle">
+                Confirm the ticket details and total before continuing.
+              </p>
+            </header>
+
+            <div class="payment-summary__content">
+              <div class="payment-summary__row payment-summary__row--ticket">
+                <div class="payment-summary__column">
+                  <span class="payment-summary__label">Ticket</span>
+                  <span
+                    id="summary-ticket-name"
+                    class="payment-summary__value"
+                  ></span>
+                </div>
+                <div class="payment-summary__column payment-summary__column--price">
+                  <span
+                    id="summary-ticket-price"
+                    class="payment-summary__value"
+                  ></span>
+                </div>
+              </div>
+
+              <p id="summary-quantity" class="payment-summary__quantity"></p>
+
+              <div class="payment-summary__row payment-summary__row--date">
+                <span class="payment-summary__label">Travel date</span>
+                <span
+                  id="summary-travel-date"
+                  class="payment-summary__value"
+                ></span>
+              </div>
+
+              <p id="summary-route" class="payment-summary__route"></p>
+
+              <hr class="payment-summary__divider" />
+
+              <div class="payment-summary__row payment-summary__row--total">
+                <span class="payment-summary__label">TOTAL</span>
+                <span id="summary-total" class="payment-summary__total-amount"></span>
+              </div>
+            </div>
+          </section>
+
+          <form
+            id="payment-method-form"
+            class="payment-methods"
+            aria-labelledby="payment-methods-title"
+          >
+            <h2 id="payment-methods-title" class="visually-hidden">
+              Select a payment method
+            </h2>
+
+            <div class="payment-methods__options">
+              <label class="payment-option">
+                <input
+                  type="radio"
+                  name="paymentMethod"
+                  value="promptpay"
+                  data-method-key="promptpay"
+                  required
+                />
+                <span class="payment-option__indicator" aria-hidden="true"></span>
+                <span class="payment-option__label">Pay via QR PromptPay</span>
+              </label>
+
+              <label class="payment-option">
+                <input
+                  type="radio"
+                  name="paymentMethod"
+                  value="card"
+                  data-method-key="card"
+                  required
+                />
+                <span class="payment-option__indicator" aria-hidden="true"></span>
+                <span class="payment-option__label">Credit / Debit card</span>
+              </label>
+
+              <label class="payment-option">
+                <input
+                  type="radio"
+                  name="paymentMethod"
+                  value="truemoney"
+                  data-method-key="truemoney"
+                  required
+                />
+                <span class="payment-option__indicator" aria-hidden="true"></span>
+                <span class="payment-option__label">TrueMoney</span>
+              </label>
+            </div>
+          </form>
+
+          <aside class="payment-action" aria-labelledby="payment-action-title">
+            <h2 id="payment-action-title">Payment information</h2>
+            <p id="selected-method-title" class="payment-action__method-title">
+              Select a payment method
+            </p>
+            <p
+              id="selected-method-description"
+              class="payment-action__description"
+            >
+              Choose one of the payment methods to view additional instructions.
+            </p>
+            <p class="payment-action__disclaimer">
+              You acknowledge that the train ticket price charged to you may vary
+              from time to time due to your selection of seating class, travel
+              period, or increased applicable fees, and you agree to pay these
+              amounts.
+            </p>
+            <button
+              id="continue-btn"
+              class="continue-btn"
+              type="submit"
+              form="payment-method-form"
+              disabled
+            >
+              CONTINUE
+            </button>
+          </aside>
+        </div>
+      </main>
+
+      <div
+        data-include="../shared/footer.html"
+        data-include-class="site-footer"
+      ></div>
+    </div>
+  </body>
+</html>

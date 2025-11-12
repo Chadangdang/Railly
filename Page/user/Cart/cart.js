@@ -461,7 +461,7 @@
         return;
       }
 
-      proceedToConfirmation(selectedItem);
+      redirectToPayment(selectedItem);
     });
   }
 
@@ -495,7 +495,7 @@
     };
   }
 
-  function proceedToConfirmation(item) {
+  function redirectToPayment(item) {
     var params = new URLSearchParams({
       routeId: item.routeId,
       origin: item.origin,
@@ -504,8 +504,21 @@
       arrival: item.arrival,
       price: item.price,
       datee: item.datee,
-      quantity: item.quantity
+      quantity: item.quantity,
+      cartItemId: item.id
     });
+
+    if (item.originName) {
+      params.set('originName', item.originName);
+    }
+
+    if (item.destinationName) {
+      params.set('destinationName', item.destinationName);
+    }
+
+    if (item.travelMinutes) {
+      params.set('travelMinutes', item.travelMinutes);
+    }
 
     if (context && context.username && context.id) {
       params.set('username', context.username);
@@ -513,7 +526,7 @@
     }
 
     window.location.href =
-      '../BookingConfirmation/Bookingconfirmation.html?' + params.toString();
+      '../Payment/payment.html?' + params.toString();
   }
 
   function formatDateForCard(dateString) {
