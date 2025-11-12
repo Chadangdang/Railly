@@ -11,7 +11,6 @@
     list: null,
     empty: null,
     summaryTravel: null,
-    summaryDate: null,
     summaryQuantity: null,
     summaryTotal: null,
     purchaseBtn: null
@@ -46,7 +45,6 @@
     elements.list = document.getElementById('cart-list');
     elements.empty = document.getElementById('cart-empty');
     elements.summaryTravel = document.getElementById('summary-travel');
-    elements.summaryDate = document.getElementById('summary-date');
     elements.summaryQuantity = document.getElementById('summary-quantity');
     elements.summaryTotal = document.getElementById('summary-total');
     elements.purchaseBtn = document.getElementById('purchase-btn');
@@ -404,10 +402,6 @@
       elements.summaryTravel.textContent = 'Select a ticket to view the travel details.';
       elements.summaryQuantity.textContent = 'x0';
       elements.summaryTotal.textContent = '0 THB';
-      if (elements.summaryDate) {
-        elements.summaryDate.dataset.state = 'empty';
-        elements.summaryDate.textContent = 'Select a ticket';
-      }
       return;
     }
 
@@ -415,21 +409,18 @@
     elements.summaryTravel.dataset.state = 'filled';
     elements.summaryTravel.innerHTML = '';
 
-    if (elements.summaryDate) {
-      if (summaryParts.date) {
-        elements.summaryDate.dataset.state = 'filled';
-        elements.summaryDate.textContent = summaryParts.date;
-      } else {
-        elements.summaryDate.dataset.state = 'empty';
-        elements.summaryDate.textContent = '—';
-      }
-    }
-
     if (summaryParts.route) {
       var routeLine = document.createElement('span');
       routeLine.className = 'summary-travel-details__route';
       routeLine.textContent = summaryParts.route;
       elements.summaryTravel.appendChild(routeLine);
+    }
+
+    if (summaryParts.date) {
+      var dateLine = document.createElement('span');
+      dateLine.className = 'summary-travel-details__date';
+      dateLine.textContent = summaryParts.date;
+      elements.summaryTravel.appendChild(dateLine);
     }
 
     if (summaryParts.timeRange) {

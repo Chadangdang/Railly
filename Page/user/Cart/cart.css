@@ -403,21 +403,6 @@
   flex-wrap: wrap;
 }
 
-.summary-travel-date {
-  font-size: 16px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: #1647a2;
-  white-space: normal;
-}
-
-.summary-travel-date[data-state='empty'] {
-  color: rgba(0, 0, 0, 0.45);
-  letter-spacing: 0.04em;
-  text-transform: none;
-}
-
 .cart-summary__payment {
   display: flex;
   flex-direction: column;
@@ -450,6 +435,14 @@
   color: #1647a2;
 }
 
+.summary-travel-details__date {
+  font-size: 16px;
+  font-weight: 600;
+  color: #000000;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
 .summary-travel-details__time {
   font-size: 16px;
   font-weight: 500;
@@ -457,8 +450,9 @@
 
 .cart-summary__payment .cart-summary__row {
   display: flex;
-  justify-content: space-between;
-  gap: 8px;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 12px;
   font-size: 18px;
   font-weight: 500;
   color: #000000;
