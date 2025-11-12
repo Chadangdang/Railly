@@ -583,9 +583,12 @@
       return entry && entry.id === itemId;
     });
 
+    var timestamp = Date.now();
+
     if (existingItem) {
       var quantity = Number(existingItem.quantity) || 0;
       existingItem.quantity = quantity + 1;
+      existingItem.addedAt = timestamp;
     } else {
       userCart.push({
         id: itemId,
@@ -602,9 +605,24 @@
         price: Number(ticket.price) || 0,
         travelMinutes: ticket.travelMinutes,
         quantity: 1,
-        addedAt: Date.now()
+        addedAt: timestamp
       });
     }
+
+    userCart.sort(function (a, b) {
+      var aTime = a && Number(a.addedAt);
+      var bTime = b && Number(b.addedAt);
+
+      if (!Number.isFinite(aTime)) {
+        aTime = 0;
+      }
+
+      if (!Number.isFinite(bTime)) {
+        bTime = 0;
+      }
+
+      return bTime - aTime;
+    });
 
     cartMap[userIdKey] = userCart;
     saveCartStorage(cartMap);

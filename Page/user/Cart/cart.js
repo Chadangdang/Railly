@@ -56,9 +56,11 @@
     var userItems = storedMap[userIdKey];
 
     cartItems = Array.isArray(userItems)
-      ? userItems.filter(function (item) {
-          return item && Number(item.quantity) > 0;
-        })
+      ? userItems
+          .filter(function (item) {
+            return item && Number(item.quantity) > 0;
+          })
+          .sort(compareByAddedAtDesc)
       : [];
 
     selectedItemId = loadSelectedItemId();
@@ -115,6 +117,21 @@
 
     var value = String(context.id) + '::' + id;
     localStorage.setItem(SELECTED_KEY, value);
+  }
+
+  function compareByAddedAtDesc(a, b) {
+    var aTime = a && Number(a.addedAt);
+    var bTime = b && Number(b.addedAt);
+
+    if (!Number.isFinite(aTime)) {
+      aTime = 0;
+    }
+
+    if (!Number.isFinite(bTime)) {
+      bTime = 0;
+    }
+
+    return bTime - aTime;
   }
 
   function renderCart() {
