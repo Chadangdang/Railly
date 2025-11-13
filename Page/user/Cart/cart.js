@@ -18,6 +18,9 @@
 
   var cartItems = [];
   var selectedItemId = null;
+  var expirationIntervalId = null;
+
+  var EXPIRATION_CHECK_INTERVAL = 30 * 1000;
 
   function normaliseLimit(value) {
     if (value === undefined || value === null) {
@@ -119,6 +122,7 @@
     loadCartFromStorage();
     renderCart();
     attachPurchaseHandler();
+    startExpirationMonitor();
   }
 
   function cacheElements() {
@@ -133,14 +137,21 @@
   function loadCartFromStorage() {
     var storedMap = safelyParse(localStorage.getItem(STORAGE_KEY));
     var userIdKey = String(context.id);
-    var userItems = storedMap[userIdKey];
+    var userItems = Array.isArray(storedMap[userIdKey])
+      ? storedMap[userIdKey]
+      : null;
+    var storageAdjusted = false;
+    var cleanedItems = [];
+    var now = new Date();
 
     if (Array.isArray(userItems)) {
-      var storageAdjusted = false;
-      var cleanedItems = [];
-
       userItems.forEach(function (rawItem) {
         if (!rawItem) {
+          return;
+        }
+
+        if (isItemDepartureInPast(rawItem, now)) {
+          storageAdjusted = true;
           return;
         }
 
@@ -165,18 +176,15 @@
 
       cleanedItems.sort(compareByAddedAtDesc);
       cartItems = cleanedItems;
-
-      if (storageAdjusted) {
-        saveCartToStorage();
-      }
     } else {
       cartItems = [];
     }
 
     selectedItemId = loadSelectedItemId();
+    ensureSelectedItemIsValid();
 
-    if (!selectedItemId && cartItems.length > 0) {
-      selectedItemId = cartItems[0].id;
+    if (storageAdjusted) {
+      saveCartToStorage();
     }
   }
 
@@ -198,6 +206,225 @@
       console.warn('Unable to parse stored cart data:', error);
       return {};
     }
+  }
+
+  function startExpirationMonitor() {
+    if (expirationIntervalId) {
+      window.clearInterval(expirationIntervalId);
+    }
+
+    if (removeExpiredItemsFromCart()) {
+      renderCart();
+    }
+
+    expirationIntervalId = window.setInterval(function () {
+      if (removeExpiredItemsFromCart()) {
+        renderCart();
+      }
+    }, EXPIRATION_CHECK_INTERVAL);
+  }
+
+  function removeExpiredItemsFromCart() {
+    if (cartItems.length === 0) {
+      return false;
+    }
+
+    var now = new Date();
+    var changed = false;
+
+    for (var index = cartItems.length - 1; index >= 0; index--) {
+      var item = cartItems[index];
+
+      if (isItemDepartureInPast(item, now)) {
+        cartItems.splice(index, 1);
+        changed = true;
+      }
+    }
+
+    if (changed) {
+      saveCartToStorage();
+      ensureSelectedItemIsValid();
+    }
+
+    return changed;
+  }
+
+  function ensureSelectedItemIsValid() {
+    if (!cartItems || cartItems.length === 0) {
+      if (selectedItemId) {
+        selectedItemId = null;
+        saveSelectedItemId(null);
+      }
+      return;
+    }
+
+    var fallbackItem = cartItems.find(function (entry) {
+      return entry && entry.id;
+    });
+
+    if (!fallbackItem) {
+      if (selectedItemId) {
+        selectedItemId = null;
+        saveSelectedItemId(null);
+      }
+      return;
+    }
+
+    if (!selectedItemId) {
+      selectedItemId = fallbackItem.id;
+      saveSelectedItemId(selectedItemId);
+      return;
+    }
+
+    var exists = cartItems.some(function (entry) {
+      return entry && entry.id === selectedItemId;
+    });
+
+    if (!exists) {
+      selectedItemId = fallbackItem.id;
+      saveSelectedItemId(selectedItemId);
+    }
+  }
+
+  function isItemDepartureInPast(item, referenceTime) {
+    if (!item) {
+      return false;
+    }
+
+    var departureDate = buildDepartureDateTime(item.datee, item.departure);
+
+    if (!departureDate) {
+      return false;
+    }
+
+    var comparison =
+      referenceTime instanceof Date && !Number.isNaN(referenceTime.getTime())
+        ? referenceTime
+        : new Date();
+
+    return departureDate.getTime() <= comparison.getTime();
+  }
+
+  function buildDepartureDateTime(dateValue, timeValue) {
+    if (!dateValue) {
+      return null;
+    }
+
+    var timeComponent = normaliseTimeComponent(timeValue);
+
+    if (!timeComponent) {
+      return null;
+    }
+
+    var isoString = String(dateValue).trim() + 'T' + timeComponent;
+    var candidate = new Date(isoString);
+
+    if (!Number.isNaN(candidate.getTime())) {
+      return candidate;
+    }
+
+    var dateOnly = parseDateValue(dateValue);
+
+    if (!dateOnly) {
+      return null;
+    }
+
+    var parts = timeComponent.split(':');
+    var hours = Number(parts[0]);
+    var minutes = Number(parts[1]);
+    var seconds = Number(parts[2]);
+    var adjustedDate = new Date(dateOnly.getTime());
+    adjustedDate.setHours(hours, minutes, seconds, 0);
+
+    return adjustedDate;
+  }
+
+  function normaliseTimeComponent(timeValue) {
+    if (!timeValue) {
+      return null;
+    }
+
+    var raw = String(timeValue).trim();
+
+    if (!raw) {
+      return null;
+    }
+
+    var meridiemMatch = raw.match(/(am|pm)$/i);
+    var meridiem = null;
+
+    if (meridiemMatch) {
+      meridiem = meridiemMatch[1].toLowerCase();
+      raw = raw.slice(0, -meridiemMatch[0].length).trim();
+    }
+
+    raw = raw.replace(/\s+/g, '');
+
+    if (/z$/i.test(raw)) {
+      raw = raw.slice(0, -1);
+    }
+
+    if (raw.indexOf(':') === -1 && raw.indexOf('.') !== -1) {
+      raw = raw.replace(/\./g, ':');
+    }
+
+    if (raw.indexOf(':') === -1) {
+      if (/^\d{3,4}$/.test(raw)) {
+        raw = raw.padStart(4, '0');
+        raw = raw.slice(0, 2) + ':' + raw.slice(2);
+      } else {
+        return null;
+      }
+    }
+
+    var parts = raw.split(':');
+
+    if (parts.length < 2) {
+      return null;
+    }
+
+    var hours = parts[0];
+    var minutes = parts[1];
+    var seconds = parts.length > 2 ? parts[2] : '00';
+
+    var hoursNumber = Number(hours);
+    var minutesNumber = Number(minutes);
+    var secondsNumber = Number(seconds);
+
+    if (
+      !Number.isFinite(hoursNumber) ||
+      !Number.isFinite(minutesNumber) ||
+      !Number.isFinite(secondsNumber)
+    ) {
+      return null;
+    }
+
+    if (meridiem) {
+      if (hoursNumber === 12) {
+        hoursNumber = 0;
+      }
+
+      if (meridiem === 'pm') {
+        hoursNumber += 12;
+      }
+    }
+
+    if (
+      hoursNumber < 0 ||
+      hoursNumber > 23 ||
+      minutesNumber < 0 ||
+      minutesNumber > 59 ||
+      secondsNumber < 0 ||
+      secondsNumber > 59
+    ) {
+      return null;
+    }
+
+    var hoursString = String(hoursNumber).padStart(2, '0');
+    var minutesString = String(minutesNumber).padStart(2, '0');
+    var secondsString = String(secondsNumber).padStart(2, '0');
+
+    return hoursString + ':' + minutesString + ':' + secondsString;
   }
 
   function loadSelectedItemId() {
