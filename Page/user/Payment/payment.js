@@ -135,25 +135,23 @@
   }
 
   function buildRouteSummary(data) {
-    var travelDate = formatFullDate(data.datee) || data.datee || '';
     var departureTime = formatTimeForDisplay(data.departure);
     var arrivalTime = formatTimeForDisplay(data.arrival);
 
-    var departureLine =
-      'Departure: ' +
-      travelDate +
-      (travelDate ? ', ' : '') +
-      departureTime +
-      ' ---- ' +
-      data.originLabel;
+    var originLabel = data.originLabel || '';
+    var destinationLabel = data.destinationLabel || '';
 
-    var arrivalLine =
-      'Arrived: ' +
-      travelDate +
-      (travelDate ? ', ' : '') +
-      arrivalTime +
-      ' ---- ' +
-      data.destinationLabel;
+    var departureLine = 'Departure: ';
+    if (departureTime) {
+      departureLine += departureTime + ' ';
+    }
+    departureLine += '---- ' + originLabel;
+
+    var arrivalLine = 'Arrived: ';
+    if (arrivalTime) {
+      arrivalLine += arrivalTime + ' ';
+    }
+    arrivalLine += '---- ' + destinationLabel;
 
     return [departureLine, arrivalLine];
   }

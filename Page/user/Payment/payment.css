@@ -167,8 +167,8 @@
 .payment-summary__quantity {
   font-size: 18px;
   color: rgba(0, 0, 0, 0.55);
-  margin-left: auto;
   text-align: right;
+  align-self: flex-end;
 }
 
 .payment-summary__route {
@@ -256,7 +256,7 @@
 }
 
 .payment-option__label {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 400;
   color: #000000;
 }
@@ -370,7 +370,7 @@
   }
 
   .payment-option__label {
-    font-size: 20px;
+    font-size: 17px;
   }
 
   .payment-action__description {
