@@ -62,7 +62,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
   text-align: center;
 }
 
@@ -82,16 +82,6 @@
   text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
 }
 
-.payment-subtitle {
-  margin: 0;
-  width: 100%;
-  max-width: 640px;
-  font-size: 18px;
-  font-weight: 400;
-  line-height: 29px;
-  color: #000000;
-}
-
 .payment-layout {
   width: min(1266px, 100%);
   display: grid;
@@ -107,14 +97,14 @@
   background: #ffffff;
   border-radius: 15px;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-  padding: 32px 40px;
+  padding: 28px 32px;
 }
 
 .payment-summary {
   grid-column: 1 / -1;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 16px;
 }
 
 .payment-summary__header h2 {
@@ -132,12 +122,12 @@
 .payment-summary__content {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
 }
 
 .payment-summary__row {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 16px;
 }
@@ -150,20 +140,24 @@
   align-items: baseline;
 }
 
+.payment-summary__row--route {
+  align-items: flex-start;
+}
+
 .payment-summary__label {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 400;
 }
 
 .payment-summary__value {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 400;
 }
 
 .payment-summary__column {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 4px;
 }
 
 .payment-summary__column--price {
@@ -171,24 +165,27 @@
 }
 
 .payment-summary__quantity {
-  font-size: 20px;
-  color: rgba(0, 0, 0, 0.5);
+  font-size: 18px;
+  color: rgba(0, 0, 0, 0.55);
+  margin-left: auto;
+  text-align: right;
 }
 
 .payment-summary__route {
+  flex: 1 1 auto;
   font-size: 18px;
-  line-height: 1.5;
+  line-height: 1.45;
   color: rgba(0, 0, 0, 0.6);
 }
 
 .payment-summary__divider {
   border: none;
   border-top: 1px solid rgba(0, 0, 0, 0.3);
-  margin: 8px 0 0;
+  margin: 4px 0 0;
 }
 
 .payment-summary__row--total {
-  margin-top: 8px;
+  margin-top: 4px;
 }
 
 .payment-summary__total-amount {
@@ -199,25 +196,25 @@
 .payment-methods {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  padding-right: 32px;
+  gap: 14px;
+  padding-right: 28px;
 }
 
 .payment-methods__options {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 16px;
 }
 
 .payment-option {
   position: relative;
   display: flex;
   align-items: center;
-  gap: 24px;
+  gap: 18px;
   background: #ffffff;
   border-radius: 15px;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-  padding: 20px 28px;
+  padding: 16px 24px;
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
@@ -238,8 +235,8 @@
 }
 
 .payment-option__indicator {
-  width: 22px;
-  height: 22px;
+  width: 20px;
+  height: 20px;
   border-radius: 6px;
   background: #d9d9d9;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
@@ -251,15 +248,15 @@
 
 .payment-option__indicator::after {
   content: '';
-  width: 12px;
-  height: 12px;
+  width: 10px;
+  height: 10px;
   border-radius: 3px;
   background: transparent;
   transition: background 0.2s ease;
 }
 
 .payment-option__label {
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 400;
   color: #000000;
 }
@@ -285,8 +282,8 @@
 .payment-action {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  padding-left: 32px;
+  gap: 14px;
+  padding-left: 28px;
 }
 
 .payment-action h2 {
@@ -295,20 +292,20 @@
 }
 
 .payment-action__method-title {
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 400;
 }
 
 .payment-action__description {
-  font-size: 20px;
-  line-height: 1.5;
+  font-size: 18px;
+  line-height: 1.45;
   color: #000000;
 }
 
 .payment-action__disclaimer {
-  font-size: 15px;
-  line-height: 1.6;
-  color: rgba(0, 0, 0, 0.85);
+  font-size: 14px;
+  line-height: 1.5;
+  color: rgba(0, 0, 0, 0.8);
 }
 
 .continue-btn {

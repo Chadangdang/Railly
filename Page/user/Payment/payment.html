@@ -21,9 +21,6 @@
       <main class="page-content payment-main">
         <header class="payment-header">
           <h1 class="payment-title">PAYMENT</h1>
-          <p class="payment-subtitle">
-            Review your ticket details before choosing a payment method.
-          </p>
         </header>
 
         <div class="payment-layout">
@@ -55,8 +52,6 @@
                 </div>
               </div>
 
-              <p id="summary-quantity" class="payment-summary__quantity"></p>
-
               <div class="payment-summary__row payment-summary__row--date">
                 <span class="payment-summary__label">Travel date</span>
                 <span
@@ -65,7 +60,10 @@
                 ></span>
               </div>
 
-              <p id="summary-route" class="payment-summary__route"></p>
+              <div class="payment-summary__row payment-summary__row--route">
+                <span id="summary-route" class="payment-summary__route"></span>
+                <span id="summary-quantity" class="payment-summary__quantity"></span>
+              </div>
 
               <hr class="payment-summary__divider" />
 

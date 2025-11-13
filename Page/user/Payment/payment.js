@@ -139,20 +139,23 @@
     var departureTime = formatTimeForDisplay(data.departure);
     var arrivalTime = formatTimeForDisplay(data.arrival);
 
-    return (
+    var departureLine =
       'Departure: ' +
       travelDate +
       (travelDate ? ', ' : '') +
       departureTime +
       ' ---- ' +
-      data.originLabel +
-      '  Arrived: ' +
+      data.originLabel;
+
+    var arrivalLine =
+      'Arrived: ' +
       travelDate +
       (travelDate ? ', ' : '') +
       arrivalTime +
       ' ---- ' +
-      data.destinationLabel
-    );
+      data.destinationLabel;
+
+    return [departureLine, arrivalLine];
   }
 
   function attachEventHandlers() {
@@ -249,7 +252,16 @@
     }
 
     if (elements.route) {
-      elements.route.textContent = data.routeSummary;
+      if (Array.isArray(data.routeSummary)) {
+        var sanitizedLines = data.routeSummary
+          .filter(Boolean)
+          .map(function (line) {
+            return escapeHtml(line);
+          });
+        elements.route.innerHTML = sanitizedLines.join('<br />');
+      } else {
+        elements.route.textContent = data.routeSummary || '';
+      }
     }
 
     if (elements.total) {
@@ -447,6 +459,15 @@
     }
 
     return stringValue;
+  }
+
+  function escapeHtml(value) {
+    return String(value)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
   }
 
   if (window.__layoutReady) {
