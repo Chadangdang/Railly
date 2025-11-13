@@ -25,6 +25,8 @@ $conn = get_db_connection();
 try {
     $schema = determineBookingSchema($conn);
 
+    expirePastTickets($conn, $schema);
+
     fetchValidatedUser(
         $conn,
         $schema['user_table'],
@@ -50,6 +52,49 @@ try {
     echo json_encode(['status' => 'error', 'message' => 'Failed to retrieve user tickets.']);
 } finally {
     $conn->close();
+}
+
+function expirePastTickets(mysqli $conn, array $schema): void
+{
+    if ($schema['variant'] === 'relational') {
+        expirePastRelationalTickets($conn, $schema);
+    } else {
+        expirePastLegacyTickets($conn, $schema);
+    }
+}
+
+function expirePastRelationalTickets(mysqli $conn, array $schema): void
+{
+    $sql = 'UPDATE ' . quoteIdentifier($schema['tickets_table']) . ' AS t '
+        . 'INNER JOIN ' . quoteIdentifier($schema['service_table']) . ' AS s ON '
+        . qualifyColumn('t', $schema['ticket_service_fk_column']) . ' = '
+        . qualifyColumn('s', $schema['service_id_column']) . ' '
+        . "SET " . qualifyColumn('t', $schema['ticket_status_column']) . " = 'EXPIRED' "
+        . "WHERE " . qualifyColumn('t', $schema['ticket_status_column']) . " IN ('PAID','USED') "
+        . 'AND ' . qualifyColumn('s', $schema['service_depart_column']) . ' <= NOW()';
+
+    if ($conn->query($sql) === false) {
+        error_log('expirePastRelationalTickets failed: ' . $conn->error);
+    }
+}
+
+function expirePastLegacyTickets(mysqli $conn, array $schema): void
+{
+    $sql = 'UPDATE ' . quoteIdentifier($schema['ticket_table']) . ' AS pt '
+        . 'INNER JOIN ' . quoteIdentifier($schema['service_table']) . ' AS s ON '
+        . qualifyColumn('pt', $schema['ticket_service_column']) . ' = '
+        . qualifyColumn('s', $schema['service_id_column']) . ' '
+        . 'INNER JOIN ' . quoteIdentifier($schema['route_table']) . ' AS r ON '
+        . qualifyColumn('s', $schema['service_route_column']) . ' = '
+        . qualifyColumn('r', $schema['route_pk_column']) . ' '
+        . "SET " . qualifyColumn('pt', $schema['ticket_status_column']) . " = 'EXPIRED' "
+        . "WHERE " . qualifyColumn('pt', $schema['ticket_status_column']) . " IN ('PAID','USED') "
+        . 'AND TIMESTAMP(' . qualifyColumn('s', $schema['service_date_column']) . ', '
+        . qualifyColumn('r', $schema['route_depart_column']) . ') <= NOW()';
+
+    if ($conn->query($sql) === false) {
+        error_log('expirePastLegacyTickets failed: ' . $conn->error);
+    }
 }
 
 function fetchRelationalUserTickets(mysqli $conn, array $schema, int $userId): array

@@ -229,6 +229,18 @@
   color: var(--ticket-status-expired);
 }
 
+.ticket-card--expired {
+  background: linear-gradient(180deg, #f8f9fa 0%, #e9ecef 100%);
+  border: 1px solid rgba(108, 117, 125, 0.3);
+  box-shadow: 0px 10px 26px rgba(108, 117, 125, 0.18);
+}
+
+.ticket-card--expired .ticket-card__time,
+.ticket-card--expired .ticket-card__station,
+.ticket-card--expired .ticket-card__date {
+  color: #495057;
+}
+
 .ticket-card__meta {
   display: flex;
   flex-direction: column;
@@ -243,6 +255,14 @@
   font-size: 16px;
   font-weight: 600;
   color: #000000;
+}
+
+.ticket-card--expired .ticket-card__meta {
+  color: #6c757d;
+}
+
+.ticket-card--expired .ticket-card__meta strong {
+  color: #343a40;
 }
 
 .ticket-card__body {
@@ -304,6 +324,14 @@
   color: var(--ticket-status-expired);
 }
 
+.ticket-card--expired .ticket-card__divider {
+  border-top-color: rgba(108, 117, 125, 0.6);
+}
+
+.ticket-card--expired .ticket-card__divider::after {
+  border-color: rgba(108, 117, 125, 0.6);
+}
+
 .ticket-card__route {
   display: flex;
   flex-direction: column;
@@ -352,6 +380,16 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
+}
+
+.ticket-card--expired .ticket-card__qr {
+  border-color: rgba(108, 117, 125, 0.8);
+  background: linear-gradient(
+      135deg,
+      rgba(108, 117, 125, 0.1) 0%,
+      rgba(173, 181, 189, 0.1) 100%
+    ),
+    #f1f3f5;
 }
 
 .ticket-card__actions {
@@ -413,6 +451,10 @@
   border-radius: 10px;
 }
 
+.ticket-card--expired .ticket-card__qr::after {
+  border-color: rgba(108, 117, 125, 0.25);
+}
+
 .ticket-card__footer {
   display: flex;
   flex-wrap: wrap;
@@ -420,6 +462,10 @@
   gap: 16px 32px;
   font-size: 16px;
   color: #3c3c3c;
+}
+
+.ticket-card--expired .ticket-card__footer {
+  color: #495057;
 }
 
 .ticket-card__footer-item {
@@ -433,9 +479,17 @@
   color: #5a5a5a;
 }
 
+.ticket-card--expired .ticket-card__footer-label {
+  color: #6c757d;
+}
+
 .ticket-card__footer strong {
   font-weight: 600;
   color: #000000;
+}
+
+.ticket-card--expired .ticket-card__footer strong {
+  color: #343a40;
 }
 
 .visually-hidden {

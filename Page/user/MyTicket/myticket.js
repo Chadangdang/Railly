@@ -24,16 +24,62 @@
       return;
     }
 
+    function parseDepartureDateTime(ticket) {
+      if (!ticket) {
+        return null;
+      }
+
+      var dateValue = ticket.datee ? String(ticket.datee).trim() : '';
+      if (!dateValue) {
+        return null;
+      }
+
+      var timeValue = ticket.departure ? String(ticket.departure).trim() : '';
+      var isoString = dateValue;
+
+      if (timeValue) {
+        if (/^\d{2}:\d{2}:\d{2}$/.test(timeValue)) {
+          isoString += 'T' + timeValue;
+        } else if (/^\d{2}:\d{2}$/.test(timeValue)) {
+          isoString += 'T' + timeValue + ':00';
+        } else {
+          isoString += ' ' + timeValue;
+        }
+      }
+
+      var parsed = new Date(isoString);
+      if (Number.isNaN(parsed.getTime()) && timeValue) {
+        parsed = new Date(dateValue + ' ' + timeValue);
+      }
+
+      return Number.isNaN(parsed.getTime()) ? null : parsed;
+    }
+
+    function deriveTicketStatus(ticket) {
+      var baseStatus = normalizeStatus(ticket && ticket.status);
+      var departureMoment = parseDepartureDateTime(ticket);
+
+      if (
+        departureMoment &&
+        departureMoment.getTime() <= Date.now() &&
+        (baseStatus === 'paid' || baseStatus === 'used')
+      ) {
+        return 'expired';
+      }
+
+      return baseStatus;
+    }
+
     var FILTER_PREDICATES = {
       active: function (ticket) {
-        var status = normalizeStatus(ticket.status);
+        var status = deriveTicketStatus(ticket);
         return status === 'paid' || status === 'used';
       },
       cancelled: function (ticket) {
-        return normalizeStatus(ticket.status) === 'cancelled';
+        return deriveTicketStatus(ticket) === 'cancelled';
       },
       expired: function (ticket) {
-        return normalizeStatus(ticket.status) === 'expired';
+        return deriveTicketStatus(ticket) === 'expired';
       },
     };
 
@@ -215,7 +261,7 @@
       article.className = 'ticket-card';
       article.setAttribute('role', 'listitem');
 
-      var status = normalizeStatus(ticket.status);
+      var status = deriveTicketStatus(ticket);
       if (status) {
         article.classList.add('ticket-card--' + status);
       }
@@ -225,7 +271,7 @@
 
       var statusBadge = document.createElement('span');
       statusBadge.className = 'ticket-card__status';
-      statusBadge.textContent = formatStatusLabel(ticket.status);
+      statusBadge.textContent = formatStatusLabel(status);
 
       var meta = document.createElement('div');
       meta.className = 'ticket-card__meta';
