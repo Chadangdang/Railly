@@ -8,6 +8,10 @@
     expired: 'Expired',
   };
 
+  var CANCEL_CONFIRMATION_MESSAGE =
+    'Are you sure?\n\nDo you really want to cancel this ticket?\nThis process cannot be undone.';
+  var CANCEL_SUCCESS_FALLBACK_MESSAGE = 'Your ticket has been cancelled.';
+
   function normalizeStatus(status) {
     return typeof status === 'string' ? status.trim().toLowerCase() : '';
   }
@@ -62,7 +66,7 @@
       if (
         departureMoment &&
         departureMoment.getTime() <= Date.now() &&
-        (baseStatus === 'paid' || baseStatus === 'used')
+        baseStatus === 'paid'
       ) {
         return 'expired';
       }
@@ -90,6 +94,7 @@
       isLoading: false,
       error: null,
     };
+    var pendingCancellations = new Set();
 
     filterButtons.forEach(function (button) {
       button.addEventListener('click', function () {
@@ -107,6 +112,125 @@
         renderTickets();
       });
     });
+
+    ticketList.addEventListener('click', function (event) {
+      var target = event.target;
+      if (!target) {
+        return;
+      }
+
+      var cancelButton = null;
+      if (typeof target.closest === 'function') {
+        cancelButton = target.closest('.ticket-card__cancel-button');
+      } else if (
+        target.classList &&
+        target.classList.contains('ticket-card__cancel-button')
+      ) {
+        cancelButton = target;
+      }
+
+      if (!cancelButton) {
+        return;
+      }
+
+      event.preventDefault();
+      handleCancelButtonClick(cancelButton);
+    });
+
+    function findTicketById(ticketId) {
+      var numericId = Number(ticketId);
+      if (!Number.isFinite(numericId)) {
+        return null;
+      }
+
+      for (var i = 0; i < state.tickets.length; i += 1) {
+        var ticket = state.tickets[i];
+        if (Number(ticket.ticket_id) === numericId) {
+          return ticket;
+        }
+      }
+
+      return null;
+    }
+
+    function setTicketStatus(ticketId, newStatus) {
+      var numericId = Number(ticketId);
+      if (!Number.isFinite(numericId)) {
+        return false;
+      }
+
+      var nextStatus = typeof newStatus === 'string' && newStatus ? newStatus : 'CANCELLED';
+      var updated = false;
+
+      state.tickets = state.tickets.map(function (ticket) {
+        if (Number(ticket.ticket_id) === numericId) {
+          var clone = Object.assign({}, ticket);
+          clone.status = nextStatus;
+          updated = true;
+          return clone;
+        }
+        return ticket;
+      });
+
+      return updated;
+    }
+
+    function handleCancelButtonClick(button) {
+      var ticketId = button.getAttribute('data-ticket-id');
+      if (!ticketId) {
+        return;
+      }
+
+      var ticket = findTicketById(ticketId);
+      if (!ticket) {
+        window.alert('We could not find this ticket. Please refresh and try again.');
+        return;
+      }
+
+      var status = deriveTicketStatus(ticket);
+      if (status !== 'paid') {
+        window.alert('Only paid tickets can be cancelled.');
+        return;
+      }
+
+      if (!window.confirm(CANCEL_CONFIRMATION_MESSAGE)) {
+        return;
+      }
+
+      var key = String(ticketId);
+      if (pendingCancellations.has(key)) {
+        return;
+      }
+
+      pendingCancellations.add(key);
+      renderTickets();
+
+      cancelTicketRequest(ticketId)
+        .then(function (response) {
+          var nextStatus =
+            response && response.ticket && response.ticket.status
+              ? response.ticket.status
+              : 'CANCELLED';
+
+          setTicketStatus(ticketId, nextStatus);
+          pendingCancellations.delete(key);
+          renderTickets();
+
+          var message =
+            (response && response.message) || CANCEL_SUCCESS_FALLBACK_MESSAGE;
+          window.alert(message);
+        })
+        .catch(function (error) {
+          pendingCancellations.delete(key);
+          renderTickets();
+
+          var fallback =
+            error && error.message
+              ? error.message
+              : 'We were unable to cancel this ticket. Please try again later.';
+          window.alert(fallback);
+        });
+    }
 
     function formatStatusLabel(status) {
       var normalized = normalizeStatus(status);
@@ -260,11 +384,13 @@
       var article = document.createElement('article');
       article.className = 'ticket-card';
       article.setAttribute('role', 'listitem');
+      article.dataset.ticketId = String(ticket.ticket_id);
 
       var status = deriveTicketStatus(ticket);
       if (status) {
         article.classList.add('ticket-card--' + status);
       }
+      article.setAttribute('data-ticket-status', status);
 
       var header = document.createElement('header');
       header.className = 'ticket-card__header';
@@ -331,6 +457,18 @@
         cancelButton.textContent = 'Cancel';
         cancelButton.setAttribute('aria-label', 'Cancel this ticket');
         cancelButton.title = 'Cancel this ticket';
+        cancelButton.setAttribute('data-ticket-id', String(ticket.ticket_id));
+        cancelButton.setAttribute('data-ticket-status', status);
+
+        if (pendingCancellations.has(String(ticket.ticket_id))) {
+          cancelButton.disabled = true;
+          cancelButton.classList.add('is-busy');
+          cancelButton.textContent = 'Cancelling…';
+          cancelButton.setAttribute('aria-busy', 'true');
+        } else {
+          cancelButton.setAttribute('aria-busy', 'false');
+        }
+
         actions.appendChild(cancelButton);
       }
 
@@ -448,6 +586,44 @@
         .finally(function () {
           state.isLoading = false;
           renderTickets();
+        });
+    }
+
+    function cancelTicketRequest(ticketId) {
+      var session = window.userSession;
+      var context = session ? session.getUserContext() : null;
+
+      if (!context || !context.username || !context.id) {
+        return Promise.reject(
+          new Error('Please sign in to cancel your tickets.')
+        );
+      }
+
+      var formData = new FormData();
+      formData.append('ticket_id', ticketId);
+      formData.append('username', context.username);
+      formData.append('id', context.id);
+
+      return fetch('../../../Backend/cancelTicket.php', {
+        method: 'POST',
+        body: formData,
+        credentials: 'include',
+      })
+        .then(function (response) {
+          if (!response.ok) {
+            throw new Error('Failed to cancel the ticket.');
+          }
+          return response.json();
+        })
+        .then(function (data) {
+          if (!data || data.status !== 'success') {
+            var message = data && data.message ? data.message : null;
+            throw new Error(
+              message || 'Unable to cancel the ticket at this time.'
+            );
+          }
+
+          return data;
         });
     }
 

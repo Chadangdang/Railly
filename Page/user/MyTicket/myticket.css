@@ -9,9 +9,14 @@
   --ticket-card-shadow: 0px 12px 30px rgba(0, 0, 0, 0.18);
   --ticket-card-border: 1px solid rgba(0, 0, 0, 0.08);
   --ticket-status-paid: #1249a6;
-  --ticket-status-used: #91021e;
+  --ticket-status-used: #198754;
   --ticket-status-cancelled: #b02a37;
-  --ticket-status-expired: #6c757d;
+  --ticket-status-expired: #6f42c1;
+  --ticket-status-expired-soft: rgba(111, 66, 193, 0.16);
+  --ticket-status-expired-border: rgba(111, 66, 193, 0.35);
+  --ticket-status-expired-shadow: rgba(111, 66, 193, 0.18);
+  --ticket-status-expired-text: #4b2c84;
+  --ticket-status-expired-muted: #5f3d9d;
   --ticket-qr-background: linear-gradient(
       135deg,
       rgba(18, 73, 166, 0.08) 0%,
@@ -215,7 +220,7 @@
 }
 
 .ticket-card--used .ticket-card__status {
-  background: rgba(145, 2, 30, 0.12);
+  background: rgba(25, 135, 84, 0.16);
   color: var(--ticket-status-used);
 }
 
@@ -225,20 +230,20 @@
 }
 
 .ticket-card--expired .ticket-card__status {
-  background: rgba(108, 117, 125, 0.15);
+  background: rgba(111, 66, 193, 0.18);
   color: var(--ticket-status-expired);
 }
 
 .ticket-card--expired {
-  background: linear-gradient(180deg, #f8f9fa 0%, #e9ecef 100%);
-  border: 1px solid rgba(108, 117, 125, 0.3);
-  box-shadow: 0px 10px 26px rgba(108, 117, 125, 0.18);
+  background: linear-gradient(180deg, #f7f1ff 0%, #ede4ff 100%);
+  border: 1px solid var(--ticket-status-expired-border);
+  box-shadow: 0px 10px 26px var(--ticket-status-expired-shadow);
 }
 
 .ticket-card--expired .ticket-card__time,
 .ticket-card--expired .ticket-card__station,
 .ticket-card--expired .ticket-card__date {
-  color: #495057;
+  color: var(--ticket-status-expired-text);
 }
 
 .ticket-card__meta {
@@ -258,11 +263,11 @@
 }
 
 .ticket-card--expired .ticket-card__meta {
-  color: #6c757d;
+  color: var(--ticket-status-expired-muted);
 }
 
 .ticket-card--expired .ticket-card__meta strong {
-  color: #343a40;
+  color: #3a1f78;
 }
 
 .ticket-card__body {
@@ -325,11 +330,11 @@
 }
 
 .ticket-card--expired .ticket-card__divider {
-  border-top-color: rgba(108, 117, 125, 0.6);
+  border-top-color: rgba(111, 66, 193, 0.45);
 }
 
 .ticket-card--expired .ticket-card__divider::after {
-  border-color: rgba(108, 117, 125, 0.6);
+  border-color: rgba(111, 66, 193, 0.45);
 }
 
 .ticket-card__route {
@@ -383,13 +388,13 @@
 }
 
 .ticket-card--expired .ticket-card__qr {
-  border-color: rgba(108, 117, 125, 0.8);
+  border-color: rgba(111, 66, 193, 0.45);
   background: linear-gradient(
       135deg,
-      rgba(108, 117, 125, 0.1) 0%,
-      rgba(173, 181, 189, 0.1) 100%
+      rgba(111, 66, 193, 0.12) 0%,
+      rgba(173, 128, 231, 0.12) 100%
     ),
-    #f1f3f5;
+    #f4edff;
 }
 
 .ticket-card__actions {
@@ -418,6 +423,11 @@
   cursor: pointer;
   padding: 0;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.ticket-card__cancel-button.is-busy {
+  cursor: progress;
+  opacity: 0.85;
 }
 
 .ticket-card__cancel-button:hover,
@@ -452,7 +462,7 @@
 }
 
 .ticket-card--expired .ticket-card__qr::after {
-  border-color: rgba(108, 117, 125, 0.25);
+  border-color: rgba(111, 66, 193, 0.25);
 }
 
 .ticket-card__footer {
@@ -465,7 +475,7 @@
 }
 
 .ticket-card--expired .ticket-card__footer {
-  color: #495057;
+  color: var(--ticket-status-expired-text);
 }
 
 .ticket-card__footer-item {
@@ -480,7 +490,7 @@
 }
 
 .ticket-card--expired .ticket-card__footer-label {
-  color: #6c757d;
+  color: var(--ticket-status-expired-muted);
 }
 
 .ticket-card__footer strong {
@@ -489,7 +499,7 @@
 }
 
 .ticket-card--expired .ticket-card__footer strong {
-  color: #343a40;
+  color: #2d1763;
 }
 
 .visually-hidden {
