@@ -6,6 +6,18 @@
   --myticket-radius-md: 15px;
   --myticket-heading-gradient: linear-gradient(180deg, #91021e 0%, #29083d 100%);
   --myticket-primary-gradient: linear-gradient(90deg, #1647a2 0%, #91021e 100%);
+  --ticket-card-shadow: 0px 12px 30px rgba(0, 0, 0, 0.18);
+  --ticket-card-border: 1px solid rgba(0, 0, 0, 0.08);
+  --ticket-status-paid: #1249a6;
+  --ticket-status-used: #91021e;
+  --ticket-status-cancelled: #b02a37;
+  --ticket-status-expired: #6c757d;
+  --ticket-qr-background: linear-gradient(
+      135deg,
+      rgba(18, 73, 166, 0.08) 0%,
+      rgba(145, 2, 30, 0.08) 100%
+    ),
+    #ffffff;
 }
 
 .myticket-page-wrapper {
@@ -136,18 +148,294 @@
 .ticket-list {
   width: 100%;
   max-width: var(--myticket-max-width);
-  min-height: 320px;
-  padding: 40px 32px;
-  border-radius: var(--myticket-radius-lg);
-  background: rgba(255, 255, 255, 0.92);
-  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.2);
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
-.ticket-list:empty::after {
+.ticket-list__message {
+  margin: 0 auto;
+  padding: 24px 32px;
+  max-width: 640px;
+  border-radius: var(--myticket-radius-md);
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0px 6px 18px rgba(0, 0, 0, 0.18);
+  font-size: 18px;
+  line-height: 1.6;
+  color: #1f1f1f;
+  text-align: center;
+}
+
+.ticket-card {
+  position: relative;
+  width: 100%;
+  background: #ffffff;
+  border-radius: var(--myticket-radius-md);
+  box-shadow: var(--ticket-card-shadow);
+  border: var(--ticket-card-border);
+  padding: 32px 36px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  font-family: 'Jost', sans-serif;
+}
+
+.ticket-card::after {
   content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.8);
+}
+
+.ticket-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.ticket-card__status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 6px 20px;
+  border-radius: 999px;
+  background: rgba(18, 73, 166, 0.12);
+  color: var(--ticket-status-paid);
+  font-weight: 700;
+  font-size: 18px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.ticket-card--used .ticket-card__status {
+  background: rgba(145, 2, 30, 0.12);
+  color: var(--ticket-status-used);
+}
+
+.ticket-card--cancelled .ticket-card__status {
+  background: rgba(176, 42, 55, 0.15);
+  color: var(--ticket-status-cancelled);
+}
+
+.ticket-card--expired .ticket-card__status {
+  background: rgba(108, 117, 125, 0.15);
+  color: var(--ticket-status-expired);
+}
+
+.ticket-card__meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  font-size: 15px;
+  color: #444444;
+  text-align: right;
+}
+
+.ticket-card__meta strong {
+  font-size: 16px;
+  font-weight: 600;
+  color: #000000;
+}
+
+.ticket-card__body {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(160px, 1fr)) minmax(120px, auto);
+  align-items: center;
+  gap: 32px;
+}
+
+.ticket-card__section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-align: left;
+}
+
+.ticket-card__section--destination {
+  align-items: flex-end;
+  text-align: right;
+}
+
+.ticket-card__section--destination .ticket-card__time,
+.ticket-card__section--destination .ticket-card__station,
+.ticket-card__section--destination .ticket-card__station-code {
+  text-align: right;
+}
+
+.ticket-card__time {
+  font-size: 30px;
+  font-weight: 500;
+  line-height: 1.1;
+  color: #000000;
+}
+
+.ticket-card__station {
+  font-size: 28px;
+  font-weight: 400;
+  line-height: 1.2;
+  color: #000000;
+}
+
+.ticket-card__station-code {
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ticket-status-paid);
+}
+
+.ticket-card--used .ticket-card__station-code {
+  color: var(--ticket-status-used);
+}
+
+.ticket-card--cancelled .ticket-card__station-code {
+  color: var(--ticket-status-cancelled);
+}
+
+.ticket-card--expired .ticket-card__station-code {
+  color: var(--ticket-status-expired);
+}
+
+.ticket-card__route {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  font-size: 18px;
+  color: #000000;
+}
+
+.ticket-card__date {
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.ticket-card__divider {
+  width: 100%;
+  max-width: 220px;
+  height: 0;
+  border-top: 3px solid #000000;
+  position: relative;
+}
+
+.ticket-card__divider::after {
+  content: '';
+  position: absolute;
+  top: -7px;
+  right: 0;
+  width: 10px;
+  height: 10px;
+  border: 3px solid #000000;
+  border-left: none;
+  border-bottom: none;
+  transform: rotate(45deg);
+  background: transparent;
+}
+
+.ticket-card__qr {
+  width: 96px;
+  height: 96px;
+  border: 2px solid #000000;
+  border-radius: 14px;
+  background: var(--ticket-qr-background);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.ticket-card__actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  justify-self: end;
+}
+
+.ticket-card__cancel-button {
+  width: 101px;
+  height: 49px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(90deg, #1647a2 5.51%, #91021e 105.51%);
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  color: #ffffff;
+  font-family: 'Jost', sans-serif;
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 29px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.ticket-card__cancel-button:hover,
+.ticket-card__cancel-button:focus-visible {
+  transform: translateY(-1px);
+  box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.25);
+  outline: none;
+}
+
+.ticket-card__cancel-button:active {
+  transform: translateY(0);
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.ticket-card__cancel-button:focus-visible {
+  outline: 3px solid rgba(255, 255, 255, 0.6);
+  outline-offset: 3px;
+}
+
+.ticket-card__cancel-button:disabled,
+.ticket-card__cancel-button[disabled] {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.ticket-card__qr::after {
+  content: '';
+  position: absolute;
+  inset: 12px;
+  border: 1px dashed rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+}
+
+.ticket-card__footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px 32px;
+  font-size: 16px;
+  color: #3c3c3c;
+}
+
+.ticket-card__footer-item {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.ticket-card__footer-label {
+  font-weight: 500;
+  color: #5a5a5a;
+}
+
+.ticket-card__footer strong {
+  font-weight: 600;
+  color: #000000;
 }
 
 .visually-hidden {
@@ -171,9 +459,41 @@
     min-width: 160px;
   }
 
-  .ticket-list {
-    padding: 32px 20px;
-    min-height: 240px;
+  .ticket-card {
+    padding: 28px 24px 24px;
+  }
+
+  .ticket-card__body {
+    grid-template-columns: repeat(2, minmax(140px, 1fr));
+    grid-template-rows: auto auto;
+    gap: 24px;
+  }
+
+  .ticket-card__section--origin {
+    order: 1;
+  }
+
+  .ticket-card__route {
+    grid-column: span 2;
+    order: 2;
+  }
+
+  .ticket-card__section--destination {
+    order: 3;
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .ticket-card__section--destination .ticket-card__time,
+  .ticket-card__section--destination .ticket-card__station,
+  .ticket-card__section--destination .ticket-card__station-code {
+    text-align: left;
+  }
+
+  .ticket-card__actions {
+    grid-column: span 2;
+    justify-self: center;
+    order: 4;
   }
 }
 
@@ -191,7 +511,39 @@
     min-width: 0;
   }
 
-  .ticket-list {
-    padding: 24px 16px;
+  .ticket-card {
+    padding: 24px 20px 20px;
+    gap: 20px;
+  }
+
+  .ticket-card__header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .ticket-card__meta {
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .ticket-card__body {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .ticket-card__route {
+    order: 2;
+  }
+
+  .ticket-card__actions {
+    order: 4;
+    justify-self: flex-start;
+    align-items: flex-start;
+  }
+
+  .ticket-card__footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
   }
 }
