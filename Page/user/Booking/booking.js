@@ -164,7 +164,11 @@
       day: 'numeric'
     });
 
-    return 'Showing departures for ' + formatter.format(date) + ' sorted by travel time.';
+    return (
+      'Showing upcoming departures for ' +
+      formatter.format(date) +
+      ' sorted by travel time.'
+    );
   }
 
   function handleSearch() {
@@ -203,8 +207,16 @@
     var originLabel = getSelectedOptionText(originSelect);
     var destLabel = getSelectedOptionText(destSelect);
     var formattedDate = formatDateForDisplay(dateValue);
+    var todayValue = toDateInputValue(new Date());
 
-    return 'Showing departures from ' + originLabel + ' to ' + destLabel + ' on ' + formattedDate + '.';
+    var baseMessage =
+      'Showing departures from ' + originLabel + ' to ' + destLabel + ' on ' + formattedDate + '.';
+
+    if (dateValue === todayValue) {
+      baseMessage += ' Upcoming departures are shown from the current time.';
+    }
+
+    return baseMessage;
   }
 
   function getSelectedOptionText(select) {
@@ -225,7 +237,8 @@
       })
       .then(function (data) {
         if (Array.isArray(data)) {
-          renderTickets(data, headingMeta);
+          var filteredTickets = filterTicketsForFutureDepartures(data, queryParams);
+          renderTickets(filteredTickets, headingMeta);
           return;
         }
 
@@ -239,6 +252,85 @@
       .catch(function () {
         renderMessage('Unable to fetch tickets right now. Please try again later.');
       });
+  }
+
+  function filterTicketsForFutureDepartures(tickets, queryParams) {
+    if (!Array.isArray(tickets) || tickets.length === 0) {
+      return tickets;
+    }
+
+    var searchDate = queryParams && queryParams.datee;
+
+    if (!searchDate) {
+      return tickets;
+    }
+
+    var now = new Date();
+    var todayValue = toDateInputValue(new Date(now));
+
+    if (searchDate !== todayValue) {
+      return tickets;
+    }
+
+    return tickets.filter(function (ticket) {
+      if (!ticket) {
+        return false;
+      }
+
+      var ticketDateValue = ticket.datee || searchDate;
+      var departureDateTime = buildDateTimeFromValues(ticketDateValue, ticket.departure);
+
+      if (!departureDateTime) {
+        return true;
+      }
+
+      return departureDateTime.getTime() >= now.getTime();
+    });
+  }
+
+  function buildDateTimeFromValues(dateString, timeString) {
+    if (!dateString || !timeString) {
+      return null;
+    }
+
+    var trimmedDate = String(dateString).trim();
+    var trimmedTime = String(timeString).trim();
+
+    if (!trimmedDate || !trimmedTime) {
+      return null;
+    }
+
+    var dateParts = trimmedDate.split('-');
+
+    if (dateParts.length !== 3) {
+      return null;
+    }
+
+    var timeParts = trimmedTime.split(':');
+
+    if (timeParts.length < 2) {
+      return null;
+    }
+
+    var year = parseInt(dateParts[0], 10);
+    var monthIndex = parseInt(dateParts[1], 10) - 1;
+    var day = parseInt(dateParts[2], 10);
+    var hour = parseInt(timeParts[0], 10);
+    var minute = parseInt(timeParts[1], 10);
+    var second = timeParts.length > 2 ? parseInt(timeParts[2], 10) : 0;
+
+    if (
+      Number.isNaN(year) ||
+      Number.isNaN(monthIndex) ||
+      Number.isNaN(day) ||
+      Number.isNaN(hour) ||
+      Number.isNaN(minute) ||
+      Number.isNaN(second)
+    ) {
+      return null;
+    }
+
+    return new Date(year, monthIndex, day, hour, minute, second, 0);
   }
 
   function renderTickets(tickets, headingMeta) {
