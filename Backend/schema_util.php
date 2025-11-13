@@ -57,6 +57,7 @@ function determineBookingSchema(mysqli $conn): array
             'ticket_status_column' => detectColumn($conn, $ticketsTable, ['status']),
             'ticket_id_column' => detectColumn($conn, $ticketsTable, ['ticket_id', 'id']),
             'ticket_issued_at_column' => detectColumn($conn, $ticketsTable, ['issued_at', 'created_at']),
+            'ticket_cancelled_at_column' => detectColumn($conn, $ticketsTable, ['cancelled_at']),
             'ticket_deleted_column' => detectColumn($conn, $ticketsTable, ['deleted_at']),
         ];
 
@@ -121,6 +122,7 @@ function determineBookingSchema(mysqli $conn): array
             'ticket_quantity_column' => detectColumn($conn, $paidTicketTable, ['quantity', 'total']),
             'ticket_status_column' => detectColumn($conn, $paidTicketTable, ['status']),
             'ticket_created_column' => detectColumn($conn, $paidTicketTable, ['created_at', 'issued_at']),
+            'ticket_cancelled_at_column' => detectColumn($conn, $paidTicketTable, ['cancelled_at']),
             'ticket_id_column' => detectColumn($conn, $paidTicketTable, ['ticket_id', 'id']),
         ];
 

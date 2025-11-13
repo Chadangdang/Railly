@@ -108,6 +108,9 @@ function fetchRelationalUserTickets(mysqli $conn, array $schema, int $userId): a
         $schema['ticket_issued_at_column'] !== null
             ? qualifyColumn('t', $schema['ticket_issued_at_column']) . ' AS issued_at'
             : 'NULL AS issued_at',
+        $schema['ticket_cancelled_at_column'] !== null
+            ? qualifyColumn('t', $schema['ticket_cancelled_at_column']) . ' AS cancelled_at'
+            : 'NULL AS cancelled_at',
         qualifyColumn('s', $schema['service_id_column']) . ' AS service_id',
         'DATE(' . qualifyColumn('s', $schema['service_depart_column']) . ') AS service_date',
         'TIME(' . qualifyColumn('s', $schema['service_depart_column']) . ') AS depart_time',
@@ -180,6 +183,7 @@ function fetchRelationalUserTickets(mysqli $conn, array $schema, int $userId): a
             'quantity' => 1,
             'status' => $row['status'],
             'created_at' => $row['issued_at'] ?? null,
+            'cancelled_at' => $row['cancelled_at'] ?? null,
         ];
     }
 
@@ -191,7 +195,7 @@ function fetchRelationalUserTickets(mysqli $conn, array $schema, int $userId): a
 function fetchLegacyUserTickets(mysqli $conn, array $schema, int $userId): array
 {
     $query = sprintf(
-        'SELECT %s AS ticket_id, %s AS quantity, %s AS status, %s AS created_at, '
+        'SELECT %s AS ticket_id, %s AS quantity, %s AS status, %s AS created_at, %s AS cancelled_at, '
         . '%s AS service_id, %s AS service_date, %s AS origin, %s AS dest, %s AS depart_time, %s AS arrival_time, %s AS price_thb '
         . 'FROM %s AS pt '
         . 'INNER JOIN %s AS s ON %s = %s '
@@ -203,6 +207,9 @@ function fetchLegacyUserTickets(mysqli $conn, array $schema, int $userId): array
         qualifyColumn('pt', $schema['ticket_status_column']),
         $schema['ticket_created_column'] !== null
             ? qualifyColumn('pt', $schema['ticket_created_column'])
+            : 'NULL',
+        $schema['ticket_cancelled_at_column'] !== null
+            ? qualifyColumn('pt', $schema['ticket_cancelled_at_column'])
             : 'NULL',
         qualifyColumn('s', $schema['service_id_column']),
         qualifyColumn('s', $schema['service_date_column']),
@@ -247,6 +254,7 @@ function fetchLegacyUserTickets(mysqli $conn, array $schema, int $userId): array
             'quantity' => (int) $row['quantity'],
             'status' => $row['status'],
             'created_at' => $row['created_at'],
+            'cancelled_at' => $row['cancelled_at'],
         ];
     }
 

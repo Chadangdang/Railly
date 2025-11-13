@@ -90,10 +90,18 @@ function cancelRelationalTicket(mysqli $conn, array $schema, int $ticketId, int 
         }
 
         $cancelledStatus = 'CANCELLED';
+        $cancelTimestamp = null;
+        $setClauses = [quoteIdentifier($schema['ticket_status_column']) . ' = ?'];
+
+        if ($schema['ticket_cancelled_at_column'] !== null) {
+            $cancelTimestamp = date('Y-m-d H:i:s');
+            $setClauses[] = quoteIdentifier($schema['ticket_cancelled_at_column']) . ' = ?';
+        }
+
         $updateSql = sprintf(
-            'UPDATE %s SET %s = ? WHERE %s = ? AND %s = ?',
+            'UPDATE %s SET %s WHERE %s = ? AND %s = ?',
             quoteIdentifier($schema['tickets_table']),
-            quoteIdentifier($schema['ticket_status_column']),
+            implode(', ', $setClauses),
             quoteIdentifier($schema['ticket_id_column']),
             quoteIdentifier($schema['ticket_customer_fk_column'])
         );
@@ -103,7 +111,11 @@ function cancelRelationalTicket(mysqli $conn, array $schema, int $ticketId, int 
         }
 
         $updateStmt = $conn->prepare($updateSql);
-        $updateStmt->bind_param('sii', $cancelledStatus, $ticketId, $userId);
+        if ($cancelTimestamp !== null) {
+            $updateStmt->bind_param('ssii', $cancelledStatus, $cancelTimestamp, $ticketId, $userId);
+        } else {
+            $updateStmt->bind_param('sii', $cancelledStatus, $ticketId, $userId);
+        }
         $updateStmt->execute();
         $updateStmt->close();
 
@@ -147,6 +159,7 @@ function cancelRelationalTicket(mysqli $conn, array $schema, int $ticketId, int 
             'ticket' => [
                 'ticket_id' => $ticketId,
                 'status' => $cancelledStatus,
+                'cancelled_at' => $cancelTimestamp,
             ],
             'available_tickets' => $availableTickets,
             'restored_quantity' => $restoredQuantity,
@@ -190,16 +203,28 @@ function cancelLegacyTicket(mysqli $conn, array $schema, int $ticketId, int $use
         }
 
         $cancelledStatus = 'CANCELLED';
+        $cancelTimestamp = null;
+        $setClauses = [quoteIdentifier($schema['ticket_status_column']) . ' = ?'];
+
+        if ($schema['ticket_cancelled_at_column'] !== null) {
+            $cancelTimestamp = date('Y-m-d H:i:s');
+            $setClauses[] = quoteIdentifier($schema['ticket_cancelled_at_column']) . ' = ?';
+        }
+
         $updateSql = sprintf(
-            'UPDATE %s SET %s = ? WHERE %s = ? AND %s = ?',
+            'UPDATE %s SET %s WHERE %s = ? AND %s = ?',
             quoteIdentifier($schema['ticket_table']),
-            quoteIdentifier($schema['ticket_status_column']),
+            implode(', ', $setClauses),
             quoteIdentifier($schema['ticket_id_column']),
             quoteIdentifier($schema['ticket_user_column'])
         );
 
         $updateStmt = $conn->prepare($updateSql);
-        $updateStmt->bind_param('sii', $cancelledStatus, $ticketId, $userId);
+        if ($cancelTimestamp !== null) {
+            $updateStmt->bind_param('ssii', $cancelledStatus, $cancelTimestamp, $ticketId, $userId);
+        } else {
+            $updateStmt->bind_param('sii', $cancelledStatus, $ticketId, $userId);
+        }
         $updateStmt->execute();
         $updateStmt->close();
 
@@ -227,6 +252,7 @@ function cancelLegacyTicket(mysqli $conn, array $schema, int $ticketId, int $use
             'ticket' => [
                 'ticket_id' => $ticketId,
                 'status' => $cancelledStatus,
+                'cancelled_at' => $cancelTimestamp,
             ],
             'available_tickets' => $newAvailable,
             'restored_quantity' => $quantity,

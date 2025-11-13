@@ -153,19 +153,31 @@
       return null;
     }
 
-    function setTicketStatus(ticketId, newStatus) {
+    function applyTicketUpdates(ticketId, updates) {
       var numericId = Number(ticketId);
       if (!Number.isFinite(numericId)) {
         return false;
       }
 
-      var nextStatus = typeof newStatus === 'string' && newStatus ? newStatus : 'CANCELLED';
+      var payload = updates && typeof updates === 'object' ? updates : {};
+      var statusValue =
+        typeof payload.status === 'string' && payload.status.trim()
+          ? payload.status
+          : 'CANCELLED';
+      var hasCancelledAt = Object.prototype.hasOwnProperty.call(
+        payload,
+        'cancelled_at'
+      );
+      var cancelledAtValue = hasCancelledAt ? payload.cancelled_at : undefined;
       var updated = false;
 
       state.tickets = state.tickets.map(function (ticket) {
         if (Number(ticket.ticket_id) === numericId) {
           var clone = Object.assign({}, ticket);
-          clone.status = nextStatus;
+          clone.status = statusValue;
+          if (hasCancelledAt) {
+            clone.cancelled_at = cancelledAtValue;
+          }
           updated = true;
           return clone;
         }
@@ -207,12 +219,28 @@
 
       cancelTicketRequest(ticketId)
         .then(function (response) {
-          var nextStatus =
-            response && response.ticket && response.ticket.status
-              ? response.ticket.status
-              : 'CANCELLED';
+          var updates = {};
 
-          setTicketStatus(ticketId, nextStatus);
+          if (response && response.ticket) {
+            if (typeof response.ticket.status === 'string') {
+              updates.status = response.ticket.status;
+            }
+
+            if (
+              Object.prototype.hasOwnProperty.call(
+                response.ticket,
+                'cancelled_at'
+              )
+            ) {
+              updates.cancelled_at = response.ticket.cancelled_at;
+            }
+          }
+
+          if (!Object.prototype.hasOwnProperty.call(updates, 'status')) {
+            updates.status = 'CANCELLED';
+          }
+
+          applyTicketUpdates(ticketId, updates);
           pendingCancellations.delete(key);
           renderTickets();
 
@@ -308,6 +336,10 @@
         dateStyle: 'medium',
         timeStyle: 'short',
       }).format(parsed);
+    }
+
+    function formatCancellationAt(value) {
+      return formatIssuedAt(value);
     }
 
     function parseStationLabel(label) {
@@ -486,7 +518,15 @@
       footer.appendChild(createFooterItem('Price', formatPrice(ticket.price)));
 
       var issuedAt = formatIssuedAt(ticket.created_at);
-      if (issuedAt) {
+      var cancelledAt = formatCancellationAt(ticket.cancelled_at);
+
+      if (status === 'cancelled') {
+        if (cancelledAt) {
+          footer.appendChild(createFooterItem('Cancelled at', cancelledAt));
+        } else if (issuedAt) {
+          footer.appendChild(createFooterItem('Issued', issuedAt));
+        }
+      } else if (issuedAt) {
         footer.appendChild(createFooterItem('Issued', issuedAt));
       }
 
