@@ -346,7 +346,6 @@
     var actions = document.createElement('div');
     actions.className = 'ticket-actions';
 
-    var availableCount = normaliseNumber(ticket.available_ticket);
     var availabilityText = formatAvailability(ticket);
     if (availabilityText) {
       var availabilityElement = document.createElement('div');
@@ -357,12 +356,28 @@
 
     var button = document.createElement('button');
     button.type = 'button';
-    button.textContent = availableCount > 0 ? 'ADD TO CART' : 'SOLD OUT';
-    button.disabled = availableCount <= 0;
+    button.textContent = 'ADD TO CART';
     button.addEventListener('click', function () {
-      addTicketToCart(ticket, card);
+      var result = addTicketToCart(ticket);
+      syncTicketButtonState(button, ticket);
+
+      if (result.added) {
+        triggerCartFeedback(card);
+        return;
+      }
+
+      if (result.maxed) {
+        triggerMaxFeedback(card, result.message);
+        return;
+      }
+
+      if (result.soldOut && result.message) {
+        announceCartUpdate(result.message);
+      }
     });
     actions.appendChild(button);
+
+    syncTicketButtonState(button, ticket);
 
     card.appendChild(actions);
 
@@ -469,6 +484,169 @@
     return Number.isFinite(number) ? number : -1;
   }
 
+  function normaliseLimit(value) {
+    if (value === undefined || value === null) {
+      return null;
+    }
+
+    var number = Number(value);
+
+    if (!Number.isFinite(number)) {
+      return null;
+    }
+
+    number = Math.floor(number);
+
+    if (number < 0) {
+      return null;
+    }
+
+    return number;
+  }
+
+  function collectTicketLimitCandidates(ticket) {
+    if (!ticket) {
+      return [];
+    }
+
+    var candidates = [];
+
+    var available = normaliseLimit(ticket.available_ticket);
+    if (available !== null) {
+      candidates.push(available);
+    }
+
+    var total = normaliseLimit(ticket.total_ticket);
+    if (total !== null) {
+      candidates.push(total);
+    }
+
+    var capacity = normaliseLimit(ticket.capacity);
+    if (capacity !== null) {
+      candidates.push(capacity);
+    }
+
+    return candidates;
+  }
+
+  function collectStoredLimitCandidates(entry) {
+    if (!entry) {
+      return [];
+    }
+
+    var keys = [
+      'maxQuantity',
+      'availableTicket',
+      'available_ticket',
+      'totalTicket',
+      'total_ticket',
+      'capacity'
+    ];
+
+    var candidates = [];
+
+    keys.forEach(function (key) {
+      var normalised = normaliseLimit(entry[key]);
+      if (normalised !== null) {
+        candidates.push(normalised);
+      }
+    });
+
+    return candidates;
+  }
+
+  function pickMinimumCandidate(candidates) {
+    if (!Array.isArray(candidates) || candidates.length === 0) {
+      return null;
+    }
+
+    var limit = candidates[0];
+
+    for (var i = 1; i < candidates.length; i++) {
+      if (candidates[i] < limit) {
+        limit = candidates[i];
+      }
+    }
+
+    return limit;
+  }
+
+  function getTicketLimit(ticket) {
+    return pickMinimumCandidate(collectTicketLimitCandidates(ticket));
+  }
+
+  function getEffectiveLimit(ticket, entry) {
+    var ticketCandidates = collectTicketLimitCandidates(ticket);
+    var storedCandidates = collectStoredLimitCandidates(entry);
+
+    return pickMinimumCandidate(ticketCandidates.concat(storedCandidates));
+  }
+
+  function getLatestContext() {
+    return session ? session.getUserContext() : context;
+  }
+
+  function getActiveUserId() {
+    var latest = getLatestContext();
+
+    if (!latest || !latest.id) {
+      return null;
+    }
+
+    return String(latest.id);
+  }
+
+  function syncTicketButtonState(button, ticket) {
+    if (!button) {
+      return;
+    }
+
+    var userId = getActiveUserId();
+
+    if (!userId) {
+      button.disabled = false;
+      button.classList.remove('is-max');
+      button.textContent = 'ADD TO CART';
+      button.setAttribute('aria-label', 'Add ticket to cart');
+      button.title = 'Add ticket to cart';
+      return;
+    }
+
+    var cartMap = loadCartStorage();
+    var userCart = Array.isArray(cartMap[userId]) ? cartMap[userId] : [];
+    var itemId = buildCartItemId(ticket);
+    var entry = userCart.find(function (item) {
+      return item && item.id === itemId;
+    });
+
+    var effectiveLimit = getEffectiveLimit(ticket, entry);
+    var quantity = entry ? Number(entry.quantity) || 0 : 0;
+
+    if (effectiveLimit !== null && effectiveLimit <= 0) {
+      button.disabled = true;
+      button.classList.remove('is-max');
+      button.textContent = 'SOLD OUT';
+      button.setAttribute('aria-label', 'Ticket is sold out');
+      button.title = 'Ticket is sold out';
+      return;
+    }
+
+    if (effectiveLimit !== null && quantity >= effectiveLimit) {
+      button.disabled = true;
+      button.classList.add('is-max');
+      button.textContent = 'MAX IN CART';
+      button.setAttribute('aria-label', 'Maximum tickets already in cart');
+      button.title = 'Maximum tickets already in cart';
+      return;
+    }
+
+    button.disabled = false;
+    button.classList.remove('is-max');
+    button.textContent = 'ADD TO CART';
+    button.setAttribute('aria-label', 'Add ticket to cart');
+    button.title = 'Add ticket to cart';
+  }
+
   function calculateTravelMinutes(departure, arrival) {
     var departureMinutes = parseTimeToMinutes(departure);
     var arrivalMinutes = parseTimeToMinutes(arrival);
@@ -565,13 +743,13 @@
     return value.toLocaleString(undefined, { minimumFractionDigits: 2 }) + ' THB';
   }
 
-  function addTicketToCart(ticket, cardElement) {
-    var latestContext = session ? session.getUserContext() : context;
+  function addTicketToCart(ticket) {
+    var latestContext = getLatestContext();
 
     if (!latestContext || !latestContext.username || !latestContext.id) {
       alert('Please log in to add tickets to your cart.');
       window.location.href = '../Login/Login.html';
-      return;
+      return { added: false, maxed: false, soldOut: false, message: null };
     }
 
     var cartMap = loadCartStorage();
@@ -584,32 +762,123 @@
     });
 
     var timestamp = Date.now();
+    var limitFromTicket = getTicketLimit(ticket);
+    var availableCount = normaliseLimit(ticket.available_ticket);
+    var totalCount = normaliseLimit(ticket.total_ticket);
+    var capacityCount = normaliseLimit(ticket.capacity);
+
+    var result = {
+      added: false,
+      maxed: false,
+      soldOut: false,
+      message: null
+    };
+
+    var storageChanged = false;
 
     if (existingItem) {
-      var quantity = Number(existingItem.quantity) || 0;
-      existingItem.quantity = quantity + 1;
-      existingItem.addedAt = timestamp;
+      var effectiveLimit = getEffectiveLimit(ticket, existingItem);
+      var currentQuantity = Number(existingItem.quantity) || 0;
+
+      if (effectiveLimit !== null && effectiveLimit <= 0) {
+        if (currentQuantity !== 0) {
+          existingItem.quantity = 0;
+          storageChanged = true;
+        }
+        result.soldOut = true;
+        result.message = 'This departure is sold out.';
+      } else {
+        var desiredQuantity = currentQuantity + 1;
+
+        if (effectiveLimit !== null && desiredQuantity > effectiveLimit) {
+          if (effectiveLimit > 0 && currentQuantity > effectiveLimit) {
+            existingItem.quantity = effectiveLimit;
+          }
+
+          result.maxed = effectiveLimit !== null && effectiveLimit > 0;
+          result.soldOut = effectiveLimit !== null && effectiveLimit <= 0;
+          result.message = result.maxed
+            ? 'Maximum tickets already in your cart for this service.'
+            : 'This departure is sold out.';
+          storageChanged = true;
+        } else {
+          existingItem.quantity = desiredQuantity;
+          existingItem.addedAt = timestamp;
+          storageChanged = true;
+          result.added = true;
+        }
+      }
+
+      if (effectiveLimit !== null && effectiveLimit >= 0 && existingItem.maxQuantity !== effectiveLimit) {
+        existingItem.maxQuantity = effectiveLimit;
+        storageChanged = true;
+      }
+
+      if (availableCount !== null && existingItem.availableTicket !== availableCount) {
+        existingItem.availableTicket = availableCount;
+        storageChanged = true;
+      }
+
+      if (totalCount !== null && existingItem.totalTicket !== totalCount) {
+        existingItem.totalTicket = totalCount;
+        storageChanged = true;
+      }
+
+      if (capacityCount !== null && existingItem.capacity !== capacityCount) {
+        existingItem.capacity = capacityCount;
+        storageChanged = true;
+      }
     } else {
-      userCart.push({
-        id: itemId,
-        routeId: ticket.route_id || ticket.routeId || '',
-        origin: ticket.origin || '',
-        originName: ticket.origin || '',
-        originCode: ticket.origin_code || ticket.originCode || '',
-        destination: ticket.dest || ticket.destination || '',
-        destinationName: ticket.dest || ticket.destination || '',
-        destinationCode: ticket.dest_code || ticket.destinationCode || '',
-        departure: ticket.departure || '',
-        arrival: ticket.arrival || '',
-        datee: ticket.datee || '',
-        price: Number(ticket.price) || 0,
-        travelMinutes: ticket.travelMinutes,
-        quantity: 1,
-        addedAt: timestamp
-      });
+      if (limitFromTicket !== null && limitFromTicket <= 0) {
+        result.soldOut = true;
+        result.message = 'This departure is sold out.';
+      } else {
+        var initialQuantity = 1;
+
+        if (limitFromTicket !== null && initialQuantity > limitFromTicket) {
+          initialQuantity = limitFromTicket;
+        }
+
+        if (initialQuantity <= 0) {
+          result.soldOut = true;
+          result.message = 'This departure is sold out.';
+        } else {
+          userCart.push({
+            id: itemId,
+            routeId: ticket.route_id || ticket.routeId || '',
+            origin: ticket.origin || '',
+            originName: ticket.origin || '',
+            originCode: ticket.origin_code || ticket.originCode || '',
+            destination: ticket.dest || ticket.destination || '',
+            destinationName: ticket.dest || ticket.destination || '',
+            destinationCode: ticket.dest_code || ticket.destinationCode || '',
+            departure: ticket.departure || '',
+            arrival: ticket.arrival || '',
+            datee: ticket.datee || '',
+            price: Number(ticket.price) || 0,
+            travelMinutes: ticket.travelMinutes,
+            quantity: initialQuantity,
+            maxQuantity: limitFromTicket !== null ? limitFromTicket : undefined,
+            availableTicket: availableCount !== null ? availableCount : undefined,
+            totalTicket: totalCount !== null ? totalCount : undefined,
+            capacity: capacityCount !== null ? capacityCount : undefined,
+            addedAt: timestamp
+          });
+          storageChanged = true;
+          result.added = true;
+        }
+      }
     }
 
-    userCart.sort(function (a, b) {
+    var filteredCart = userCart.filter(function (entry) {
+      return entry && Number(entry.quantity) > 0;
+    });
+
+    if (filteredCart.length !== userCart.length) {
+      storageChanged = true;
+    }
+
+    filteredCart.sort(function (a, b) {
       var aTime = a && Number(a.addedAt);
       var bTime = b && Number(b.addedAt);
 
@@ -624,18 +893,27 @@
       return bTime - aTime;
     });
 
-    cartMap[userIdKey] = userCart;
-    saveCartStorage(cartMap);
-    localStorage.setItem('railly-cart-selected', userIdKey + '::' + itemId);
+    if (storageChanged) {
+      cartMap[userIdKey] = filteredCart;
+      saveCartStorage(cartMap);
+      localStorage.setItem('railly-cart-selected', userIdKey + '::' + itemId);
+    }
 
-    triggerCartFeedback(cardElement);
+    return result;
   }
 
   function triggerCartFeedback(cardElement) {
     animateTicketToCart(cardElement);
     highlightCartLink();
-    showInlineConfirmation(cardElement);
+    showInlineConfirmation(cardElement, 'Added to cart!');
     announceCartUpdate('Ticket added to your cart.');
+  }
+
+  function triggerMaxFeedback(cardElement, message) {
+    showInlineConfirmation(cardElement, 'MAX IN CART');
+    announceCartUpdate(
+      message || 'Maximum tickets already in your cart for this service.'
+    );
   }
 
   function animateTicketToCart(cardElement) {
@@ -720,7 +998,7 @@
     navCartLink.dataset.pulseTimeoutId = String(timeoutId);
   }
 
-  function showInlineConfirmation(cardElement) {
+  function showInlineConfirmation(cardElement, text) {
     if (!cardElement) {
       return;
     }
@@ -739,7 +1017,7 @@
 
     var message = document.createElement('div');
     message.className = 'ticket-added-message';
-    message.textContent = 'Added to cart!';
+    message.textContent = text || 'Added to cart!';
     actions.appendChild(message);
 
     requestAnimationFrame(function () {
@@ -821,7 +1099,7 @@
   }
 
   function redirectToConfirmation(ticket) {
-    var latestContext = session ? session.getUserContext() : context;
+    var latestContext = getLatestContext();
 
     var params = new URLSearchParams({
       routeId: ticket.route_id,

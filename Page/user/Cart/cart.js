@@ -19,6 +19,86 @@
   var cartItems = [];
   var selectedItemId = null;
 
+  function normaliseLimit(value) {
+    if (value === undefined || value === null) {
+      return null;
+    }
+
+    var number = Number(value);
+
+    if (!Number.isFinite(number)) {
+      return null;
+    }
+
+    number = Math.floor(number);
+
+    if (number < 0) {
+      return null;
+    }
+
+    return number;
+  }
+
+  function collectItemLimitCandidates(item) {
+    if (!item) {
+      return [];
+    }
+
+    return [
+      normaliseLimit(item.maxQuantity),
+      normaliseLimit(item.availableTicket),
+      normaliseLimit(item.available_ticket),
+      normaliseLimit(item.totalTicket),
+      normaliseLimit(item.total_ticket),
+      normaliseLimit(item.capacity)
+    ].filter(function (candidate) {
+      return candidate !== null;
+    });
+  }
+
+  function getItemMaxQuantity(item) {
+    var candidates = collectItemLimitCandidates(item);
+
+    if (candidates.length === 0) {
+      return null;
+    }
+
+    var limit = candidates[0];
+
+    for (var i = 1; i < candidates.length; i++) {
+      if (candidates[i] < limit) {
+        limit = candidates[i];
+      }
+    }
+
+    return limit;
+  }
+
+  function clampItemQuantityToLimit(item) {
+    if (!item) {
+      return item;
+    }
+
+    var limit = getItemMaxQuantity(item);
+
+    if (limit === null) {
+      return item;
+    }
+
+    var quantity = Number(item.quantity);
+
+    if (!Number.isFinite(quantity)) {
+      item.quantity = 0;
+      return item;
+    }
+
+    if (quantity > limit) {
+      item.quantity = limit;
+    }
+
+    return item;
+  }
+
   function initCartPage() {
     session = window.userSession ? window.userSession : null;
     context = session ? session.getUserContext() : { username: null, id: null };
@@ -55,13 +135,43 @@
     var userIdKey = String(context.id);
     var userItems = storedMap[userIdKey];
 
-    cartItems = Array.isArray(userItems)
-      ? userItems
-          .filter(function (item) {
-            return item && Number(item.quantity) > 0;
-          })
-          .sort(compareByAddedAtDesc)
-      : [];
+    if (Array.isArray(userItems)) {
+      var storageAdjusted = false;
+      var cleanedItems = [];
+
+      userItems.forEach(function (rawItem) {
+        if (!rawItem) {
+          return;
+        }
+
+        var originalQuantity = Number(rawItem.quantity);
+        clampItemQuantityToLimit(rawItem);
+        var adjustedQuantity = Number(rawItem.quantity);
+
+        if (
+          Number.isFinite(originalQuantity) &&
+          Number.isFinite(adjustedQuantity) &&
+          originalQuantity !== adjustedQuantity
+        ) {
+          storageAdjusted = true;
+        }
+
+        if (adjustedQuantity > 0) {
+          cleanedItems.push(rawItem);
+        } else if (originalQuantity > 0) {
+          storageAdjusted = true;
+        }
+      });
+
+      cleanedItems.sort(compareByAddedAtDesc);
+      cartItems = cleanedItems;
+
+      if (storageAdjusted) {
+        saveCartToStorage();
+      }
+    } else {
+      cartItems = [];
+    }
 
     selectedItemId = loadSelectedItemId();
 
@@ -329,6 +439,30 @@
       changeItemQuantity(item.id, 1);
     });
 
+    var limit = getItemMaxQuantity(item);
+    var quantity = Number(item.quantity) || 0;
+    var atMax = limit !== null && quantity >= limit;
+
+    if (limit !== null) {
+      valueElement.dataset.max = String(limit);
+      valueElement.title = 'Maximum ' + limit + ' tickets available';
+    } else {
+      delete valueElement.dataset.max;
+      valueElement.removeAttribute('title');
+    }
+
+    if (atMax) {
+      increaseBtn.disabled = true;
+      increaseBtn.classList.add('quantity-btn--max');
+      increaseBtn.setAttribute('aria-label', 'Maximum quantity reached');
+      increaseBtn.title = 'Maximum quantity reached';
+    } else {
+      increaseBtn.disabled = false;
+      increaseBtn.classList.remove('quantity-btn--max');
+      increaseBtn.setAttribute('aria-label', 'Increase ticket quantity');
+      increaseBtn.title = 'Increase ticket quantity';
+    }
+
     wrapper.appendChild(decreaseBtn);
     wrapper.appendChild(valueElement);
     wrapper.appendChild(increaseBtn);
@@ -348,6 +482,14 @@
     var item = cartItems[index];
     var currentQuantity = Number(item.quantity) || 0;
     var newQuantity = currentQuantity + delta;
+
+    if (delta > 0) {
+      var limit = getItemMaxQuantity(item);
+      if (limit !== null && newQuantity > limit) {
+        alert('You have reached the maximum capacity for this ticket.');
+        return;
+      }
+    }
 
     if (newQuantity <= 0) {
       cartItems.splice(index, 1);

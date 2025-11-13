@@ -343,6 +343,11 @@
   box-shadow: none;
 }
 
+.quantity-btn.quantity-btn--max {
+  background: linear-gradient(135deg, rgba(22, 71, 162, 0.35), rgba(243, 68, 122, 0.35));
+  color: #ffffff;
+}
+
 .quantity-btn:not(:disabled):hover {
   transform: translateY(-1px);
   box-shadow: 0px 4px 12px rgba(243, 68, 122, 0.35);

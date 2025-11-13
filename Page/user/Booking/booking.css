@@ -481,6 +481,16 @@
   box-shadow: none;
 }
 
+.ticket-actions button.is-max {
+  background: linear-gradient(
+    135deg,
+    rgba(22, 71, 162, 0.35),
+    rgba(243, 68, 122, 0.35)
+  );
+  color: #ffffff;
+  text-transform: uppercase;
+}
+
 .ticket-added-message {
   position: absolute;
   right: 0;
