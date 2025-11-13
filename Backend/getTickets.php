@@ -85,10 +85,12 @@ function determineTicketSchema(mysqli $conn): array
             'depart_column' => detectColumn($conn, $serviceTable, ['depart_at']),
             'arrival_column' => detectColumn($conn, $serviceTable, ['arrive_at', 'arrival_at']),
             'capacity_column' => detectColumn($conn, $serviceTable, ['capacity']),
+            'available_column' => detectColumn($conn, $serviceTable, ['available', 'available_ticket', 'available_tickets', 'remaining_ticket']),
             'price_column' => detectColumn($conn, $routeTable, ['base_price', 'price_thb', 'price']),
             'station_id_column' => detectColumn($conn, $stationTable, ['station_id', 'id']),
             'station_name_column' => detectColumn($conn, $stationTable, ['name', 'station_name']),
-            'station_code_column' => detectColumn($conn, $stationTable, ['code', 'station_code'])
+            'station_code_column' => detectColumn($conn, $stationTable, ['code', 'station_code']),
+            'status_column' => detectColumn($conn, $serviceTable, ['status', 'service_status'])
         ];
 
         foreach ([
@@ -214,12 +216,24 @@ function fetchRelationalTickets(mysqli $conn, array $schema, string $mode, strin
         $selectParts[] = 'NULL AS dest_code';
     }
 
-    $availableExpression = qualifyColumn('s', $schema['capacity_column']);
     $soldJoin = '';
+    $availableExpression = null;
 
-    if (tableHasColumns($conn, 'tickets', ['service_id', 'status'])) {
-        $availableExpression = 'GREATEST(' . qualifyColumn('s', $schema['capacity_column']) . ' - COALESCE(sold.sold_count, 0), 0)';
-        $soldJoin = 'LEFT JOIN (SELECT service_id, COUNT(*) AS sold_count FROM ' . quoteIdentifier('tickets') . " WHERE status IN ('PAID','USED') GROUP BY service_id) AS sold ON sold.service_id = " . qualifyColumn('s', $schema['service_id_column']);
+    if ($schema['available_column'] !== null) {
+        $availableExpression = 'GREATEST(COALESCE(' . qualifyColumn('s', $schema['available_column']) . ', 0), 0)';
+
+        if ($schema['capacity_column'] !== null) {
+            $availableExpression = 'LEAST(' . qualifyColumn('s', $schema['capacity_column']) . ', ' . $availableExpression . ')';
+        }
+    } elseif ($schema['capacity_column'] !== null) {
+        $availableExpression = qualifyColumn('s', $schema['capacity_column']);
+
+        if (tableHasColumns($conn, 'tickets', ['service_id', 'status'])) {
+            $availableExpression = 'GREATEST(' . qualifyColumn('s', $schema['capacity_column']) . ' - COALESCE(sold.sold_count, 0), 0)';
+            $soldJoin = 'LEFT JOIN (SELECT service_id, COUNT(*) AS sold_count FROM ' . quoteIdentifier('tickets') . " WHERE status IN ('PAID','USED') GROUP BY service_id) AS sold ON sold.service_id = " . qualifyColumn('s', $schema['service_id_column']);
+        }
+    } else {
+        $availableExpression = '0';
     }
 
     $selectParts[] = $availableExpression . ' AS available_ticket';
@@ -237,14 +251,24 @@ function fetchRelationalTickets(mysqli $conn, array $schema, string $mode, strin
 
     $orderClause = ' ORDER BY TIME(' . qualifyColumn('s', $schema['depart_column']) . ') ASC';
 
+    $whereConditions = [];
+
+    if ($schema['status_column'] !== null) {
+        $whereConditions[] = 'UPPER(' . qualifyColumn('s', $schema['status_column']) . ") = 'OPEN'";
+    }
+
     if ($mode === 'today') {
-        $query .= ' WHERE DATE(' . qualifyColumn('s', $schema['depart_column']) . ') = ?' . $orderClause;
+        $whereConditions[] = 'DATE(' . qualifyColumn('s', $schema['depart_column']) . ') = ?';
+        $whereClause = empty($whereConditions) ? '' : ' WHERE ' . implode(' AND ', $whereConditions);
+        $query .= $whereClause . $orderClause;
         $stmt = $conn->prepare($query);
         $stmt->bind_param('s', $date);
     } else {
-        $query .= ' WHERE ' . qualifyColumn('origin', $schema['station_name_column']) . ' = ? AND '
-            . qualifyColumn('dest', $schema['station_name_column']) . ' = ? AND '
-            . 'DATE(' . qualifyColumn('s', $schema['depart_column']) . ') = ?' . $orderClause;
+        $whereConditions[] = qualifyColumn('origin', $schema['station_name_column']) . ' = ?';
+        $whereConditions[] = qualifyColumn('dest', $schema['station_name_column']) . ' = ?';
+        $whereConditions[] = 'DATE(' . qualifyColumn('s', $schema['depart_column']) . ') = ?';
+        $whereClause = empty($whereConditions) ? '' : ' WHERE ' . implode(' AND ', $whereConditions);
+        $query .= $whereClause . $orderClause;
         $stmt = $conn->prepare($query);
         $stmt->bind_param('sss', $origin, $destination, $date);
     }

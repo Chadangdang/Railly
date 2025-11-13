@@ -294,6 +294,11 @@
     formData.append('departure', ticketData.departure);
     formData.append('arrival', ticketData.arrival);
     formData.append('price', ticketData.total);
+    formData.append('quantity', ticketData.quantity);
+
+    if (Number.isFinite(ticketData.unitPrice)) {
+      formData.append('unit_price', ticketData.unitPrice);
+    }
     formData.append('payment_method', selectedMethod);
 
     fetch('../../../Backend/confirm.php', {
