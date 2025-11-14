@@ -59,6 +59,7 @@ function determineBookingSchema(mysqli $conn): array
             'ticket_issued_at_column' => detectColumn($conn, $ticketsTable, ['issued_at', 'created_at']),
             'ticket_used_at_column' => detectColumn($conn, $ticketsTable, ['used_at']),
             'ticket_cancelled_at_column' => detectColumn($conn, $ticketsTable, ['cancelled_at']),
+            'ticket_cancel_reason_column' => detectColumn($conn, $ticketsTable, ['cancel_reason']),
             'ticket_deleted_column' => detectColumn($conn, $ticketsTable, ['deleted_at']),
         ];
 
@@ -124,6 +125,7 @@ function determineBookingSchema(mysqli $conn): array
             'ticket_status_column' => detectColumn($conn, $paidTicketTable, ['status']),
             'ticket_created_column' => detectColumn($conn, $paidTicketTable, ['created_at', 'issued_at']),
             'ticket_cancelled_at_column' => detectColumn($conn, $paidTicketTable, ['cancelled_at']),
+            'ticket_cancel_reason_column' => detectColumn($conn, $paidTicketTable, ['cancel_reason']),
             'ticket_id_column' => detectColumn($conn, $paidTicketTable, ['ticket_id', 'id']),
         ];
 
@@ -272,6 +274,18 @@ function tableExists(mysqli $conn, string $table): bool
     } catch (mysqli_sql_exception $exception) {
         return false;
     }
+}
+
+function bindDynamicParams(mysqli_stmt $stmt, string $types, array $params): void
+{
+    $values = [];
+    $values[] = $types;
+
+    foreach ($params as $key => $value) {
+        $values[] = &$params[$key];
+    }
+
+    call_user_func_array([$stmt, 'bind_param'], $values);
 }
 
 function quoteIdentifier(string $identifier): string

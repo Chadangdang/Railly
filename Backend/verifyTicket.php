@@ -156,6 +156,12 @@ function fetchRelationalTicketForVerification(mysqli $conn, array $schema, int $
         $columns[] = 'NULL AS cancelled_at';
     }
 
+    if ($schema['ticket_cancel_reason_column'] !== null) {
+        $columns[] = qualifyColumn('t', $schema['ticket_cancel_reason_column']) . ' AS cancel_reason';
+    } else {
+        $columns[] = 'NULL AS cancel_reason';
+    }
+
     $query = 'SELECT ' . implode(', ', $columns)
         . ' FROM ' . quoteIdentifier($schema['tickets_table']) . ' AS t '
         . 'INNER JOIN ' . quoteIdentifier($schema['service_table']) . ' AS s ON '
@@ -212,6 +218,7 @@ function fetchRelationalTicketForVerification(mysqli $conn, array $schema, int $
         'issued_at' => $row['issued_at'] ?? null,
         'used_at' => $row['used_at'] ?? null,
         'cancelled_at' => $row['cancelled_at'] ?? null,
+        'cancel_reason' => $row['cancel_reason'] ?? null,
     ];
 }
 
@@ -247,6 +254,12 @@ function fetchLegacyTicketForVerification(mysqli $conn, array $schema, int $tick
         $columns[] = qualifyColumn('pt', $schema['ticket_cancelled_at_column']) . ' AS cancelled_at';
     } else {
         $columns[] = 'NULL AS cancelled_at';
+    }
+
+    if ($schema['ticket_cancel_reason_column'] !== null) {
+        $columns[] = qualifyColumn('pt', $schema['ticket_cancel_reason_column']) . ' AS cancel_reason';
+    } else {
+        $columns[] = 'NULL AS cancel_reason';
     }
 
     $query = 'SELECT ' . implode(', ', $columns)
@@ -291,6 +304,7 @@ function fetchLegacyTicketForVerification(mysqli $conn, array $schema, int $tick
         'issued_at' => $row['issued_at'] ?? null,
         'used_at' => null,
         'cancelled_at' => $row['cancelled_at'] ?? null,
+        'cancel_reason' => $row['cancel_reason'] ?? null,
     ];
 }
 
@@ -439,15 +453,4 @@ function markLegacyTicketAsUsed(mysqli $conn, array $schema, int $ticketId, int 
             $conn->rollback();
         }
     }
-}
-
-function bindDynamicParams(mysqli_stmt $stmt, string $types, array $params): void
-{
-    $values = [];
-    $values[] = $types;
-    foreach ($params as $key => $value) {
-        $values[] = &$params[$key];
-    }
-
-    call_user_func_array([$stmt, 'bind_param'], $values);
 }
