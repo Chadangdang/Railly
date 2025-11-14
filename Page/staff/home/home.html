@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Railly Staff – Ticket Scanner</title>
+    <link rel="stylesheet" href="../shared/header.css" />
+    <link rel="stylesheet" href="./home.css" />
+    <script src="../../../assets/js/layout-loader.js" defer></script>
+    <script src="../shared/header.js" defer></script>
+    <script src="./home.js" defer></script>
+  </head>
+  <body class="staff-home-page">
+    <div
+      data-include="../shared/header.html"
+      data-staff-title="Ticket scanner"
+    ></div>
+
+    <main class="staff-home-main" aria-labelledby="page-title">
+      <section class="scanner-card" role="region" aria-label="QR code scanner">
+        <div class="scanner-card__stage" role="presentation">
+          <video
+            id="camera-stream"
+            class="scanner-card__video"
+            autoplay
+            playsinline
+            muted
+          >
+            Camera preview is not available on this device.
+          </video>
+          <div class="scanner-card__frame" aria-hidden="true"></div>
+          <div class="scanner-card__glow" aria-hidden="true"></div>
+        </div>
+
+        <div class="scanner-card__body">
+          <h2 class="scanner-card__title">Scan passenger ticket</h2>
+          <p class="scanner-card__hint">
+            Hold the passenger&rsquo;s QR code inside the frame. The ticket details will
+            open automatically when the code is recognised.
+          </p>
+          <p id="scan-status" class="scanner-status" role="status">
+            Initialising camera…
+          </p>
+          <button id="retry-camera" class="scanner-action" type="button" hidden>
+            Retry camera access
+          </button>
+        </div>
+      </section>
+    </main>
+
+    <footer class="staff-home-footer" aria-label="Additional actions">
+      <a class="history-link" href="../history/history.html">View history</a>
+    </footer>
+  </body>
+</html>
