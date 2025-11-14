@@ -525,18 +525,10 @@
       return section;
     }
 
-    function getPrimaryDateText(ticket, statusInfo) {
-      var currentStatus = (statusInfo && statusInfo.current) || null;
-
-      if (currentStatus === 'cancelled') {
-        var cancelledDisplay =
-          formatCancelledDateForDisplay(ticket && ticket.cancelled_at);
-        if (cancelledDisplay) {
-          return 'Cancelled at: ' + cancelledDisplay;
-        }
-      }
-
-      return formatDateForDisplay(ticket && ticket.datee);
+    function getPrimaryDateInfo(ticket) {
+      return {
+        text: formatDateForDisplay(ticket && ticket.datee),
+      };
     }
 
     function buildTicketCard(ticket) {
@@ -592,15 +584,21 @@
       var route = document.createElement('div');
       route.className = 'ticket-card__route';
 
+      var dateInfo = getPrimaryDateInfo(ticket);
+
+      var dateWrapper = document.createElement('span');
+      dateWrapper.className = 'ticket-card__date-wrapper';
+
       var dateEl = document.createElement('span');
       dateEl.className = 'ticket-card__date';
-      dateEl.textContent = getPrimaryDateText(ticket, statusInfo);
+      dateEl.textContent = dateInfo.text;
+      dateWrapper.appendChild(dateEl);
 
       var divider = document.createElement('span');
       divider.className = 'ticket-card__divider';
       divider.setAttribute('aria-hidden', 'true');
 
-      route.appendChild(dateEl);
+      route.appendChild(dateWrapper);
       route.appendChild(divider);
 
       body.appendChild(route);
