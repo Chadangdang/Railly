@@ -158,6 +158,7 @@
       tickets: [],
       isLoading: false,
       error: null,
+      user: null,
     };
     var pendingCancellations = new Set();
 
@@ -531,6 +532,82 @@
       };
     }
 
+    function buildTicketVerificationUrl(ticket) {
+      if (!ticket || !state.user || !state.user.id) {
+        return null;
+      }
+
+      try {
+        var base = new URL('/Page/staff/verify.html', window.location.origin);
+        base.searchParams.set('ticket_id', String(ticket.ticket_id));
+        base.searchParams.set('user_id', String(state.user.id));
+        return base.toString();
+      } catch (error) {
+        return null;
+      }
+    }
+
+    function buildTicketQrFallback(ticket) {
+      var fallback = document.createElement('span');
+      fallback.className = 'ticket-card__qr-fallback';
+
+      var lines = ['Show ticket ID'];
+      var formattedId = formatTicketId(ticket && ticket.ticket_id);
+      if (formattedId) {
+        lines.push(formattedId);
+      }
+
+      fallback.textContent = lines.join('\n');
+      return fallback;
+    }
+
+    function renderTicketQrCode(container, ticket) {
+      if (!container) {
+        return;
+      }
+
+      while (container.firstChild) {
+        container.removeChild(container.firstChild);
+      }
+
+      var verificationUrl = buildTicketVerificationUrl(ticket);
+      if (!verificationUrl) {
+        container.appendChild(buildTicketQrFallback(ticket));
+        container.setAttribute('aria-label', 'Ticket QR code unavailable');
+        container.setAttribute('data-qr-status', 'unavailable');
+        return;
+      }
+
+      var qrServiceUrl =
+        'https://api.qrserver.com/v1/create-qr-code/?size=180x180&margin=10&data=' +
+        encodeURIComponent(verificationUrl);
+
+      var image = document.createElement('img');
+      image.className = 'ticket-card__qr-image';
+      image.alt = 'QR code for staff verification';
+      image.loading = 'lazy';
+      image.decoding = 'async';
+      image.src = qrServiceUrl;
+
+      var handleLoadError = function () {
+        while (container.firstChild) {
+          container.removeChild(container.firstChild);
+        }
+        container.appendChild(buildTicketQrFallback(ticket));
+        container.setAttribute('aria-label', 'Ticket QR code unavailable');
+        container.setAttribute('data-qr-status', 'failed');
+      };
+
+      image.addEventListener('error', handleLoadError);
+
+      image.addEventListener('load', function () {
+        container.setAttribute('data-qr-status', 'ready');
+        container.setAttribute('aria-label', 'Ticket QR code ready for scanning');
+      });
+
+      container.appendChild(image);
+    }
+
     function buildTicketCard(ticket) {
       var article = document.createElement('article');
       article.className = 'ticket-card';
@@ -607,12 +684,10 @@
       var qr = document.createElement('div');
       qr.className = 'ticket-card__qr';
       qr.setAttribute('role', 'img');
-      qr.setAttribute('aria-label', 'QR code placeholder');
+      qr.setAttribute('aria-live', 'polite');
+      qr.setAttribute('data-ticket-id', String(ticket.ticket_id));
 
-      var qrHiddenText = document.createElement('span');
-      qrHiddenText.className = 'visually-hidden';
-      qrHiddenText.textContent = 'QR code placeholder';
-      qr.appendChild(qrHiddenText);
+      renderTicketQrCode(qr, ticket);
 
       var actions = document.createElement('div');
       actions.className = 'ticket-card__actions';
@@ -743,6 +818,7 @@
         state.tickets = [];
         state.error = 'Please sign in to view your tickets.';
         state.isLoading = false;
+        state.user = null;
         renderTickets();
         return;
       }
@@ -750,6 +826,11 @@
       state.isLoading = true;
       state.error = null;
       renderTickets();
+
+      state.user = {
+        id: context.id,
+        username: context.username,
+      };
 
       var params = new URLSearchParams({
         username: context.username,

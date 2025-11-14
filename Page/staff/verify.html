@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Railly Staff – Ticket Verification</title>
+    <link rel="stylesheet" href="../../index.css" />
+    <link rel="stylesheet" href="./verify.css" />
+    <script src="./verify.js" defer></script>
+  </head>
+  <body class="staff-verify-page">
+    <main class="staff-verify-main" aria-labelledby="page-title">
+      <section class="verification-card" role="region" aria-live="polite">
+        <header class="verification-card__header">
+          <h1 id="page-title" class="verification-card__title">Ticket Verification</h1>
+          <p class="verification-card__subtitle">
+            Scan a passenger's QR code to validate their ticket before boarding.
+          </p>
+        </header>
+
+        <div id="status-banner" class="verification-status" role="status"></div>
+
+        <section id="ticket-details" class="ticket-details" hidden aria-labelledby="ticket-summary-title">
+          <h2 id="ticket-summary-title" class="ticket-details__title">Ticket summary</h2>
+
+          <div class="ticket-details__status" id="ticket-status"></div>
+
+          <dl class="ticket-details__grid">
+            <div class="ticket-details__item">
+              <dt>Ticket ID</dt>
+              <dd id="detail-ticket-id">—</dd>
+            </div>
+            <div class="ticket-details__item">
+              <dt>User ID</dt>
+              <dd id="detail-user-id">—</dd>
+            </div>
+            <div class="ticket-details__item">
+              <dt>Passenger</dt>
+              <dd id="detail-username">—</dd>
+            </div>
+            <div class="ticket-details__item">
+              <dt>Travel date</dt>
+              <dd id="detail-date">—</dd>
+            </div>
+            <div class="ticket-details__item">
+              <dt>Departure</dt>
+              <dd id="detail-departure">—</dd>
+            </div>
+            <div class="ticket-details__item">
+              <dt>Arrival</dt>
+              <dd id="detail-arrival">—</dd>
+            </div>
+            <div class="ticket-details__item">
+              <dt>From</dt>
+              <dd id="detail-origin">—</dd>
+            </div>
+            <div class="ticket-details__item">
+              <dt>To</dt>
+              <dd id="detail-destination">—</dd>
+            </div>
+            <div class="ticket-details__item">
+              <dt>Quantity</dt>
+              <dd id="detail-quantity">—</dd>
+            </div>
+            <div class="ticket-details__item">
+              <dt>Price</dt>
+              <dd id="detail-price">—</dd>
+            </div>
+          </dl>
+
+          <div class="ticket-details__timeline" aria-label="Ticket timestamps">
+            <div class="ticket-details__timestamp">
+              <span class="ticket-details__timestamp-label">Issued at</span>
+              <span id="detail-issued-at" class="ticket-details__timestamp-value">—</span>
+            </div>
+            <div class="ticket-details__timestamp">
+              <span class="ticket-details__timestamp-label">Used at</span>
+              <span id="detail-used-at" class="ticket-details__timestamp-value">—</span>
+            </div>
+            <div class="ticket-details__timestamp">
+              <span class="ticket-details__timestamp-label">Cancelled at</span>
+              <span id="detail-cancelled-at" class="ticket-details__timestamp-value">—</span>
+            </div>
+          </div>
+        </section>
+
+        <footer class="verification-card__footer">
+          <button
+            id="mark-used-button"
+            class="verification-action-button"
+            type="button"
+            hidden
+          >
+            Mark ticket as used
+          </button>
+          <a class="verification-secondary-link" href="../user/MyTicket/myticket.html">
+            Back to My Ticket page
+          </a>
+        </footer>
+      </section>
+    </main>
+  </body>
+</html>
