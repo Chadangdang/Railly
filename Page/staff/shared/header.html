@@ -1,12 +1,21 @@
 <header class="staff-app-bar" aria-label="Staff navigation">
-  <div class="staff-app-bar__identity">
-    <span class="staff-app-bar__identity-name" data-role="staff-username">Staff member</span>
-    <button class="staff-app-bar__logout" type="button" data-role="staff-logout">
-      Log out
-    </button>
-  </div>
   <div class="staff-app-bar__title-group">
     <span class="staff-app-bar__eyebrow">Railly Staff Tools</span>
-    <h1 id="page-title" class="staff-app-bar__title" data-role="staff-page-title">Staff workspace</h1>
+    <div class="staff-app-bar__heading-row">
+      <h1 id="page-title" class="staff-app-bar__title" data-role="staff-page-title">
+        Staff workspace
+      </h1>
+      <span class="staff-app-bar__identity-name" data-role="staff-username">Staff member</span>
+    </div>
   </div>
+  <button
+    class="staff-app-bar__logout"
+    type="button"
+    data-role="staff-logout"
+    aria-label="Log out"
+  >
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="staff-app-bar__logout-icon">
+  <path d="M4 12H15M8 7L3 12L8 17M21 3L21 21"/>
+</svg>
+  </button>
 </header>

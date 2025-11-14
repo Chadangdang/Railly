@@ -2,56 +2,20 @@
   position: sticky;
   top: 0;
   z-index: 20;
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto;
   align-items: center;
-  justify-content: space-between;
-  padding: 16px clamp(16px, 4vw, 32px);
+  padding: 12px clamp(16px, 4vw, 28px);
   background: rgba(4, 11, 24, 0.86);
   backdrop-filter: blur(14px);
   border-bottom: 1px solid var(--staff-border, rgba(255, 255, 255, 0.15));
-  gap: 12px;
-}
-
-.staff-app-bar__identity {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: flex-start;
-  gap: 10px;
-  min-width: 0;
-}
-
-.staff-app-bar__identity-name {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.08);
-  color: var(--staff-text-primary, #ffffff);
-  font-size: 14px;
-  font-weight: 600;
-  line-height: 1.4;
-  white-space: normal;
-  word-break: break-word;
-}
-
-.staff-app-bar__identity-name::before {
-  content: '';
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: linear-gradient(120deg, var(--staff-accent, #1647a2) 0%, var(--staff-accent-secondary, #91021e) 100%);
-  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.18);
+  gap: 16px;
 }
 
 .staff-app-bar__title-group {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  text-align: center;
-  flex: 1;
+  gap: 6px;
   min-width: 0;
 }
 
@@ -62,31 +26,72 @@
   color: var(--staff-text-muted, rgba(255, 255, 255, 0.76));
 }
 
+.staff-app-bar__heading-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
 .staff-app-bar__title {
   margin: 0;
-  font-size: clamp(20px, 5vw, 24px);
+  font-size: clamp(19px, 5vw, 24px);
   font-weight: 600;
   color: var(--staff-text-primary, #ffffff);
+  line-height: 1.1;
+}
+
+.staff-app-bar__identity-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--staff-text-primary, #ffffff);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.staff-app-bar__identity-name::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: linear-gradient(
+    120deg,
+    var(--staff-accent, #1647a2) 0%,
+    var(--staff-accent-secondary, #91021e) 100%
+  );
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.18);
 }
 
 .staff-app-bar__logout {
-  font-size: 14px;
-  font-weight: 600;
-  padding: 10px 18px;
-  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
   border: none;
-  background: linear-gradient(120deg, var(--staff-accent, #1647a2) 0%, var(--staff-accent-secondary, #91021e) 100%);
-  color: #fff;
+  background: linear-gradient(
+    120deg,
+    var(--staff-accent, #1647a2) 0%,
+    var(--staff-accent-secondary, #91021e) 100%
+  );
+  color: #ffffff;
   cursor: pointer;
-  box-shadow: 0 14px 22px rgba(10, 33, 68, 0.35);
+  box-shadow: 0 12px 20px rgba(10, 33, 68, 0.35);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
-  align-self: flex-start;
 }
 
 .staff-app-bar__logout:hover,
 .staff-app-bar__logout:focus-visible {
   transform: translateY(-1px);
-  box-shadow: 0 18px 28px rgba(10, 33, 68, 0.45);
+  box-shadow: 0 16px 26px rgba(10, 33, 68, 0.45);
   outline: none;
 }
 
@@ -96,35 +101,32 @@
   box-shadow: none;
 }
 
-@media (max-width: 640px) {
-  .staff-app-bar {
-    flex-wrap: wrap;
-    justify-content: center;
-    text-align: center;
-    gap: 16px;
-  }
+.staff-app-bar__logout-icon {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+}
 
-  .staff-app-bar__identity {
-    order: 2;
-    width: 100%;
-    align-items: center;
+@media (max-width: 480px) {
+  .staff-app-bar {
+    padding-inline: clamp(14px, 6vw, 24px);
     gap: 12px;
   }
 
-  .staff-app-bar__title-group {
-    order: 1;
-    width: 100%;
+  .staff-app-bar__logout {
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
   }
 
-  .staff-app-bar__logout {
-    order: 3;
-    align-self: center;
-    width: min(260px, 100%);
+  .staff-app-bar__identity-name {
+    font-size: 12px;
+    padding: 5px 10px;
   }
 }
 
 @media (min-width: 768px) {
   .staff-app-bar {
-    padding-inline: clamp(32px, 6vw, 64px);
+    padding-inline: clamp(28px, 6vw, 56px);
   }
 }
