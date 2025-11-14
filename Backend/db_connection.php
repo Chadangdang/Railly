@@ -25,6 +25,23 @@ function envx(string $key, ?string $fallback = null): ?string {
     return $fallback;
 }
 
+/** Configure the default PHP timezone with fallback handling. */
+function configure_default_timezone(): void
+{
+    $timezone = envx('APP_TIMEZONE', 'Asia/Bangkok');
+
+    if ($timezone === null || $timezone === '') {
+        $timezone = 'Asia/Bangkok';
+    }
+
+    if (!@date_default_timezone_set($timezone)) {
+        error_log(sprintf('Invalid APP_TIMEZONE "%s". Falling back to UTC.', (string) $timezone));
+        date_default_timezone_set('UTC');
+    }
+}
+
+configure_default_timezone();
+
 /** Get MySQLi connection (MAMP for Windows defaults baked in). */
 function get_db_connection(): mysqli
 {
