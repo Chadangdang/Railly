@@ -4,18 +4,17 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Railly Staff – Ticket Verification</title>
+    <link rel="stylesheet" href="../shared/header.css" />
     <link rel="stylesheet" href="./verify.css" />
+    <script src="../../../assets/js/layout-loader.js" defer></script>
+    <script src="../shared/header.js" defer></script>
     <script src="./verify.js" defer></script>
   </head>
   <body class="staff-verify-page">
-    <header class="verify-app-bar" aria-label="Staff navigation">
-      <a class="verify-app-bar__back" href="../history/history.html">Back</a>
-      <div class="verify-app-bar__title-group">
-        <span class="verify-app-bar__eyebrow">Railly Staff Tools</span>
-        <h1 id="page-title" class="verify-app-bar__title">Ticket verification</h1>
-      </div>
-      <button id="refresh-ticket" class="verify-app-bar__refresh" type="button">Refresh</button>
-    </header>
+    <div
+      data-include="../shared/header.html"
+      data-staff-title="Ticket verification"
+    ></div>
 
     <main class="staff-verify-main" aria-labelledby="page-title">
       <section class="verification-status-card" role="region" aria-live="polite">

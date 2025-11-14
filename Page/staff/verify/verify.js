@@ -103,7 +103,6 @@
     var detailsSection = document.getElementById('ticket-details');
     var ticketStatus = document.getElementById('ticket-status');
     var markUsedButton = document.getElementById('mark-used-button');
-    var refreshButton = document.getElementById('refresh-ticket');
 
     var detailFields = {
       ticketId: document.getElementById('detail-ticket-id'),
@@ -130,9 +129,6 @@
       if (markUsedButton) {
         markUsedButton.hidden = true;
       }
-      if (refreshButton) {
-        refreshButton.disabled = true;
-      }
       return;
     }
 
@@ -146,9 +142,6 @@
 
     function setFetchingState(isFetching) {
       state.isFetching = isFetching;
-      if (refreshButton) {
-        refreshButton.disabled = isFetching;
-      }
     }
 
     function renderTicket(ticket) {
@@ -299,14 +292,6 @@
     if (markUsedButton) {
       markUsedButton.addEventListener('click', function () {
         markTicketUsed();
-      });
-    }
-
-    if (refreshButton) {
-      refreshButton.addEventListener('click', function () {
-        if (!state.isUpdating) {
-          fetchTicket();
-        }
       });
     }
 

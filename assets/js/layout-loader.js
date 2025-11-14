@@ -81,12 +81,23 @@
     }
   
     function handleComponentInsertion(placeholder, fragmentRoot) {
+      fragmentRoot.__includePlaceholder = placeholder;
       applyExtraClasses(fragmentRoot, placeholder);
-  
+
       if (fragmentRoot.matches('.site-header, .auth-header')) {
         var activePage = placeholder.getAttribute('data-nav-active');
         applyActiveNav(fragmentRoot, activePage);
         updateAuthState(fragmentRoot);
+      }
+
+      if (fragmentRoot.matches('.staff-app-bar')) {
+        var staffTitle = placeholder.getAttribute('data-staff-title');
+        if (staffTitle) {
+          var staffHeading = fragmentRoot.querySelector('[data-role="staff-page-title"]');
+          if (staffHeading) {
+            staffHeading.textContent = staffTitle;
+          }
+        }
       }
     }
   
