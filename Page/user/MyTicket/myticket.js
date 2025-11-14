@@ -59,31 +59,96 @@
       return Number.isNaN(parsed.getTime()) ? null : parsed;
     }
 
-    function deriveTicketStatus(ticket) {
-      var baseStatus = normalizeStatus(ticket && ticket.status);
-      var departureMoment = parseDepartureDateTime(ticket);
+    function parseDateTimeValue(value) {
+      if (!value) {
+        return null;
+      }
 
+      var normalized = String(value).trim();
+      if (!normalized) {
+        return null;
+      }
+
+      var isoCandidate = normalized;
+      if (/^\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}(:\d{2})?$/.test(normalized)) {
+        isoCandidate = normalized.replace(' ', 'T');
+        if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(isoCandidate)) {
+          isoCandidate += ':00';
+        }
+      }
+
+      var parsed = new Date(isoCandidate);
+      if (Number.isNaN(parsed.getTime())) {
+        parsed = new Date(normalized);
+      }
+
+      return Number.isNaN(parsed.getTime()) ? null : parsed;
+    }
+
+    function getTicketStatusInfo(ticket) {
+      var baseStatus = normalizeStatus(ticket && ticket.status);
+      var derivedStatus = baseStatus;
+      var previousStatus = null;
+
+      if (baseStatus.indexOf(':') > -1) {
+        var parts = baseStatus.split(':');
+        if (parts.length >= 2 && parts[0] === 'expired') {
+          derivedStatus = 'expired';
+          previousStatus = normalizeStatus(parts.slice(1).join(':')) || null;
+          baseStatus = 'expired';
+        }
+      }
+
+      var departureMoment = parseDepartureDateTime(ticket);
       if (
         departureMoment &&
         departureMoment.getTime() <= Date.now() &&
-        baseStatus === 'paid'
+        (baseStatus === 'paid' || baseStatus === 'used')
       ) {
-        return 'expired';
+        previousStatus = baseStatus;
+        derivedStatus = 'expired';
       }
 
-      return baseStatus;
+      if (derivedStatus === 'expired') {
+        var explicitPrevious =
+          normalizeStatus(
+            ticket &&
+              (ticket.expired_from_status ||
+                ticket.previous_status ||
+                ticket.last_status ||
+                ticket.original_status)
+          ) || null;
+
+        if (explicitPrevious) {
+          previousStatus = explicitPrevious;
+        } else if (!previousStatus) {
+          var usedMoment = parseDateTimeValue(ticket && ticket.used_at);
+          if (usedMoment) {
+            previousStatus = 'used';
+          } else {
+            previousStatus = baseStatus === 'expired' ? 'paid' : baseStatus;
+          }
+        }
+      }
+
+      return {
+        base: baseStatus,
+        current: derivedStatus || '',
+        previous: previousStatus,
+      };
     }
 
     var FILTER_PREDICATES = {
       active: function (ticket) {
-        var status = deriveTicketStatus(ticket);
+        var info = getTicketStatusInfo(ticket);
+        var status = info.current;
         return status === 'paid' || status === 'used';
       },
       cancelled: function (ticket) {
-        return deriveTicketStatus(ticket) === 'cancelled';
+        return getTicketStatusInfo(ticket).current === 'cancelled';
       },
       expired: function (ticket) {
-        return deriveTicketStatus(ticket) === 'expired';
+        return getTicketStatusInfo(ticket).current === 'expired';
       },
     };
 
@@ -199,7 +264,7 @@
         return;
       }
 
-      var status = deriveTicketStatus(ticket);
+      var status = getTicketStatusInfo(ticket).current;
       if (status !== 'paid') {
         window.alert('Only paid tickets can be cancelled.');
         return;
@@ -263,6 +328,18 @@
     function formatStatusLabel(status) {
       var normalized = normalizeStatus(status);
       return STATUS_LABELS[normalized] || (normalized ? capitalize(normalized) : 'Unknown');
+    }
+
+    function formatStatusBadge(statusInfo) {
+      if (!statusInfo || !statusInfo.current) {
+        return 'Unknown';
+      }
+
+      if (statusInfo.current === 'expired' && statusInfo.previous) {
+        return 'EXPIRED:' + statusInfo.previous.toUpperCase();
+      }
+
+      return formatStatusLabel(statusInfo.current);
     }
 
     function formatTicketId(id) {
@@ -382,6 +459,30 @@
       return wrapper;
     }
 
+    function getTicketSortTimestamp(ticket, filterKey) {
+      var key = (filterKey || '').toLowerCase();
+
+      var timestamp = null;
+      if (key === 'cancelled') {
+        timestamp =
+          parseDateTimeValue(ticket && ticket.cancelled_at) ||
+          parseDateTimeValue(ticket && ticket.created_at) ||
+          parseDepartureDateTime(ticket);
+      } else if (key === 'expired') {
+        timestamp =
+          parseDateTimeValue(ticket && ticket.used_at) ||
+          parseDepartureDateTime(ticket) ||
+          parseDateTimeValue(ticket && ticket.created_at);
+      } else {
+        timestamp =
+          parseDateTimeValue(ticket && ticket.created_at) ||
+          parseDepartureDateTime(ticket) ||
+          parseDateTimeValue(ticket && ticket.cancelled_at);
+      }
+
+      return timestamp ? timestamp.getTime() : Number.NEGATIVE_INFINITY;
+    }
+
     function buildStationSection(timeValue, stationLabel, type) {
       var section = document.createElement('div');
       var className = 'ticket-card__section';
@@ -418,18 +519,29 @@
       article.setAttribute('role', 'listitem');
       article.dataset.ticketId = String(ticket.ticket_id);
 
-      var status = deriveTicketStatus(ticket);
+      var statusInfo = getTicketStatusInfo(ticket);
+      var status = statusInfo.current;
+
       if (status) {
         article.classList.add('ticket-card--' + status);
       }
       article.setAttribute('data-ticket-status', status);
+      if (statusInfo.previous) {
+        article.setAttribute('data-ticket-previous-status', statusInfo.previous);
+      }
 
       var header = document.createElement('header');
       header.className = 'ticket-card__header';
 
       var statusBadge = document.createElement('span');
       statusBadge.className = 'ticket-card__status';
-      statusBadge.textContent = formatStatusLabel(status);
+      statusBadge.textContent = formatStatusBadge(statusInfo);
+      var statusAriaLabel = formatStatusLabel(status);
+      if (status === 'expired' && statusInfo.previous) {
+        statusAriaLabel =
+          'Expired, previously ' + formatStatusLabel(statusInfo.previous);
+      }
+      statusBadge.setAttribute('aria-label', statusAriaLabel);
 
       var meta = document.createElement('div');
       meta.className = 'ticket-card__meta';
@@ -517,17 +629,17 @@
       footer.appendChild(createFooterItem('Quantity', String(quantity)));
       footer.appendChild(createFooterItem('Price', formatPrice(ticket.price)));
 
-      var issuedAt = formatIssuedAt(ticket.created_at);
+      var bookedAt = formatIssuedAt(ticket.created_at);
       var cancelledAt = formatCancellationAt(ticket.cancelled_at);
 
       if (status === 'cancelled') {
         if (cancelledAt) {
           footer.appendChild(createFooterItem('Cancelled at', cancelledAt));
-        } else if (issuedAt) {
-          footer.appendChild(createFooterItem('Issued', issuedAt));
+        } else if (bookedAt) {
+          footer.appendChild(createFooterItem('Booked at', bookedAt));
         }
-      } else if (issuedAt) {
-        footer.appendChild(createFooterItem('Issued', issuedAt));
+      } else if (bookedAt) {
+        footer.appendChild(createFooterItem('Booked at', bookedAt));
       }
 
       article.appendChild(header);
@@ -558,6 +670,25 @@
       };
 
       var filteredTickets = state.tickets.filter(predicate);
+
+      filteredTickets.sort(function (a, b) {
+        var diff =
+          getTicketSortTimestamp(b, filterKey) -
+          getTicketSortTimestamp(a, filterKey);
+
+        if (diff !== 0) {
+          return diff;
+        }
+
+        var idA = Number(a && a.ticket_id);
+        var idB = Number(b && b.ticket_id);
+
+        if (Number.isFinite(idA) && Number.isFinite(idB)) {
+          return idB - idA;
+        }
+
+        return 0;
+      });
 
       if (filteredTickets.length === 0) {
         var message = 'No tickets found for this filter yet.';

@@ -108,6 +108,9 @@ function fetchRelationalUserTickets(mysqli $conn, array $schema, int $userId): a
         $schema['ticket_issued_at_column'] !== null
             ? qualifyColumn('t', $schema['ticket_issued_at_column']) . ' AS issued_at'
             : 'NULL AS issued_at',
+        $schema['ticket_used_at_column'] !== null
+            ? qualifyColumn('t', $schema['ticket_used_at_column']) . ' AS used_at'
+            : 'NULL AS used_at',
         $schema['ticket_cancelled_at_column'] !== null
             ? qualifyColumn('t', $schema['ticket_cancelled_at_column']) . ' AS cancelled_at'
             : 'NULL AS cancelled_at',
@@ -183,6 +186,7 @@ function fetchRelationalUserTickets(mysqli $conn, array $schema, int $userId): a
             'quantity' => 1,
             'status' => $row['status'],
             'created_at' => $row['issued_at'] ?? null,
+            'used_at' => $row['used_at'] ?? null,
             'cancelled_at' => $row['cancelled_at'] ?? null,
         ];
     }
@@ -254,6 +258,7 @@ function fetchLegacyUserTickets(mysqli $conn, array $schema, int $userId): array
             'quantity' => (int) $row['quantity'],
             'status' => $row['status'],
             'created_at' => $row['created_at'],
+            'used_at' => null,
             'cancelled_at' => $row['cancelled_at'],
         ];
     }
