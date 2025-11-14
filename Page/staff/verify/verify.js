@@ -103,6 +103,7 @@
     var detailsSection = document.getElementById('ticket-details');
     var ticketStatus = document.getElementById('ticket-status');
     var markUsedButton = document.getElementById('mark-used-button');
+    var refreshButton = document.getElementById('refresh-ticket');
 
     var detailFields = {
       ticketId: document.getElementById('detail-ticket-id'),
@@ -129,6 +130,9 @@
       if (markUsedButton) {
         markUsedButton.hidden = true;
       }
+      if (refreshButton) {
+        refreshButton.disabled = true;
+      }
       return;
     }
 
@@ -137,7 +141,15 @@
       userId: userId,
       ticket: null,
       isUpdating: false,
+      isFetching: false,
     };
+
+    function setFetchingState(isFetching) {
+      state.isFetching = isFetching;
+      if (refreshButton) {
+        refreshButton.disabled = isFetching;
+      }
+    }
 
     function renderTicket(ticket) {
       if (!ticket) {
@@ -201,15 +213,20 @@
     }
 
     function fetchTicket() {
-      var url = '../../Backend/verifyTicket.php?';
+      if (state.isFetching) {
+        return;
+      }
+
+      var url = '../../../Backend/verifyTicket.php';
       var query = new URLSearchParams({
         ticket_id: state.ticketId,
         user_id: state.userId,
       });
 
+      setFetchingState(true);
       setStatusBanner(statusBanner, 'Verifying ticket…', null);
 
-      fetch(url + query.toString(), { credentials: 'include' })
+      fetch(url + '?' + query.toString(), { credentials: 'include' })
         .then(function (response) {
           if (!response.ok) {
             throw new Error('Unable to verify ticket at this time.');
@@ -227,6 +244,9 @@
         })
         .catch(function (error) {
           handleError(error.message || 'Ticket could not be verified.');
+        })
+        .finally(function () {
+          setFetchingState(false);
         });
     }
 
@@ -245,7 +265,7 @@
       formData.append('ticket_id', state.ticketId);
       formData.append('user_id', state.userId);
 
-      fetch('../../Backend/verifyTicket.php', {
+      fetch('../../../Backend/verifyTicket.php', {
         method: 'POST',
         body: formData,
         credentials: 'include',
@@ -263,21 +283,30 @@
           }
 
           state.ticket = payload.ticket;
-          state.isUpdating = false;
           renderTicket(payload.ticket);
         })
         .catch(function (error) {
+          setStatusBanner(statusBanner, error.message || 'Failed to update the ticket.', 'error');
+        })
+        .finally(function () {
           state.isUpdating = false;
           if (markUsedButton) {
             markUsedButton.disabled = false;
           }
-          setStatusBanner(statusBanner, error.message || 'Failed to update the ticket.', 'error');
         });
     }
 
     if (markUsedButton) {
       markUsedButton.addEventListener('click', function () {
         markTicketUsed();
+      });
+    }
+
+    if (refreshButton) {
+      refreshButton.addEventListener('click', function () {
+        if (!state.isUpdating) {
+          fetchTicket();
+        }
       });
     }
 
