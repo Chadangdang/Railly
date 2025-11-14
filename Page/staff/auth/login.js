@@ -58,7 +58,11 @@
       var password = passwordInput ? passwordInput.value : '';
 
       if (!username || !password) {
-        setMessage(messageElement, 'Please enter both your username and password.', 'error');
+        setMessage(
+          messageElement,
+          'Please enter both your username or email and your password.',
+          'error'
+        );
         return;
       }
 
