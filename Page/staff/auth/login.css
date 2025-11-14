@@ -1,0 +1,209 @@
+@import url('https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&display=swap');
+
+:root {
+  --staff-surface: #040b18;
+  --staff-surface-secondary: #0b1a30;
+  --staff-accent: #1647a2;
+  --staff-accent-secondary: #91021e;
+  --staff-text-primary: #ffffff;
+  --staff-text-muted: rgba(255, 255, 255, 0.75);
+  --staff-card-bg: rgba(11, 26, 48, 0.8);
+  --staff-border: rgba(255, 255, 255, 0.12);
+  --staff-radius-lg: 26px;
+  --staff-radius-sm: 14px;
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body.staff-login-page {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  font-family: 'Jost', sans-serif;
+  background: radial-gradient(circle at top, rgba(22, 71, 162, 0.55), transparent 60%),
+    radial-gradient(circle at bottom, rgba(145, 2, 30, 0.4), transparent 55%),
+    linear-gradient(180deg, var(--staff-surface) 0%, var(--staff-surface-secondary) 60%, #102c4c 100%);
+  color: var(--staff-text-primary);
+}
+
+.staff-login-main {
+  width: min(100%, 420px);
+}
+
+.staff-login-card {
+  background: var(--staff-card-bg);
+  border: 1px solid var(--staff-border);
+  border-radius: var(--staff-radius-lg);
+  box-shadow: 0 38px 56px rgba(4, 12, 24, 0.45);
+  padding: clamp(24px, 6vw, 36px);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  backdrop-filter: blur(18px);
+}
+
+.staff-login-card__header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.staff-login-card__eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  font-size: 11px;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.staff-login-card__title {
+  margin: 0;
+  font-size: clamp(24px, 4vw, 28px);
+  font-weight: 600;
+}
+
+.staff-login-card__hint {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--staff-text-muted);
+}
+
+.staff-login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.staff-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.staff-input-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.staff-input {
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--staff-radius-sm);
+  background: rgba(4, 13, 27, 0.65);
+  color: var(--staff-text-primary);
+  font-size: 15px;
+  padding: 12px 14px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.staff-input::placeholder {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.staff-input:focus {
+  outline: none;
+  border-color: rgba(22, 71, 162, 0.8);
+  box-shadow: 0 0 0 3px rgba(22, 71, 162, 0.25);
+}
+
+.staff-password-field {
+  display: flex;
+  align-items: stretch;
+}
+
+.staff-password-field .staff-input {
+  flex: 1;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.staff-password-toggle {
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-left: none;
+  border-top-right-radius: var(--staff-radius-sm);
+  border-bottom-right-radius: var(--staff-radius-sm);
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--staff-text-primary);
+  font-size: 13px;
+  font-weight: 500;
+  padding: 0 16px;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.staff-password-toggle:hover,
+.staff-password-toggle:focus-visible {
+  background: rgba(255, 255, 255, 0.18);
+  outline: none;
+}
+
+.staff-login-message {
+  min-height: 20px;
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--staff-text-muted);
+}
+
+.staff-login-message.is-error {
+  color: #ffb7c5;
+}
+
+.staff-login-message.is-success {
+  color: #9ff3c9;
+}
+
+.staff-login-submit {
+  border: none;
+  border-radius: 999px;
+  padding: 14px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #fff;
+  background: linear-gradient(120deg, var(--staff-accent) 0%, var(--staff-accent-secondary) 100%);
+  cursor: pointer;
+  box-shadow: 0 22px 34px rgba(4, 12, 24, 0.4);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+}
+
+.staff-login-submit:hover,
+.staff-login-submit:focus-visible {
+  transform: translateY(-1px);
+  box-shadow: 0 28px 40px rgba(4, 12, 24, 0.45);
+  outline: none;
+}
+
+.staff-login-submit:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.staff-login-support {
+  margin: 0;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.6);
+  text-align: center;
+}
+
+@media (max-width: 480px) {
+  body.staff-login-page {
+    padding: 16px;
+  }
+
+  .staff-login-card {
+    padding: 24px;
+  }
+
+  .staff-password-toggle {
+    padding-inline: 14px;
+  }
+}

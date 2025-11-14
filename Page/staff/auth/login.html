@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Railly Staff – Log in</title>
+    <link rel="stylesheet" href="./login.css" />
+  </head>
+  <body class="staff-login-page">
+    <main class="staff-login-main" aria-labelledby="login-title">
+      <section class="staff-login-card" role="region" aria-labelledby="login-title">
+        <header class="staff-login-card__header">
+          <p class="staff-login-card__eyebrow">Railly staff portal</p>
+          <h1 id="login-title" class="staff-login-card__title">Log in to continue</h1>
+          <p class="staff-login-card__hint">
+            Enter your staff username and password to access ticket tools and passenger history.
+          </p>
+        </header>
+
+        <form id="staff-login-form" class="staff-login-form" novalidate>
+          <div class="staff-input-group">
+            <label class="staff-input-label" for="staff-username">Username</label>
+            <input
+              id="staff-username"
+              name="username"
+              type="text"
+              class="staff-input"
+              autocomplete="username"
+              required
+            />
+          </div>
+
+          <div class="staff-input-group">
+            <label class="staff-input-label" for="staff-password">Password</label>
+            <div class="staff-password-field">
+              <input
+                id="staff-password"
+                name="password"
+                type="password"
+                class="staff-input"
+                autocomplete="current-password"
+                required
+              />
+              <button
+                type="button"
+                class="staff-password-toggle"
+                data-role="toggle-password"
+                aria-controls="staff-password"
+                aria-pressed="false"
+                aria-label="Show password"
+              >
+                Show
+              </button>
+            </div>
+          </div>
+
+          <p
+            id="staff-login-message"
+            class="staff-login-message"
+            role="status"
+            aria-live="polite"
+          ></p>
+
+          <button type="submit" class="staff-login-submit">Log in</button>
+        </form>
+
+        <p class="staff-login-support" role="note">
+          Having trouble signing in? Contact the Railly administrator team for assistance.
+        </p>
+      </section>
+    </main>
+
+    <script src="./login.js" defer></script>
+  </body>
+</html>
