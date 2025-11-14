@@ -14,17 +14,17 @@ function togglePassword() {
 async function handleLogin(event) {
   event.preventDefault();
 
-  const username = document.getElementById('username').value.trim();
+  const identifier = document.getElementById('identifier').value.trim();
   const password = document.getElementById('pass').value.trim();
 
-  console.log('Username:', username);
+  console.log('Identifier:', identifier);
   console.log('Password:', password);
 
   try {
     const response = await fetch('../../../Backend/Login.php', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password })
+      body: JSON.stringify({ identifier, password })
     });
 
     console.log('Server response status:', response.status);

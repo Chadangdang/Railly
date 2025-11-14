@@ -24,15 +24,20 @@
 
       <form id="login-form" class="form-content">
         <div class="input-group">
-          <label class="input-label" for="username">User Name or Email</label>
+          <label class="input-label" for="identifier">Username or Email</label>
           <input
             type="text"
-            id="username"
+            id="identifier"
+            name="identifier"
             class="underline-input"
             autocomplete="off"
-            placeholder="user or email"
+            placeholder="username or email"
             required
           >
+          <p class="input-helper-text">
+            You can sign in using either your username or the email associated with your
+            Railly account.
+          </p>
         </div>
 
         <div class="input-group">

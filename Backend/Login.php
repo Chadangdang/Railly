@@ -18,7 +18,13 @@ if (!is_array($payload)) {
     exit;
 }
 
-$identifier = isset($payload['username']) ? trim((string) $payload['username']) : '';
+$identifier = '';
+
+if (isset($payload['identifier'])) {
+    $identifier = trim((string) $payload['identifier']);
+} elseif (isset($payload['username'])) {
+    $identifier = trim((string) $payload['username']);
+}
 $password = isset($payload['password']) ? trim((string) $payload['password']) : '';
 
 if ($identifier === '' || $password === '') {
