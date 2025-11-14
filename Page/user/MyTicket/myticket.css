@@ -155,7 +155,7 @@
   max-width: var(--myticket-max-width);
   display: flex;
   flex-direction: column;
-  gap: 28px;
+  gap: 24px;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -181,10 +181,10 @@
   border-radius: var(--myticket-radius-md);
   box-shadow: var(--ticket-card-shadow);
   border: var(--ticket-card-border);
-  padding: 32px 36px 28px;
+  padding: 26px 32px 22px;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 16px;
   font-family: 'Jost', sans-serif;
 }
 
@@ -201,20 +201,20 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: 12px;
 }
 
 .ticket-card__status {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 6px 20px;
+  gap: 6px;
+  padding: 4px 16px;
   border-radius: 999px;
   background: rgba(18, 73, 166, 0.12);
   color: var(--ticket-status-paid);
   font-weight: 700;
-  font-size: 18px;
+  font-size: 16px;
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
@@ -247,17 +247,23 @@
 }
 
 .ticket-card__meta {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
+  display: inline-flex;
+  align-items: baseline;
+  justify-content: flex-end;
   gap: 4px;
-  font-size: 15px;
+  font-size: 14px;
   color: #444444;
   text-align: right;
+  white-space: nowrap;
 }
 
+.ticket-card__meta-label {
+  font-weight: 500;
+}
+
+.ticket-card__meta-value,
 .ticket-card__meta strong {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
   color: #000000;
 }
@@ -266,45 +272,45 @@
   color: var(--ticket-status-expired-muted);
 }
 
-.ticket-card--expired .ticket-card__meta strong {
+.ticket-card--expired .ticket-card__meta strong,
+.ticket-card--expired .ticket-card__meta-value {
   color: #343a40;
 }
 
 .ticket-card__body {
   display: grid;
-  grid-template-columns: repeat(3, minmax(160px, 1fr)) minmax(120px, auto);
+  grid-template-columns: minmax(150px, 0.85fr) minmax(112px, auto)
+    minmax(150px, 0.85fr) minmax(120px, auto);
   align-items: center;
-  gap: 32px;
+  justify-content: start;
+  column-gap: 10px;
+  row-gap: 12px;
 }
 
 .ticket-card__section {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 4px;
   text-align: left;
+  justify-self: start;
 }
 
 .ticket-card__section--destination {
-  align-items: flex-end;
-  text-align: right;
-}
-
-.ticket-card__section--destination .ticket-card__time,
-.ticket-card__section--destination .ticket-card__station,
-.ticket-card__section--destination .ticket-card__station-code {
-  text-align: right;
+  align-items: flex-start;
+  text-align: left;
+  margin-left: 0;
 }
 
 .ticket-card__time {
-  font-size: 30px;
+  font-size: 28px;
   font-weight: 500;
   line-height: 1.1;
   color: #000000;
 }
 
 .ticket-card__station {
-  font-size: 28px;
-  font-weight: 400;
+  font-size: 24px;
+  font-weight: 500;
   line-height: 1.2;
   color: #000000;
 }
@@ -341,9 +347,10 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: 4px;
   font-size: 18px;
   color: #000000;
+  justify-self: center;
 }
 
 .ticket-card__date-wrapper {
@@ -353,14 +360,14 @@
 }
 
 .ticket-card__date {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 500;
   line-height: 1.4;
 }
 
 .ticket-card__divider {
   width: 100%;
-  max-width: 220px;
+  max-width: 170px;
   height: 0;
   border-top: 3px solid #000000;
   position: relative;
@@ -404,27 +411,29 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 18px;
+  gap: 0;
   justify-self: end;
+  width: 120px;
 }
 
 .ticket-card__cancel-button {
-  width: 101px;
-  height: 49px;
+  width: 120px;
   border: none;
   border-radius: 10px;
   background: linear-gradient(90deg, #1647a2 5.51%, #91021e 105.51%);
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   color: #ffffff;
   font-family: 'Jost', sans-serif;
-  font-size: 20px;
-  font-weight: 400;
-  line-height: 29px;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  line-height: 1;
+  text-transform: uppercase;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  padding: 0;
+  padding: 9px 0;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
@@ -478,11 +487,15 @@
 
 .ticket-card__footer {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: center;
-  gap: 16px 32px;
+  gap: 12px 24px;
   font-size: 16px;
   color: #3c3c3c;
+}
+
+.ticket-card__footer .ticket-card__cancel-button {
+  margin-left: auto;
 }
 
 .ticket-card--expired .ticket-card__footer {
@@ -535,13 +548,13 @@
   }
 
   .ticket-card {
-    padding: 28px 24px 24px;
+    padding: 24px 22px 20px;
   }
 
   .ticket-card__body {
     grid-template-columns: repeat(2, minmax(140px, 1fr));
     grid-template-rows: auto auto;
-    gap: 24px;
+    gap: 16px;
   }
 
   .ticket-card__section--origin {
@@ -551,12 +564,14 @@
   .ticket-card__route {
     grid-column: span 2;
     order: 2;
+    transform: none;
   }
 
   .ticket-card__section--destination {
     order: 3;
     align-items: flex-start;
     text-align: left;
+    margin-left: 0;
   }
 
   .ticket-card__section--destination .ticket-card__time,
@@ -569,6 +584,18 @@
     grid-column: span 2;
     justify-self: center;
     order: 4;
+    width: 120px;
+  }
+
+  .ticket-card__footer {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .ticket-card__footer .ticket-card__cancel-button {
+    margin-left: 0;
+    width: 100%;
+    max-width: 240px;
   }
 }
 
@@ -587,8 +614,8 @@
   }
 
   .ticket-card {
-    padding: 24px 20px 20px;
-    gap: 20px;
+    padding: 20px 18px 18px;
+    gap: 16px;
   }
 
   .ticket-card__header {
@@ -603,17 +630,25 @@
 
   .ticket-card__body {
     grid-template-columns: 1fr;
-    gap: 20px;
+    gap: 16px;
   }
 
   .ticket-card__route {
     order: 2;
+    transform: none;
   }
 
   .ticket-card__actions {
     order: 4;
     justify-self: flex-start;
     align-items: flex-start;
+    width: 100%;
+  }
+
+  .ticket-card__section--destination {
+    margin-left: 0;
+    align-items: flex-start;
+    text-align: left;
   }
 
   .ticket-card__footer {

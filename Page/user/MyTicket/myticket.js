@@ -642,9 +642,11 @@
       meta.className = 'ticket-card__meta';
 
       var metaLabel = document.createElement('span');
-      metaLabel.textContent = 'Ticket ID';
+      metaLabel.className = 'ticket-card__meta-label';
+      metaLabel.textContent = 'Ticket ID:';
 
       var metaValue = document.createElement('strong');
+      metaValue.className = 'ticket-card__meta-value';
       metaValue.textContent = formatTicketId(ticket.ticket_id);
 
       meta.appendChild(metaLabel);
@@ -693,39 +695,11 @@
       actions.className = 'ticket-card__actions';
       actions.appendChild(qr);
 
-      if (status === 'paid') {
-        var cancelButton = document.createElement('button');
-        cancelButton.type = 'button';
-        cancelButton.className = 'ticket-card__cancel-button';
-        cancelButton.textContent = 'Cancel';
-        cancelButton.setAttribute('aria-label', 'Cancel this ticket');
-        cancelButton.title = 'Cancel this ticket';
-        cancelButton.setAttribute('data-ticket-id', String(ticket.ticket_id));
-        cancelButton.setAttribute('data-ticket-status', status);
-
-        if (pendingCancellations.has(String(ticket.ticket_id))) {
-          cancelButton.disabled = true;
-          cancelButton.classList.add('is-busy');
-          cancelButton.textContent = 'Cancelling…';
-          cancelButton.setAttribute('aria-busy', 'true');
-        } else {
-          cancelButton.setAttribute('aria-busy', 'false');
-        }
-
-        actions.appendChild(cancelButton);
-      }
-
       body.appendChild(actions);
 
       var footer = document.createElement('footer');
       footer.className = 'ticket-card__footer';
 
-      var quantity = ticket.quantity;
-      if (quantity === undefined || quantity === null || quantity === '') {
-        quantity = 1;
-      }
-
-      footer.appendChild(createFooterItem('Quantity', String(quantity)));
       footer.appendChild(createFooterItem('Price', formatPrice(ticket.price)));
 
       var bookedAt = formatIssuedAt(ticket.created_at);
@@ -739,6 +713,28 @@
         }
       } else if (bookedAt) {
         footer.appendChild(createFooterItem('Booked at', bookedAt));
+      }
+
+      if (status === 'paid') {
+        var cancelButton = document.createElement('button');
+        cancelButton.type = 'button';
+        cancelButton.className = 'ticket-card__cancel-button';
+        cancelButton.textContent = 'CANCEL';
+        cancelButton.setAttribute('aria-label', 'Cancel this ticket');
+        cancelButton.title = 'Cancel this ticket';
+        cancelButton.setAttribute('data-ticket-id', String(ticket.ticket_id));
+        cancelButton.setAttribute('data-ticket-status', status);
+
+        if (pendingCancellations.has(String(ticket.ticket_id))) {
+          cancelButton.disabled = true;
+          cancelButton.classList.add('is-busy');
+          cancelButton.textContent = 'CANCELLING…';
+          cancelButton.setAttribute('aria-busy', 'true');
+        } else {
+          cancelButton.setAttribute('aria-busy', 'false');
+        }
+
+        footer.appendChild(cancelButton);
       }
 
       article.appendChild(header);
