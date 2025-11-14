@@ -103,7 +103,7 @@
           setMessage(messageElement, 'Login successful. Redirecting…', 'success');
 
           window.setTimeout(function () {
-            window.location.href = '../verify/verify.html';
+            window.location.href = '../home/home.html';
           }, 600);
         })
         .catch(function (error) {
