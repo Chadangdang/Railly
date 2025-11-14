@@ -14,8 +14,10 @@
 
 .staff-app-bar__identity {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
   justify-content: flex-start;
+  gap: 10px;
   min-width: 0;
 }
 
@@ -29,7 +31,9 @@
   color: var(--staff-text-primary, #ffffff);
   font-size: 14px;
   font-weight: 600;
-  white-space: nowrap;
+  line-height: 1.4;
+  white-space: normal;
+  word-break: break-word;
 }
 
 .staff-app-bar__identity-name::before {
@@ -76,6 +80,7 @@
   cursor: pointer;
   box-shadow: 0 14px 22px rgba(10, 33, 68, 0.35);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+  align-self: flex-start;
 }
 
 .staff-app-bar__logout:hover,
@@ -101,6 +106,9 @@
 
   .staff-app-bar__identity {
     order: 2;
+    width: 100%;
+    align-items: center;
+    gap: 12px;
   }
 
   .staff-app-bar__title-group {
@@ -110,6 +118,8 @@
 
   .staff-app-bar__logout {
     order: 3;
+    align-self: center;
+    width: min(260px, 100%);
   }
 }
 
