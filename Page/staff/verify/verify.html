@@ -17,11 +17,31 @@
     ></div>
 
     <main class="staff-verify-main" aria-labelledby="page-title">
+      <nav class="verification-nav" aria-label="Back navigation">
+        <button
+          id="verification-back-button"
+          class="verification-back-button"
+          type="button"
+        >
+          <span class="verification-back-button__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" focusable="false">
+              <path d="M15.5 19a1 1 0 0 1-.7-.29l-6-6a1 1 0 0 1 0-1.42l6-6a1 1 0 1 1 1.4 1.42L10.91 12l5.29 5.29A1 1 0 0 1 15.5 19Z" />
+            </svg>
+          </span>
+          <span class="verification-back-button__label">Back</span>
+        </button>
+      </nav>
+
       <section class="verification-status-card" role="region" aria-live="polite">
+        <div class="verification-status-card__header">
+          <span class="verification-status-card__label">Ticket status</span>
+          <span id="ticket-status" class="ticket-status-badge">Status</span>
+        </div>
         <div id="status-banner" class="verification-status" role="status"></div>
+        <p id="status-detail" class="verification-status-detail" hidden></p>
         <p class="verification-hint">
-          Scan a passenger QR code or paste the link provided by the scanner. The
-          ticket data will appear below once the code is validated.
+          Scan a passenger QR code or paste the link provided by the scanner. Ticket
+          details will appear once the code is confirmed.
         </p>
       </section>
 
@@ -33,44 +53,44 @@
       >
         <article class="ticket-card">
           <header class="ticket-card__header">
-            <div id="ticket-status" class="ticket-status-badge">Status</div>
             <div class="ticket-card__passenger">
               <span class="ticket-card__passenger-label">Passenger</span>
               <span id="detail-username" class="ticket-card__passenger-name">—</span>
             </div>
-          </header>
 
-          <div class="ticket-card__body">
-            <h2 id="ticket-summary-title" class="ticket-card__title">Ticket summary</h2>
-
-            <dl class="ticket-card__meta">
-              <div class="ticket-card__meta-item">
+            <dl class="ticket-card__summary" aria-label="Ticket identifiers">
+              <div class="ticket-card__summary-item">
                 <dt>Ticket ID</dt>
                 <dd id="detail-ticket-id">—</dd>
               </div>
-              <div class="ticket-card__meta-item">
+              <div class="ticket-card__summary-item">
                 <dt>User ID</dt>
                 <dd id="detail-user-id">—</dd>
               </div>
+            </dl>
+          </header>
+
+          <div class="ticket-card__body">
+            <h2 id="ticket-summary-title" class="ticket-card__title">Journey overview</h2>
+
+            <div class="ticket-card__journey" aria-label="Route information">
+              <div class="ticket-card__station" data-type="origin">
+                <span class="ticket-card__station-label">From</span>
+                <span id="detail-origin" class="ticket-card__station-name">—</span>
+                <span id="detail-departure" class="ticket-card__station-time">—</span>
+              </div>
+              <div class="ticket-card__journey-divider" aria-hidden="true"></div>
+              <div class="ticket-card__station" data-type="destination">
+                <span class="ticket-card__station-label">To</span>
+                <span id="detail-destination" class="ticket-card__station-name">—</span>
+                <span id="detail-arrival" class="ticket-card__station-time">—</span>
+              </div>
+            </div>
+
+            <dl class="ticket-card__meta" aria-label="Ticket information">
               <div class="ticket-card__meta-item">
                 <dt>Travel date</dt>
                 <dd id="detail-date">—</dd>
-              </div>
-              <div class="ticket-card__meta-item">
-                <dt>Departure</dt>
-                <dd id="detail-departure">—</dd>
-              </div>
-              <div class="ticket-card__meta-item">
-                <dt>Arrival</dt>
-                <dd id="detail-arrival">—</dd>
-              </div>
-              <div class="ticket-card__meta-item">
-                <dt>From</dt>
-                <dd id="detail-origin">—</dd>
-              </div>
-              <div class="ticket-card__meta-item">
-                <dt>To</dt>
-                <dd id="detail-destination">—</dd>
               </div>
               <div class="ticket-card__meta-item">
                 <dt>Quantity</dt>
@@ -96,16 +116,76 @@
                 <span id="detail-cancelled-at" class="ticket-card__timestamp-value">—</span>
               </div>
             </div>
+
+            <div id="ticket-status-detail" class="ticket-card__status-detail" hidden></div>
+
+            <div id="ticket-usage-note" class="ticket-card__note" hidden>
+              <span class="ticket-card__note-label">Latest staff note</span>
+              <p id="ticket-usage-note-content" class="ticket-card__note-content"></p>
+              <span id="ticket-usage-note-meta" class="ticket-card__note-meta"></span>
+            </div>
           </div>
         </article>
+
+        <form
+          id="ticket-action-form"
+          class="ticket-action-form"
+          novalidate
+          hidden
+        >
+          <label class="ticket-action-form__label" for="usage-note">
+            Staff note <span class="ticket-action-form__hint">(max 100 characters)</span>
+          </label>
+          <textarea
+            id="usage-note"
+            class="ticket-action-form__textarea"
+            maxlength="100"
+            rows="3"
+            placeholder="Add a note for the history log"
+          ></textarea>
+          <div id="note-counter" class="ticket-action-form__counter" aria-live="polite">
+            0 / 100
+          </div>
+          <p id="form-error" class="ticket-action-form__error" role="alert" hidden></p>
+          <div class="ticket-action-buttons">
+            <button
+              id="cancel-ticket-button"
+              class="ticket-action-button ticket-action-button--danger"
+              type="button"
+              hidden
+            >
+              Cancel ticket
+            </button>
+            <button
+              id="mark-used-button"
+              class="ticket-action-button ticket-action-button--primary"
+              type="button"
+              hidden
+            >
+              Mark ticket as used
+            </button>
+          </div>
+        </form>
       </section>
     </main>
 
-    <footer class="verification-footer" aria-label="Ticket actions">
-      <button id="mark-used-button" class="verification-action-button" type="button" hidden>
-        Mark ticket as used
-      </button>
-      <a class="verification-secondary-link" href="../history/history.html">View recent scans</a>
+    <footer class="verification-footer" aria-label="Navigation">
+      <a class="verification-secondary-link" href="../history/history.html">View history</a>
     </footer>
+
+    <div id="action-overlay" class="verification-overlay" hidden aria-hidden="true">
+      <div class="verification-overlay__icon" role="img" aria-label="Ticket marked as used">
+        <svg viewBox="0 0 64 64" aria-hidden="true">
+          <circle class="verification-overlay__circle" cx="32" cy="32" r="30" />
+          <path
+            class="verification-overlay__check"
+            d="M22 33.5l6.5 6.5L42 26"
+            fill="none"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          ></path>
+        </svg>
+      </div>
+    </div>
   </body>
 </html>

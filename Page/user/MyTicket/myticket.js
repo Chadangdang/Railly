@@ -538,7 +538,7 @@
       }
 
       try {
-        var base = new URL('/Page/staff/verify.html', window.location.origin);
+        var base = new URL('/Page/staff/verify/verify.html', window.location.origin);
         base.searchParams.set('ticket_id', String(ticket.ticket_id));
         base.searchParams.set('user_id', String(state.user.id));
         return base.toString();

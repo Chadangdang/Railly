@@ -2,11 +2,31 @@
   'use strict';
 
   var STATUS_LABELS = {
-    PAID: { label: 'Paid', tone: 'success', banner: 'Ticket is valid and ready to board.' },
-    USED: { label: 'Used', tone: 'warning', banner: 'Ticket has already been marked as used.' },
-    CANCELLED: { label: 'Cancelled', tone: 'error', banner: 'Ticket was cancelled and is not valid for travel.' },
-    EXPIRED: { label: 'Expired', tone: 'error', banner: 'Ticket has expired and cannot be used.' },
+    PAID: {
+      label: 'Valid (paid)',
+      tone: 'success',
+      banner: 'Ticket is valid and ready to board.',
+    },
+    USED: {
+      label: 'Used',
+      tone: 'error',
+      banner: 'Ticket has already been marked as used.',
+    },
+    CANCELLED: {
+      label: 'Cancelled',
+      tone: 'warning',
+      banner: 'Ticket was cancelled and is not valid for travel.',
+    },
+    EXPIRED: {
+      label: 'Expired',
+      tone: 'neutral',
+      banner: 'Ticket has expired and cannot be used.',
+    },
   };
+
+  var LOGIN_PATH = '../auth/login.html';
+  var HISTORY_PATH = '../history/history.html';
+  var HOME_PATH = '../home/home.html';
 
   function setStatusBanner(element, message, tone) {
     if (!element) {
@@ -15,7 +35,7 @@
 
     element.textContent = message || '';
 
-    element.classList.remove('is-success', 'is-error', 'is-warning');
+    element.classList.remove('is-success', 'is-error', 'is-warning', 'is-neutral');
     if (!tone) {
       return;
     }
@@ -26,6 +46,8 @@
       element.classList.add('is-error');
     } else if (tone === 'warning') {
       element.classList.add('is-warning');
+    } else if (tone === 'neutral') {
+      element.classList.add('is-neutral');
     }
   }
 
@@ -34,7 +56,7 @@
       return;
     }
 
-    element.classList.remove('is-success', 'is-error', 'is-warning');
+    element.classList.remove('is-success', 'is-error', 'is-warning', 'is-neutral');
 
     if (tone === 'success') {
       element.classList.add('is-success');
@@ -42,6 +64,8 @@
       element.classList.add('is-error');
     } else if (tone === 'warning') {
       element.classList.add('is-warning');
+    } else if (tone === 'neutral') {
+      element.classList.add('is-neutral');
     }
   }
 
@@ -98,11 +122,127 @@
     }
   }
 
+  function trimNote(value) {
+    return value ? String(value).trim() : '';
+  }
+
+  function buildStatusDetail(ticket, status) {
+    if (!ticket) {
+      return '';
+    }
+
+    if (status === 'PAID') {
+      var parts = [];
+      if (ticket.date) {
+        parts.push('Travel date ' + formatDateForDisplay(ticket.date));
+      }
+      if (ticket.departure_time) {
+        parts.push('Departure ' + formatTimeForDisplay(ticket.departure_time));
+      }
+      return parts.length > 0 ? parts.join(' • ') : 'Ticket is ready for boarding.';
+    }
+
+    if (status === 'USED') {
+      if (ticket.used_at) {
+        return 'Marked as used on ' + formatTimeForDisplay(ticket.used_at) + '.';
+      }
+      return 'Ticket has been marked as used.';
+    }
+
+    if (status === 'CANCELLED') {
+      var reason = ticket.cancel_reason ? String(ticket.cancel_reason).toUpperCase() : '';
+      if (reason === 'STAFF_CANCELLED') {
+        var staffInfo = ticket.cancelled_by_staff || {};
+        var label = staffInfo.staff_username ? 'Cancelled by staff: ' + staffInfo.staff_username : 'Cancelled by staff.';
+        if (ticket.cancelled_at) {
+          label += ' (' + formatTimeForDisplay(ticket.cancelled_at) + ')';
+        }
+        return label;
+      }
+
+      if (reason === 'USER_CANCELLED') {
+        return 'Cancelled by passenger.';
+      }
+
+      return 'Ticket has been cancelled.';
+    }
+
+    if (status === 'EXPIRED') {
+      if (ticket.date) {
+        return 'Expired for travel on ' + formatDateForDisplay(ticket.date) + '.';
+      }
+      if (ticket.cancelled_at) {
+        return 'Expired on ' + formatTimeForDisplay(ticket.cancelled_at) + '.';
+      }
+      return 'Ticket has expired.';
+    }
+
+    return '';
+  }
+
+  function extractLatestUsage(ticket) {
+    if (!ticket || !ticket.usage_logs) {
+      return null;
+    }
+
+    if (ticket.usage_logs.latest) {
+      return ticket.usage_logs.latest;
+    }
+
+    return null;
+  }
+
+  function formatUsageMeta(entry) {
+    if (!entry) {
+      return '';
+    }
+
+    var parts = [];
+    if (entry.staff_username) {
+      parts.push('By ' + entry.staff_username);
+    }
+    if (entry.used_at) {
+      parts.push(formatTimeForDisplay(entry.used_at));
+    }
+    return parts.join(' • ');
+  }
+
+  function redirectToLogin() {
+    window.location.href = LOGIN_PATH;
+  }
+
+  function redirectToHistory() {
+    window.location.href = HISTORY_PATH;
+  }
+
   document.addEventListener('DOMContentLoaded', function () {
     var statusBanner = document.getElementById('status-banner');
+    var statusDetail = document.getElementById('status-detail');
     var detailsSection = document.getElementById('ticket-details');
     var ticketStatus = document.getElementById('ticket-status');
+    var ticketStatusDetail = document.getElementById('ticket-status-detail');
+    var ticketUsageNote = document.getElementById('ticket-usage-note');
+    var ticketUsageNoteContent = document.getElementById('ticket-usage-note-content');
+    var ticketUsageNoteMeta = document.getElementById('ticket-usage-note-meta');
     var markUsedButton = document.getElementById('mark-used-button');
+    var cancelButton = document.getElementById('cancel-ticket-button');
+    var noteInput = document.getElementById('usage-note');
+    var noteCounter = document.getElementById('note-counter');
+    var formError = document.getElementById('form-error');
+    var form = document.getElementById('ticket-action-form');
+    var overlay = document.getElementById('action-overlay');
+    var backButton = document.getElementById('verification-back-button');
+
+    if (backButton) {
+      backButton.addEventListener('click', function () {
+        if (window.history.length > 1) {
+          window.history.back();
+          return;
+        }
+
+        window.location.href = HOME_PATH;
+      });
+    }
 
     var detailFields = {
       ticketId: document.getElementById('detail-ticket-id'),
@@ -125,9 +265,19 @@
     var userId = params.get('user_id');
 
     if (!ticketId || !userId) {
-      setStatusBanner(statusBanner, 'Missing ticket information. Please scan a valid QR code.', 'error');
+      setStatusBanner(
+        statusBanner,
+        'Missing ticket information. Please scan a valid QR code.',
+        'error'
+      );
       if (markUsedButton) {
         markUsedButton.hidden = true;
+      }
+      if (cancelButton) {
+        cancelButton.hidden = true;
+      }
+      if (form) {
+        form.hidden = true;
       }
       return;
     }
@@ -140,8 +290,93 @@
       isFetching: false,
     };
 
+    function updateNoteCounter() {
+      if (!noteCounter || !noteInput) {
+        return;
+      }
+      var length = noteInput.value ? noteInput.value.length : 0;
+      noteCounter.textContent = length + ' / 100';
+    }
+
+    function clearFormError() {
+      if (formError) {
+        formError.hidden = true;
+        formError.textContent = '';
+      }
+    }
+
+    function showFormError(message) {
+      if (formError) {
+        formError.hidden = false;
+        formError.textContent = message;
+      }
+    }
+
+    if (noteInput) {
+      noteInput.addEventListener('input', function () {
+        updateNoteCounter();
+        clearFormError();
+      });
+    }
+
     function setFetchingState(isFetching) {
       state.isFetching = isFetching;
+    }
+
+    function renderUsageNote(entry) {
+      if (!ticketUsageNote) {
+        return;
+      }
+
+      if (!entry) {
+        ticketUsageNote.hidden = true;
+        return;
+      }
+
+      var noteText = trimNote(entry.note);
+      if (!noteText) {
+        noteText = 'No note recorded.';
+      }
+
+      if (ticketUsageNoteContent) {
+        ticketUsageNoteContent.textContent = noteText;
+      }
+
+      if (ticketUsageNoteMeta) {
+        var meta = formatUsageMeta(entry);
+        if (meta) {
+          ticketUsageNoteMeta.textContent = meta;
+          ticketUsageNoteMeta.hidden = false;
+        } else {
+          ticketUsageNoteMeta.textContent = '';
+          ticketUsageNoteMeta.hidden = true;
+        }
+      }
+
+      ticketUsageNote.hidden = false;
+    }
+
+    function updateActions(status) {
+      var canInteract = status === 'PAID';
+
+      if (markUsedButton) {
+        markUsedButton.hidden = !canInteract;
+        markUsedButton.disabled = !canInteract || state.isUpdating;
+      }
+
+      if (cancelButton) {
+        cancelButton.hidden = !canInteract;
+        cancelButton.disabled = !canInteract || state.isUpdating;
+      }
+
+      if (form) {
+        form.hidden = !canInteract;
+      }
+
+      if (!canInteract && noteInput) {
+        noteInput.value = '';
+        updateNoteCounter();
+      }
     }
 
     function renderTicket(ticket) {
@@ -168,41 +403,66 @@
         setBadgeTone(ticketStatus, statusMeta.tone);
       }
 
-      setStatusBanner(statusBanner, ticket.message || statusMeta.banner, statusMeta.tone);
+      var bannerMessage = ticket.message || statusMeta.banner;
+      setStatusBanner(statusBanner, bannerMessage, statusMeta.tone);
+
+      var detailText = buildStatusDetail(ticket, normalizedStatus);
+      if (statusDetail) {
+        if (detailText) {
+          statusDetail.textContent = detailText;
+          statusDetail.hidden = false;
+        } else {
+          statusDetail.hidden = true;
+          statusDetail.textContent = '';
+        }
+      }
+
+      if (ticketStatusDetail) {
+        if (detailText) {
+          ticketStatusDetail.textContent = detailText;
+          ticketStatusDetail.hidden = false;
+        } else {
+          ticketStatusDetail.hidden = true;
+          ticketStatusDetail.textContent = '';
+        }
+      }
 
       setTextContent(detailFields.ticketId, ticket.ticket_id);
       setTextContent(detailFields.userId, ticket.user_id);
       setTextContent(detailFields.username, ticket.username || '—');
       setTextContent(detailFields.date, formatDateForDisplay(ticket.date));
-
       setTextContent(detailFields.departure, formatTimeForDisplay(ticket.departure_time));
       setTextContent(detailFields.arrival, formatTimeForDisplay(ticket.arrival_time));
       setTextContent(detailFields.origin, ticket.origin || '—');
       setTextContent(detailFields.destination, ticket.destination || '—');
       setTextContent(detailFields.quantity, ticket.quantity || 1);
       setTextContent(detailFields.price, ticket.price ? '฿' + ticket.price : '฿0.00');
-
       setTextContent(detailFields.issuedAt, formatTimeForDisplay(ticket.issued_at));
       setTextContent(detailFields.usedAt, formatTimeForDisplay(ticket.used_at));
       setTextContent(detailFields.cancelledAt, formatTimeForDisplay(ticket.cancelled_at));
 
-      if (markUsedButton) {
-        var canUse = normalizedStatus === 'PAID';
-        markUsedButton.hidden = !canUse;
-        markUsedButton.disabled = !canUse || state.isUpdating;
-      }
+      renderUsageNote(extractLatestUsage(ticket));
+      updateActions(normalizedStatus);
     }
 
-    function handleError(message) {
+    function handleError(message, tone) {
       state.ticket = null;
       if (detailsSection) {
         detailsSection.hidden = true;
       }
-      if (markUsedButton) {
-        markUsedButton.hidden = true;
-        markUsedButton.disabled = true;
+      setStatusBanner(statusBanner, message, tone || 'error');
+      if (statusDetail) {
+        statusDetail.hidden = true;
+        statusDetail.textContent = '';
       }
-      setStatusBanner(statusBanner, message, 'error');
+      if (ticketStatusDetail) {
+        ticketStatusDetail.hidden = true;
+        ticketStatusDetail.textContent = '';
+      }
+      if (ticketUsageNote) {
+        ticketUsageNote.hidden = true;
+      }
+      updateActions('');
     }
 
     function fetchTicket() {
@@ -221,6 +481,11 @@
 
       fetch(url + '?' + query.toString(), { credentials: 'include' })
         .then(function (response) {
+          if (response.status === 401) {
+            redirectToLogin();
+            return Promise.reject(new Error('unauthorized'));
+          }
+
           if (!response.ok) {
             throw new Error('Unable to verify ticket at this time.');
           }
@@ -236,27 +501,43 @@
           renderTicket(payload.ticket);
         })
         .catch(function (error) {
-          handleError(error.message || 'Ticket could not be verified.');
+          if (error && error.message === 'unauthorized') {
+            return;
+          }
+          handleError(error.message || 'Ticket could not be verified.', 'error');
         })
         .finally(function () {
           setFetchingState(false);
         });
     }
 
-    function markTicketUsed() {
-      if (state.isUpdating) {
+    function submitAction(action) {
+      if (state.isUpdating || !state.ticket) {
+        return;
+      }
+
+      var noteValue = noteInput ? trimNote(noteInput.value) : '';
+
+      if (action === 'cancel' && !noteValue) {
+        showFormError('Please add a short note before cancelling this ticket.');
+        if (noteInput) {
+          noteInput.focus();
+        }
         return;
       }
 
       state.isUpdating = true;
-      if (markUsedButton) {
-        markUsedButton.disabled = true;
-      }
+      updateActions(normalizeStatus(state.ticket.status));
+      clearFormError();
       setStatusBanner(statusBanner, 'Updating ticket status…', null);
 
       var formData = new FormData();
       formData.append('ticket_id', state.ticketId);
       formData.append('user_id', state.userId);
+      formData.append('action', action);
+      if (noteValue) {
+        formData.append('note', noteValue);
+      }
 
       fetch('../../../Backend/verifyTicket.php', {
         method: 'POST',
@@ -264,6 +545,11 @@
         credentials: 'include',
       })
         .then(function (response) {
+          if (response.status === 401) {
+            redirectToLogin();
+            return Promise.reject(new Error('unauthorized'));
+          }
+
           if (!response.ok) {
             throw new Error('Unable to update the ticket.');
           }
@@ -277,24 +563,56 @@
 
           state.ticket = payload.ticket;
           renderTicket(payload.ticket);
+          setStatusBanner(statusBanner, payload.message || 'Ticket updated successfully.', 'success');
+
+          if (noteInput) {
+            noteInput.value = '';
+            updateNoteCounter();
+          }
+
+          if (action === 'use' && overlay) {
+            overlay.hidden = false;
+            setTimeout(function () {
+              redirectToHistory();
+            }, 1200);
+          } else {
+            setTimeout(function () {
+              redirectToHistory();
+            }, 900);
+          }
         })
         .catch(function (error) {
+          if (error && error.message === 'unauthorized') {
+            return;
+          }
           setStatusBanner(statusBanner, error.message || 'Failed to update the ticket.', 'error');
+          if (action === 'cancel') {
+            showFormError(error.message || 'Unable to cancel the ticket.');
+          }
         })
         .finally(function () {
           state.isUpdating = false;
-          if (markUsedButton) {
-            markUsedButton.disabled = false;
+          if (state.ticket) {
+            updateActions(normalizeStatus(state.ticket.status));
+          } else {
+            updateActions('');
           }
         });
     }
 
     if (markUsedButton) {
       markUsedButton.addEventListener('click', function () {
-        markTicketUsed();
+        submitAction('use');
       });
     }
 
+    if (cancelButton) {
+      cancelButton.addEventListener('click', function () {
+        submitAction('cancel');
+      });
+    }
+
+    updateNoteCounter();
     fetchTicket();
   });
 })();
