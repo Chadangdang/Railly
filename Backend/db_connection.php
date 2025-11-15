@@ -48,9 +48,9 @@ function get_db_connection(): mysqli
     $isInfinityFree = strpos($httpHost, 'railly.great-site.net') !== false;
 
     if ($isInfinityFree) {
-        $host = 'sqlXXX.infinityfree.com';
-        $user = 'if0_40424884_xxx';
-        $pass = 'YOUR_STRONG_DB_PASSWORD_HERE';
+        $host = 'sql303.infinityfree.com';
+        $user = 'if0_40424884';
+        $pass = 'Railly1234Plus';
         $db   = 'if0_40424884_railly';
         $port = 3306;
     } else {
