@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Railly Staff – Activity history</title>
+    <link rel="stylesheet" href="../shared/header.css" />
+    <link rel="stylesheet" href="./history.css" />
+    <script src="../../../assets/js/layout-loader.js" defer></script>
+    <script src="../shared/header.js" defer></script>
+    <script src="./history.js" defer></script>
+  </head>
+  <body class="staff-history-page">
+    <div data-include="../shared/header.html" data-staff-title="Activity history"></div>
+
+    <main class="staff-history-main" aria-labelledby="page-title">
+      <nav class="history-nav" aria-label="Back navigation">
+        <button id="history-back-button" class="verification-back-button" type="button">
+          <span class="verification-back-button__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" focusable="false">
+              <path d="M15.5 19a1 1 0 0 1-.7-.29l-6-6a1 1 0 0 1 0-1.42l6-6a1 1 0 1 1 1.4 1.42L10.91 12l5.29 5.29A1 1 0 0 1 15.5 19Z" />
+            </svg>
+          </span>
+          <span class="verification-back-button__label">Back</span>
+        </button>
+      </nav>
+
+      <section class="history-filters" aria-label="History filters">
+        <div class="history-filters__controls">
+          <label class="history-select">
+            <span class="history-select__label">Month</span>
+            <select id="history-month-select" class="history-select__input" name="month"></select>
+          </label>
+          <label class="history-select">
+            <span class="history-select__label">Year</span>
+            <select id="history-year-select" class="history-select__input" name="year"></select>
+          </label>
+        </div>
+        <p id="history-filter-summary" class="history-filters__summary" aria-live="polite"></p>
+      </section>
+
+      <section class="history-section" aria-live="polite" aria-busy="false">
+        <div id="history-loading" class="history-loading" role="status" hidden>
+          Loading activity…
+        </div>
+        <div id="history-error" class="history-error" role="alert" hidden></div>
+        <ul id="history-list" class="history-list" aria-label="Ticket activity history"></ul>
+        <p id="history-empty" class="history-empty" hidden>
+          No staff activity recorded for this period.
+        </p>
+      </section>
+    </main>
+
+    <div id="history-dialog" class="history-dialog" hidden aria-hidden="true">
+      <div class="history-dialog__backdrop" data-role="dismiss"></div>
+      <div class="history-dialog__panel" role="dialog" aria-modal="true" aria-labelledby="history-dialog-title">
+        <header class="history-dialog__header">
+          <span id="history-dialog-action" class="history-dialog__badge">Action</span>
+          <button id="history-dialog-close" class="history-dialog__close" type="button" aria-label="Close details">
+            <span aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false">
+                <path d="M6.7 6.7a1 1 0 0 1 1.4 0L12 10.6l3.9-3.9a1 1 0 0 1 1.4 1.4L13.4 12l3.9 3.9a1 1 0 0 1-1.4 1.4L12 13.4l-3.9 3.9a1 1 0 0 1-1.4-1.4L10.6 12 6.7 8.1a1 1 0 0 1 0-1.4Z" />
+              </svg>
+            </span>
+          </button>
+          <h2 id="history-dialog-title" class="history-dialog__title">Ticket details</h2>
+          <p id="history-dialog-timestamp" class="history-dialog__timestamp"></p>
+        </header>
+
+        <div class="history-dialog__content">
+          <dl class="history-dialog__summary">
+            <div class="history-dialog__summary-item">
+              <dt>Ticket ID</dt>
+              <dd id="history-detail-ticket-id">—</dd>
+            </div>
+            <div class="history-dialog__summary-item">
+              <dt>Passenger</dt>
+              <dd id="history-detail-passenger">—</dd>
+            </div>
+            <div class="history-dialog__summary-item">
+              <dt>Ticket status</dt>
+              <dd id="history-detail-status">—</dd>
+            </div>
+          </dl>
+
+          <div class="history-dialog__journey" aria-label="Journey overview">
+            <div class="history-dialog__stations">
+              <div class="history-dialog__station" data-role="origin">
+                <span class="history-dialog__station-label">From</span>
+                <span id="history-detail-origin" class="history-dialog__station-name">—</span>
+              </div>
+              <div class="history-dialog__station" data-role="destination">
+                <span class="history-dialog__station-label">To</span>
+                <span id="history-detail-destination" class="history-dialog__station-name">—</span>
+              </div>
+            </div>
+            <div class="history-dialog__timeline">
+              <div>
+                <span class="history-dialog__meta-label">Travel date</span>
+                <span id="history-detail-date" class="history-dialog__meta-value">—</span>
+              </div>
+              <div>
+                <span class="history-dialog__meta-label">Departure</span>
+                <span id="history-detail-departure" class="history-dialog__meta-value">—</span>
+              </div>
+              <div>
+                <span class="history-dialog__meta-label">Arrival</span>
+                <span id="history-detail-arrival" class="history-dialog__meta-value">—</span>
+              </div>
+            </div>
+          </div>
+
+          <dl class="history-dialog__meta-list">
+            <div class="history-dialog__meta-item">
+              <dt>Processed action</dt>
+              <dd id="history-detail-action">—</dd>
+            </div>
+            <div class="history-dialog__meta-item">
+              <dt>Processed at</dt>
+              <dd id="history-detail-processed-at">—</dd>
+            </div>
+            <div class="history-dialog__meta-item">
+              <dt>Quantity</dt>
+              <dd id="history-detail-quantity">—</dd>
+            </div>
+            <div class="history-dialog__meta-item">
+              <dt>Total price</dt>
+              <dd id="history-detail-price">—</dd>
+            </div>
+            <div class="history-dialog__meta-item">
+              <dt>Ticket issued</dt>
+              <dd id="history-detail-issued-at">—</dd>
+            </div>
+            <div class="history-dialog__meta-item">
+              <dt>Ticket usage</dt>
+              <dd id="history-detail-ticket-usage">—</dd>
+            </div>
+            <div class="history-dialog__meta-item history-dialog__meta-item--note">
+              <dt>Staff note</dt>
+              <dd id="history-detail-note">—</dd>
+            </div>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
