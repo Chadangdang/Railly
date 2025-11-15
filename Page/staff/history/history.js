@@ -406,7 +406,7 @@
         meta.textContent = formatDateTimeForDisplay(entry.used_at || entry.used_at_iso);
 
         var noteText = trimNote(entry.note);
-        if (noteText) {
+        if (noteText && resultKey !== 'REJECTED') {
           var note = document.createElement('span');
           note.className = 'history-card__note';
           note.textContent = noteText;
