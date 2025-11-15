@@ -158,6 +158,17 @@ body.staff-verify-page {
   color: var(--staff-text-primary);
 }
 
+.verification-countdown {
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: rgba(240, 173, 78, 0.16);
+  border: 1px dashed rgba(240, 173, 78, 0.4);
+  color: var(--staff-text-primary);
+  font-size: 14px;
+  font-weight: 600;
+}
+
 .verification-hint {
   margin: 0;
   font-size: 14px;

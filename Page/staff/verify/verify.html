@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="../shared/header.css" />
     <link rel="stylesheet" href="./verify.css" />
     <script src="../../../assets/js/layout-loader.js" defer></script>
+    <script src="../shared/auth-guard.js" defer></script>
     <script src="../shared/header.js" defer></script>
     <script src="./verify.js" defer></script>
   </head>
@@ -39,6 +40,13 @@
         </div>
         <div id="status-banner" class="verification-status" role="status"></div>
         <p id="status-detail" class="verification-status-detail" hidden></p>
+        <div
+          id="boarding-countdown"
+          class="verification-countdown"
+          role="status"
+          aria-live="polite"
+          hidden
+        ></div>
         <p class="verification-hint">
           Scan a passenger QR code or paste the link provided by the scanner. Ticket
           details will appear once the code is confirmed.

@@ -1,6 +1,9 @@
 (function () {
   'use strict';
 
+  var BOARDING_LEAD_MINUTES = 180;
+  var BOARDING_INTERVAL_MS = 30000;
+
   var STATUS_LABELS = {
     PAID: {
       label: 'Valid (paid)',
@@ -69,6 +72,173 @@
     }
   }
 
+  function parseDateComponent(value) {
+    if (!value) {
+      return null;
+    }
+
+    if (value instanceof Date && !Number.isNaN(value.getTime())) {
+      return new Date(value.getFullYear(), value.getMonth(), value.getDate());
+    }
+
+    var normalized = String(value).trim();
+    if (!normalized) {
+      return null;
+    }
+
+    var isoMatch = normalized.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    if (isoMatch) {
+      var year = parseInt(isoMatch[1], 10);
+      var month = parseInt(isoMatch[2], 10) - 1;
+      var day = parseInt(isoMatch[3], 10);
+      return new Date(year, month, day);
+    }
+
+    var parsed = new Date(normalized);
+    if (!Number.isNaN(parsed.getTime())) {
+      return new Date(parsed.getFullYear(), parsed.getMonth(), parsed.getDate());
+    }
+
+    return null;
+  }
+
+  function parseTimeComponent(value) {
+    if (!value) {
+      return null;
+    }
+
+    if (value instanceof Date && !Number.isNaN(value.getTime())) {
+      return {
+        hours: value.getHours(),
+        minutes: value.getMinutes(),
+        seconds: value.getSeconds(),
+      };
+    }
+
+    var normalized = String(value).trim();
+    if (!normalized) {
+      return null;
+    }
+
+    var match = normalized.match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?$/);
+    if (match) {
+      var hours = parseInt(match[1], 10);
+      var minutes = parseInt(match[2], 10);
+      var seconds = match[3] ? parseInt(match[3], 10) : 0;
+
+      if (
+        Number.isInteger(hours) &&
+        Number.isInteger(minutes) &&
+        Number.isInteger(seconds) &&
+        hours >= 0 &&
+        hours < 24 &&
+        minutes >= 0 &&
+        minutes < 60 &&
+        seconds >= 0 &&
+        seconds < 60
+      ) {
+        return { hours: hours, minutes: minutes, seconds: seconds };
+      }
+    }
+
+    var parsedTime = new Date(normalized);
+    if (!Number.isNaN(parsedTime.getTime())) {
+      return {
+        hours: parsedTime.getHours(),
+        minutes: parsedTime.getMinutes(),
+        seconds: parsedTime.getSeconds(),
+      };
+    }
+
+    return null;
+  }
+
+  function combineDateAndTime(dateValue, timeValue) {
+    var datePart = parseDateComponent(dateValue);
+    var timePart = parseTimeComponent(timeValue);
+
+    if (!datePart || !timePart) {
+      return null;
+    }
+
+    return new Date(
+      datePart.getFullYear(),
+      datePart.getMonth(),
+      datePart.getDate(),
+      timePart.hours,
+      timePart.minutes,
+      timePart.seconds || 0,
+      0
+    );
+  }
+
+  function computeBoardingInfo(ticket, status) {
+    if (!ticket || status !== 'PAID') {
+      return { supported: false, isReady: true };
+    }
+
+    var departureDateTime = combineDateAndTime(ticket.date, ticket.departure_time);
+    if (!departureDateTime) {
+      return { supported: false, isReady: true };
+    }
+
+    var leadMilliseconds = BOARDING_LEAD_MINUTES * 60 * 1000;
+    var boardingTime = new Date(departureDateTime.getTime() - leadMilliseconds);
+    var diff = boardingTime.getTime() - Date.now();
+
+    return {
+      supported: true,
+      isReady: diff <= 0,
+      boardingTime: boardingTime,
+      departureTime: departureDateTime,
+      diff: diff,
+    };
+  }
+
+  function buildCountdownParts(diffMs) {
+    if (diffMs <= 0) {
+      return [];
+    }
+
+    var totalSeconds = Math.max(0, Math.floor(diffMs / 1000));
+    var days = Math.floor(totalSeconds / 86400);
+    totalSeconds -= days * 86400;
+    var hours = Math.floor(totalSeconds / 3600);
+    totalSeconds -= hours * 3600;
+    var minutes = Math.floor(totalSeconds / 60);
+    var seconds = totalSeconds - minutes * 60;
+
+    var parts = [];
+    if (days > 0) {
+      parts.push(days + ' day' + (days === 1 ? '' : 's'));
+    }
+    if (hours > 0) {
+      parts.push(hours + ' hour' + (hours === 1 ? '' : 's'));
+    }
+    if (minutes > 0) {
+      parts.push(minutes + ' minute' + (minutes === 1 ? '' : 's'));
+    }
+    if (parts.length === 0 && seconds > 0) {
+      parts.push('less than a minute');
+    }
+
+    return parts;
+  }
+
+  function formatBoardingCountdown(diffMs) {
+    var parts = buildCountdownParts(diffMs);
+
+    if (parts.length === 0) {
+      return '';
+    }
+
+    if (parts.length === 1) {
+      return parts[0];
+    }
+
+    return parts.slice(0, -1).join(', ') + ' and ' + parts[parts.length - 1];
+  }
+
   function formatDateForDisplay(value) {
     if (!value) {
       return '—';
@@ -126,7 +296,7 @@
     return value ? String(value).trim() : '';
   }
 
-  function buildStatusDetail(ticket, status) {
+  function buildStatusDetail(ticket, status, boardingInfo) {
     if (!ticket) {
       return '';
     }
@@ -139,7 +309,22 @@
       if (ticket.departure_time) {
         parts.push('Departure ' + formatTimeForDisplay(ticket.departure_time));
       }
-      return parts.length > 0 ? parts.join(' • ') : 'Ticket is ready for boarding.';
+      if (boardingInfo && boardingInfo.supported && boardingInfo.boardingTime) {
+        var boardingText = formatTimeForDisplay(boardingInfo.boardingTime);
+        if (boardingText) {
+          parts.push(
+            (boardingInfo.isReady ? 'Boarding opened at ' : 'Boarding opens at ') +
+              boardingText +
+              ' (3 hours before departure)'
+          );
+        }
+      }
+
+      return parts.length > 0
+        ? parts.join(' • ')
+        : boardingInfo && boardingInfo.supported && !boardingInfo.isReady
+        ? 'Ticket is valid but not yet within the boarding window.'
+        : 'Ticket is ready for boarding.';
     }
 
     if (status === 'USED') {
@@ -221,6 +406,7 @@
     var detailsSection = document.getElementById('ticket-details');
     var ticketStatus = document.getElementById('ticket-status');
     var ticketStatusDetail = document.getElementById('ticket-status-detail');
+    var boardingCountdown = document.getElementById('boarding-countdown');
     var ticketUsageNote = document.getElementById('ticket-usage-note');
     var ticketUsageNoteContent = document.getElementById('ticket-usage-note-content');
     var ticketUsageNoteMeta = document.getElementById('ticket-usage-note-meta');
@@ -288,6 +474,8 @@
       ticket: null,
       isUpdating: false,
       isFetching: false,
+      boardingInfo: null,
+      boardingTimer: null,
     };
 
     function updateNoteCounter() {
@@ -310,6 +498,62 @@
         formError.hidden = false;
         formError.textContent = message;
       }
+    }
+
+    function hideBoardingCountdown() {
+      if (boardingCountdown) {
+        boardingCountdown.hidden = true;
+        boardingCountdown.textContent = '';
+      }
+    }
+
+    function clearBoardingCountdown() {
+      if (state.boardingTimer) {
+        window.clearInterval(state.boardingTimer);
+        state.boardingTimer = null;
+      }
+    }
+
+    function updateBoardingCountdownDisplay() {
+      if (!boardingCountdown || !state.boardingInfo || !state.boardingInfo.supported) {
+        hideBoardingCountdown();
+        return;
+      }
+
+      var diff = state.boardingInfo.boardingTime.getTime() - Date.now();
+      if (diff <= 0) {
+        hideBoardingCountdown();
+        clearBoardingCountdown();
+        if (!state.boardingInfo.isReady) {
+          state.boardingInfo.isReady = true;
+          renderTicket(state.ticket);
+        }
+        return;
+      }
+
+      var message = formatBoardingCountdown(diff);
+      if (message) {
+        boardingCountdown.textContent =
+          'Boarding opens in ' + message + ' (3 hours before departure).';
+        boardingCountdown.hidden = false;
+      } else {
+        hideBoardingCountdown();
+      }
+    }
+
+    function startBoardingCountdown() {
+      clearBoardingCountdown();
+
+      if (!state.boardingInfo || !state.boardingInfo.supported || state.boardingInfo.isReady) {
+        hideBoardingCountdown();
+        return;
+      }
+
+      updateBoardingCountdownDisplay();
+
+      state.boardingTimer = window.setInterval(function () {
+        updateBoardingCountdownDisplay();
+      }, BOARDING_INTERVAL_MS);
     }
 
     if (noteInput) {
@@ -356,24 +600,36 @@
       ticketUsageNote.hidden = false;
     }
 
-    function updateActions(status) {
-      var canInteract = status === 'PAID';
+    function updateActions(status, boardingInfo) {
+      var normalizedStatus = normalizeStatus(status);
+      var isPaid = normalizedStatus === 'PAID';
+      var boardingReady = !isPaid || !boardingInfo || !boardingInfo.supported || boardingInfo.isReady;
 
       if (markUsedButton) {
-        markUsedButton.hidden = !canInteract;
-        markUsedButton.disabled = !canInteract || state.isUpdating;
+        markUsedButton.hidden = !isPaid;
+        var canMarkUsed = isPaid && boardingReady && !state.isUpdating;
+        markUsedButton.disabled = !canMarkUsed;
+        markUsedButton.setAttribute('aria-disabled', String(markUsedButton.disabled));
+
+        if (isPaid && !boardingReady) {
+          markUsedButton.title = 'Boarding has not opened yet for this ticket.';
+        } else {
+          markUsedButton.removeAttribute('title');
+        }
       }
 
       if (cancelButton) {
-        cancelButton.hidden = !canInteract;
-        cancelButton.disabled = !canInteract || state.isUpdating;
+        cancelButton.hidden = !isPaid;
+        var canCancel = isPaid && !state.isUpdating;
+        cancelButton.disabled = !canCancel;
+        cancelButton.setAttribute('aria-disabled', String(cancelButton.disabled));
       }
 
       if (form) {
-        form.hidden = !canInteract;
+        form.hidden = !isPaid;
       }
 
-      if (!canInteract && noteInput) {
+      if (!isPaid && noteInput) {
         noteInput.value = '';
         updateNoteCounter();
       }
@@ -381,6 +637,8 @@
 
     function renderTicket(ticket) {
       if (!ticket) {
+        clearBoardingCountdown();
+        hideBoardingCountdown();
         if (detailsSection) {
           detailsSection.hidden = true;
         }
@@ -391,6 +649,8 @@
         detailsSection.hidden = false;
       }
 
+      clearBoardingCountdown();
+
       var normalizedStatus = normalizeStatus(ticket.status);
       var statusMeta = STATUS_LABELS[normalizedStatus] || {
         label: normalizedStatus || 'Unknown',
@@ -398,15 +658,36 @@
         banner: 'Ticket status could not be determined. Please confirm with the passenger.',
       };
 
-      if (ticketStatus) {
-        ticketStatus.textContent = statusMeta.label;
-        setBadgeTone(ticketStatus, statusMeta.tone);
+      var bannerTone = statusMeta.tone;
+      var badgeTone = statusMeta.tone;
+      var bannerMessage = ticket.message || statusMeta.banner;
+
+      var boardingInfo = computeBoardingInfo(ticket, normalizedStatus);
+      state.boardingInfo = boardingInfo;
+
+      if (normalizedStatus === 'PAID' && boardingInfo.supported) {
+        if (boardingInfo.isReady) {
+          bannerTone = 'success';
+          badgeTone = 'success';
+          bannerMessage = 'Ticket is valid and ready to board.';
+          hideBoardingCountdown();
+        } else {
+          bannerTone = 'warning';
+          badgeTone = 'warning';
+          bannerMessage = 'Ticket is valid but NOT ready to board.';
+        }
+      } else {
+        hideBoardingCountdown();
       }
 
-      var bannerMessage = ticket.message || statusMeta.banner;
-      setStatusBanner(statusBanner, bannerMessage, statusMeta.tone);
+      if (ticketStatus) {
+        ticketStatus.textContent = statusMeta.label;
+        setBadgeTone(ticketStatus, badgeTone);
+      }
 
-      var detailText = buildStatusDetail(ticket, normalizedStatus);
+      setStatusBanner(statusBanner, bannerMessage, bannerTone);
+
+      var detailText = buildStatusDetail(ticket, normalizedStatus, boardingInfo);
       if (statusDetail) {
         if (detailText) {
           statusDetail.textContent = detailText;
@@ -441,12 +722,27 @@
       setTextContent(detailFields.usedAt, formatTimeForDisplay(ticket.used_at));
       setTextContent(detailFields.cancelledAt, formatTimeForDisplay(ticket.cancelled_at));
 
-      renderUsageNote(extractLatestUsage(ticket));
-      updateActions(normalizedStatus);
+      var latestUsage = extractLatestUsage(ticket);
+      renderUsageNote(latestUsage);
+
+      updateActions(normalizedStatus, boardingInfo);
+
+      if (normalizedStatus === 'PAID' && boardingInfo.supported && !boardingInfo.isReady) {
+        startBoardingCountdown();
+      } else {
+        hideBoardingCountdown();
+      }
+
+      if (boardingInfo && boardingInfo.supported && boardingInfo.isReady) {
+        state.boardingInfo.isReady = true;
+      }
     }
 
     function handleError(message, tone) {
       state.ticket = null;
+      state.boardingInfo = null;
+      clearBoardingCountdown();
+      hideBoardingCountdown();
       if (detailsSection) {
         detailsSection.hidden = true;
       }
@@ -462,7 +758,7 @@
       if (ticketUsageNote) {
         ticketUsageNote.hidden = true;
       }
-      updateActions('');
+      updateActions('', null);
     }
 
     function fetchTicket() {
@@ -527,7 +823,7 @@
       }
 
       state.isUpdating = true;
-      updateActions(normalizeStatus(state.ticket.status));
+      updateActions(normalizeStatus(state.ticket.status), state.boardingInfo);
       clearFormError();
       setStatusBanner(statusBanner, 'Updating ticket status…', null);
 
@@ -593,9 +889,9 @@
         .finally(function () {
           state.isUpdating = false;
           if (state.ticket) {
-            updateActions(normalizeStatus(state.ticket.status));
+            updateActions(normalizeStatus(state.ticket.status), state.boardingInfo);
           } else {
-            updateActions('');
+            updateActions('', null);
           }
         });
     }
