@@ -1,6 +1,20 @@
 (function () {
   'use strict';
 
+  if (!window.BASE_URL || !window.API_BASE) {
+    var origin = window.location.origin;
+    var path = window.location.pathname || '';
+    var projectRoot = '';
+
+    var match = path.match(/^(.*?)(?:\/Page\/|\/Backend\/|$)/);
+    if (match && match[1]) {
+      projectRoot = match[1].replace(/\/$/, '');
+    }
+
+    window.BASE_URL = window.BASE_URL || origin + projectRoot;
+    window.API_BASE = window.API_BASE || window.BASE_URL + '/Backend';
+  }
+
   var session = null;
   var context = { username: null, id: null };
 
@@ -10,7 +24,10 @@
 
     if (!context.username || !context.id) {
       alert('Please log in to search and book tickets.');
-      window.location.href = '../Login/login.html';
+      var loginUrl = window.BASE_URL
+        ? window.BASE_URL + '/Page/user/Login/login.html'
+        : '../Login/login.html';
+      window.location.href = loginUrl;
       return;
     }
 
