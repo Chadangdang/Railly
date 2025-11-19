@@ -766,7 +766,7 @@
         return;
       }
 
-      var url = '../../../Backend/verifyTicket.php';
+      var url = (window.API_BASE || '') + '/verifyTicket.php';
       var query = new URLSearchParams({
         ticket_id: state.ticketId,
         user_id: state.userId,
@@ -835,7 +835,7 @@
         formData.append('note', noteValue);
       }
 
-      fetch('../../../Backend/verifyTicket.php', {
+      fetch((window.API_BASE || '') + '/verifyTicket.php', {
         method: 'POST',
         body: formData,
         credentials: 'include',

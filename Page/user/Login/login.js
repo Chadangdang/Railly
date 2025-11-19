@@ -21,7 +21,7 @@ async function handleLogin(event) {
   console.log('Password:', password);
 
   try {
-    const response = await fetch('../../../Backend/Login.php', {
+    const response = await fetch(`${window.API_BASE}/Login.php`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ identifier, password })

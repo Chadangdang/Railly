@@ -1,8 +1,8 @@
 (function (window, document) {
   'use strict';
 
-  var API_SESSION_PATH = '/Backend/staffSession.php';
-  var API_LOGOUT_PATH = '/Backend/staffLogout.php';
+  var API_SESSION_PATH = (window.API_BASE || '') + '/staffSession.php';
+  var API_LOGOUT_PATH = (window.API_BASE || '') + '/staffLogout.php';
   var LOGIN_PATH = '/Page/staff/auth/login.html';
 
   function resolveAppPath(path) {

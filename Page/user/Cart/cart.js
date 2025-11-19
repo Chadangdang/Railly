@@ -108,7 +108,7 @@
 
     if (!context.username || !context.id) {
       alert('Please log in to view your cart.');
-      window.location.href = '../Login/Login.html';
+      window.location.href = '../Login/login.html';
       return;
     }
 

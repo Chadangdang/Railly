@@ -301,7 +301,7 @@
     }
     formData.append('payment_method', selectedMethod);
 
-    fetch('../../../Backend/confirm.php', {
+    fetch(`${window.API_BASE}/confirm.php`, {
       method: 'POST',
       body: formData
     })
@@ -337,7 +337,7 @@
     });
 
     window.location.href =
-      '../MyTicket/MyTicket.html?' + params.toString();
+      '../MyTicket/myticket.html?' + params.toString();
   }
 
   function removePurchasedItem() {

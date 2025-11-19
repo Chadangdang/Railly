@@ -833,7 +833,7 @@
         id: context.id,
       });
 
-      fetch('../../../Backend/getUserTickets.php?' + params.toString(), {
+      fetch(`${window.API_BASE}/getUserTickets.php?` + params.toString(), {
         credentials: 'include',
       })
         .then(function (response) {
@@ -876,7 +876,7 @@
       formData.append('username', context.username);
       formData.append('id', context.id);
 
-      return fetch('../../../Backend/cancelTicket.php', {
+      return fetch(`${window.API_BASE}/cancelTicket.php`, {
         method: 'POST',
         body: formData,
         credentials: 'include',

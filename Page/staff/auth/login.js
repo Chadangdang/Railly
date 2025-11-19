@@ -72,7 +72,7 @@
         submitButton.disabled = true;
       }
 
-      fetch('../../../Backend/staffLogin.php', {
+      fetch(`${window.API_BASE}/staffLogin.php`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

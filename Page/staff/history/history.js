@@ -1,7 +1,7 @@
 (function (window, document) {
   'use strict';
 
-  var API_PATH = '../../../Backend/staffHistory.php';
+  var API_PATH = (window.API_BASE || '') + '/staffHistory.php';
   var LOGIN_PATH = '/Page/staff/auth/login.html';
   var HOME_PATH = '../home/home.html';
 

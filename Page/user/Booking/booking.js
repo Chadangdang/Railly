@@ -10,7 +10,7 @@
 
     if (!context.username || !context.id) {
       alert('Please log in to search and book tickets.');
-      window.location.href = '../Login/Login.html';
+      window.location.href = '../Login/login.html';
       return;
     }
 
@@ -75,7 +75,7 @@
   }
 
   function loadStations() {
-    fetch('../../../Backend/getStations.php')
+    fetch(`${window.API_BASE}/getStations.php`)
       .then(function (response) {
         return response.json();
       })
@@ -231,7 +231,7 @@
   function fetchTickets(queryParams, headingMeta) {
     var query = new URLSearchParams(queryParams);
 
-    fetch('../../../Backend/getTickets.php?' + query.toString())
+    fetch(`${window.API_BASE}/getTickets.php?` + query.toString())
       .then(function (response) {
         return response.json();
       })
@@ -840,7 +840,7 @@
 
     if (!latestContext || !latestContext.username || !latestContext.id) {
       alert('Please log in to add tickets to your cart.');
-      window.location.href = '../Login/Login.html';
+      window.location.href = '../Login/login.html';
       return { added: false, maxed: false, soldOut: false, message: null };
     }
 

@@ -3,6 +3,10 @@ declare(strict_types=1);
 
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
+// Railly environment + DB config
+$currentHost = $_SERVER['HTTP_HOST'] ?? 'localhost';
+$ENV = strpos($currentHost, 'railly.great-site.net') !== false ? 'production' : 'local';
+
 /**
  * Try to load Composer autoloader + Dotenv if present.
  * Code still works if vendor/ is missing (falls back to defaults).
@@ -25,6 +29,39 @@ function envx(string $key, ?string $fallback = null): ?string {
     return $fallback;
 }
 
+// DB configs (KEEP local MAMP config, ADD production InfinityFree)
+$dbConfigs = [
+    'local' => [
+        'host' => envx('DB_HOST', 'localhost'),
+        'user' => envx('DB_USER', 'root'),           // MAMP user
+        'pass' => envx('DB_PASS', 'root'),           // MAMP password
+        'name' => envx('DB_NAME', 'railly'),         // local DB name
+        'port' => (int) (envx('DB_PORT') ?? '8889'), // default MAMP port
+    ],
+    'production' => [
+        'host' => 'sql303.infinityfree.com',
+        'user' => 'if0_40424884',
+        'pass' => 'Railly1234Plus',
+        'name' => 'if0_40424884_railly',
+        'port' => 3306,
+    ],
+];
+
+// BASE_URL for links and redirects
+if (!defined('BASE_URL')) {
+    if ($ENV === 'production') {
+        define('BASE_URL', 'https://railly.great-site.net');
+    } else {
+        // Local MAMP:
+        // If the project is directly at http://localhost:8888 → use this:
+        define('BASE_URL', 'http://localhost:8888');
+
+        // If instead the project is in a subfolder like http://localhost:8888/railly
+        // change to:
+        // define('BASE_URL', 'http://localhost:8888/railly');
+    }
+}
+
 /** Configure the default PHP timezone with fallback handling. */
 function configure_default_timezone(): void
 {
@@ -44,25 +81,20 @@ configure_default_timezone();
 
 function get_db_connection(): mysqli
 {
-    $httpHost = $_SERVER['HTTP_HOST'] ?? '';
-    $isInfinityFree = strpos($httpHost, 'railly.great-site.net') !== false;
+    global $dbConfigs, $ENV;
 
-    if ($isInfinityFree) {
-        $host = 'sql303.infinityfree.com';
-        $user = 'if0_40424884';
-        $pass = 'Railly1234Plus';
-        $db   = 'if0_40424884_railly';
-        $port = 3306;
-    } else {
-        $host = envx('DB_HOST', '127.0.0.1');
-        $user = envx('DB_USER', 'root');
-        $pass = envx('DB_PASS', 'root');
-        $db   = envx('DB_NAME', 'railly');
-        $port = (int) (envx('DB_PORT') ?? '8889');
-    }
+    $db = $dbConfigs[$ENV] ?? $dbConfigs['local'];
+
+    $host = $db['host'];
+    $user = $db['user'];
+    $pass = $db['pass'];
+    $name = $db['name'];
+    $port = $db['port'] ?? 3306;
+
+    $isProduction = $ENV === 'production';
 
     try {
-        $conn = new mysqli($host, $user, $pass, $db, $port);
+        $conn = new mysqli($host, $user, $pass, $name, (int) $port);
         $conn->set_charset('utf8mb4');
 
         if (!$conn->ping()) {
@@ -83,9 +115,9 @@ function get_db_connection(): mysqli
             'message' => 'Database connection failed.',
         ];
 
-        if (!$isInfinityFree) {
+        if (!$isProduction) {
             $payload['details'] = $e->getMessage();
-            $payload['using']   = compact('host', 'user', 'db', 'port');
+            $payload['using']   = compact('host', 'user', 'name', 'port');
             $payload['hint']    = [
                 'Use MAMP defaults or set Backend/.env',
                 'Make sure you’re opening http://localhost:8888/… (MAMP port)',

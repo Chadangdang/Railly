@@ -1,7 +1,7 @@
 (function (window, document) {
   'use strict';
 
-  var API_SESSION_PATH = '/Backend/staffSession.php';
+  var API_SESSION_PATH = (window.API_BASE || '') + '/staffSession.php';
   var LOGIN_PATH = '/Page/staff/auth/login.html';
   var CHECK_INTERVAL = 10 * 60 * 1000; // 10 minutes
   var hasRedirected = false;

@@ -1,5 +1,21 @@
 (function () {
     'use strict';
+
+    // Establish BASE_URL and API_BASE for both local and hosted environments.
+    if (!window.BASE_URL || !window.API_BASE) {
+      var origin = window.location.origin;
+      var path = window.location.pathname || '';
+      var projectRoot = '';
+
+      // When hosted in a subfolder (e.g., /railly), preserve that prefix.
+      var match = path.match(/^(.*?)(?:\/Page\/|\/Backend\/|$)/);
+      if (match && match[1]) {
+        projectRoot = match[1].replace(/\/$/, '');
+      }
+
+      window.BASE_URL = window.BASE_URL || (origin + projectRoot);
+      window.API_BASE = window.API_BASE || (window.BASE_URL + '/Backend');
+    }
   
     var READY_EVENT = 'layout:ready';
   
@@ -53,12 +69,12 @@
           loginLink.classList.remove('is-hidden');
           loginLink.removeAttribute('id');
           loginLink.classList.remove('logout-link');
-          loginLink.setAttribute('href', '../Login/Login.html');
+          loginLink.setAttribute('href', '../Login/login.html');
         }
-  
+
         if (signupBtn) {
           signupBtn.classList.remove('is-hidden', 'user-pill');
-          signupBtn.setAttribute('href', '../Signup/Signup.html');
+          signupBtn.setAttribute('href', '../Signup/signup.html');
         }
   
         if (profileLink) {
