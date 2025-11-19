@@ -6,6 +6,10 @@
   var retryButton;
   var mediaStream = null;
   var barcodeDetector = null;
+  var jsQrLoader = null;
+  var jsQrDetector = null;
+  var canvasElement = null;
+  var canvasContext = null;
   var scanning = false;
   var detectionFrame = null;
   var hasRedirected = false;
@@ -57,7 +61,7 @@
     }
 
     if (!('BarcodeDetector' in window)) {
-      return Promise.reject(new Error('QR scanning is not supported on this device.'));
+      return ensureJsQrDetector();
     }
 
     var detectorPromise;
@@ -79,6 +83,78 @@
       barcodeDetector = detector;
       return detector;
     });
+  }
+
+  function ensureJsQrDetector() {
+    if (jsQrDetector) {
+      return Promise.resolve(jsQrDetector);
+    }
+
+    if (!jsQrLoader) {
+      jsQrLoader = new Promise(function (resolve, reject) {
+        var script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js';
+        script.async = true;
+        script.onload = resolve;
+        script.onerror = function () {
+          reject(new Error('Failed to load QR decoder.'));
+        };
+        document.head.appendChild(script);
+      });
+    }
+
+    return jsQrLoader
+      .then(function () {
+        if (!window.jsQR) {
+          throw new Error('QR scanning is not supported on this device.');
+        }
+
+        if (!canvasElement) {
+          canvasElement = document.createElement('canvas');
+          canvasContext = canvasElement.getContext('2d');
+        }
+
+        jsQrDetector = {
+          detect: function (video) {
+            return new Promise(function (resolve) {
+              if (!canvasContext || !video) {
+                resolve([]);
+                return;
+              }
+
+              var width = video.videoWidth || video.clientWidth;
+              var height = video.videoHeight || video.clientHeight;
+              if (!width || !height) {
+                resolve([]);
+                return;
+              }
+
+              canvasElement.width = width;
+              canvasElement.height = height;
+              canvasContext.drawImage(video, 0, 0, width, height);
+              var imageData = canvasContext.getImageData(0, 0, width, height);
+              var code = window.jsQR(imageData.data, imageData.width, imageData.height, {
+                inversionAttempts: 'dontInvert',
+              });
+
+              if (code && code.data) {
+                resolve([{ rawValue: code.data }]);
+                return;
+              }
+
+              resolve([]);
+            });
+          },
+        };
+
+        barcodeDetector = jsQrDetector;
+        return jsQrDetector;
+      })
+      .catch(function (error) {
+        return Promise.reject(
+          error || new Error('QR scanning is not supported on this device.'),
+        );
+      });
   }
 
   function parseTicketPayload(rawValue) {
